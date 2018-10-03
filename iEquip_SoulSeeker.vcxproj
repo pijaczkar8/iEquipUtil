@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>SoulGem_Utility</ProjectName>
+    <ProjectName>iEquip_SoulSeeker</ProjectName>
     <ProjectGuid>{811DE627-8F4E-4C7E-B5EA-9CF4D0D0D03E}</ProjectGuid>
-    <RootNamespace>SoulGem_Utility</RootNamespace>
+    <RootNamespace>iEquip_SoulSeeker</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -117,8 +117,7 @@
     <PostBuildEvent>
       <Message>
       </Message>
-      <Command>
-      </Command>
+      <Command>copy "$(TargetPath)" "D:\Mods\ModOrganizer2_SkyrimSE\mods\iEquip_SoulSeeker\SKSE\Plugins\$(TargetFileName)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -126,7 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\SoulGem_Utility.cpp" />
+    <ClCompile Include="src\iEquip_SoulSeeker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\common_vc14.vcxproj">
@@ -140,7 +139,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\SoulGem_Utility.h" />
+    <ClInclude Include="include\iEquip_SoulSeeker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

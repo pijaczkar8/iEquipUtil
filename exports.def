@@ -1,4 +1,4 @@
-LIBRARY	"SoulGem_Utility"
+LIBRARY	"iEquip_SoulSeeker"
 EXPORTS
 SKSEPlugin_Query
 SKSEPlugin_Load

@@ -4,7 +4,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SoulGem_Utility.cpp">
+    <ClCompile Include="src\iEquip_SoulSeeker.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -20,7 +20,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\SoulGem_Utility.h">
+    <ClInclude Include="include\iEquip_SoulSeeker.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
