@@ -78,8 +78,7 @@
       </Message>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>copy "$(TargetPath)" "D:\Mods\ModOrganizer2_SkyrimSE\mods\iEquip_SoulSeeker\SKSE\Plugins\$(TargetFileName)" /Y</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>
@@ -126,6 +125,8 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\iEquip_SoulSeeker.cpp" />
+    <ClCompile Include="src\SoulGem.cpp" />
+    <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\common_vc14.vcxproj">
@@ -140,6 +141,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\iEquip_SoulSeeker.h" />
+    <ClInclude Include="include\SoulGem.h" />
+    <ClInclude Include="include\Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

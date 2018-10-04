@@ -7,6 +7,12 @@
     <ClCompile Include="src\iEquip_SoulSeeker.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\SoulGem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -21,6 +27,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\iEquip_SoulSeeker.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoulGem.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utility.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

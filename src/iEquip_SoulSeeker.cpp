@@ -1,45 +1,22 @@
 #include "iEquip_SoulSeeker.h"
 
-#include "skse64/GameTypes.h"
-#include "skse64/PapyrusNativeFunctions.h"
-#include "skse64/PapyrusVM.h"
-#include "skse64/PluginAPI.h"
-#include "skse64/GameReferences.h"
-#include "skse64/GameExtraData.h"
-#include "skse64/GameForms.h"
-#include "skse64/GameBSExtraData.h"
+#include "common/IDebugLog.h"  // gLog
+#include "common/ITypes.h"  // UInt32
+#include "skse64/GameAPI.h"  // g_thePlayer
+#include "skse64/GameBSExtraData.h"  // ExtraDataType, BaseExtraList
+#include "skse64/GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
+#include "skse64/GameForms.h"  // TESForm, FormType
+#include "skse64/PapyrusNativeFunctions.h"  // StaticFunctionTag
+#include "skse64/PapyrusVM.h"  // VMClassRegistry
 
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <vector>
-#include <algorithm>
-#include <iterator>
+#include <string>  // string
+
+#include "SoulGem.h"  // SoulGem, SoulSize, SoulGemType
+#include "Utility.h"  // boolToString
 
 
 namespace iEquip_SoulSeeker
 {
-	std::string IntToHexString(int a_val, int a_bytes)
-	{
-		// Convert to hex
-		std::stringstream sstream;
-		sstream << std::hex << a_val;
-		std::string str = sstream.str();
-
-		// Convert lowercase characters to uppercase
-		for (auto & c : str) {
-			c = toupper(c);
-		}
-
-		// Sign extension
-		while (std::strlen(str.c_str()) < a_bytes * 2) {
-			str = '0' + str;
-		}
-
-		return str;
-	}
-
-
 	/**
 	 * @brief Fetch the most optimal soulgem to fill an enchanted weapon
 	 * @param a_reqCharge The required soul to fetch. Valid inputs are defined in SoulSize.
@@ -48,59 +25,90 @@ namespace iEquip_SoulSeeker
 	 * @param a_wasteOK Determines whether soulgems exceeding the requred size can be returned.
 	 * @return Returns an empty string if successful, otherwise returns an exception.
 	 **/
-	BSFixedString BringMeASoul(StaticFunctionTag* base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
+	TESForm* BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
+		// TODO: Remove dbg info
+		{
+			std::string msg;
+			_DMESSAGE("");
+			msg = "a_reqCharge == " + std::to_string(a_reqCharge);
+			_DMESSAGE(msg.c_str());
+			msg = "a_fillMethod == " + std::to_string(a_fillMethod);
+			_DMESSAGE(msg.c_str());
+			msg = "a_partialFill == " + boolToString(a_partialFill);
+			_DMESSAGE(msg.c_str());
+			msg = "a_wasteOK == " + boolToString(a_wasteOK);
+			_DMESSAGE(msg.c_str());
+			_DMESSAGE("");
+		}
+		// TODO: Remove dbg info
+
+		if (!validateParams(a_reqCharge, a_fillMethod, a_partialFill)) {
+			_ERROR("ERROR: Parameters failed to validate!");
+			return 0;
+		}
+
 		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : NULL;
 		if (!containerData) {
 			_ERROR("ERROR: No container data!");
-			return "exceptionNoContainerData";
+			return 0;
 		}
 
-		std::vector<SoulGem> candidates;
+		SoulGem candidates;
 		if (!findCandidates(containerData, candidates)) {
-			_ERROR("ERROR: No entry data!");
-			return "exceptionNoEntryData";
+			_ERROR("ERROR: Failed to find candidates!");
+			return 0;
 		} else if (candidates.empty()) {
-			_ERROR("ERROR: No suitable soul gems!");
-			return "exceptionNoSuitableSoulGems";
+			_WARNING("WARNING: No suitable soul gems!");
+			return 0;
 		}
 
-		optimalCandidate = findOptimalCandidate(candidates, a_reqCharge, a_fillMethod, a_partialFill, a_wasteOK);
+		InventoryEntryData* optimalCandidate = findOptimalCandidate(candidates, a_reqCharge, a_fillMethod, a_partialFill, a_wasteOK);
+		if (!optimalCandidate) {
+			_ERROR("ERROR: Failed to find an optimal candidate!");
+			return 0;
+		}
 
-		removeExtraSoul(containerData, optimalCandidate.formID, optimalCandidate.soulLevel);
+		if (isPlayerFilled(optimalCandidate->type->formID)) {
+			removeExtraSoul(containerData, optimalCandidate);
+		}
 
-		return "";
+		return optimalCandidate->type;
 	}
 
 
-	TESForm* iEquip_getForm(StaticFunctionTag* base)
+	bool validateParams(UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill)
 	{
-		return optimalCandidate.form;
+		if (a_reqCharge < kSoulSize_Petty || a_reqCharge > kSoulSize_Grand) {
+			std::string msg = "ERROR: Invalid soul size! (" + std::to_string(a_reqCharge) + ")";
+			_ERROR(msg.c_str());
+			return false;
+		} else if (!(a_fillMethod == kFillMethod_SmallerSoulsFirt || a_fillMethod == kFillMethod_UseLargestSoul)) {
+			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")";
+			_ERROR(msg.c_str());
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 
-	UInt32 iEquip_getSoulLevel(StaticFunctionTag* base)
-	{
-		return optimalCandidate.soulLevel;
-	}
-
-
-	bool findCandidates(ExtraContainerChanges::Data* containerData, SoulGem& candidates)
+	bool findCandidates(ExtraContainerChanges::Data* a_containerData, SoulGem& a_candidates)
 	{
 		UInt32 soulSize;
 		InventoryEntryData* entryData = 0;
-		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
-			entryData = containerData->objList->GetNthItem(i);
+		for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
+			entryData = a_containerData->objList->GetNthItem(i);
 			if (entryData) {
 				if (entryData->type->formType == kFormType_SoulGem) {
 					soulSize = CALL_MEMBER_FN(entryData, GetSoulLevel)();
 					if (soulSize > 0) {
-						candidates.addSoulGem(entryData->type, entryData->type->formID, soulSize);
+						a_candidates.addSoulGem(entryData, soulSize) ? _DMESSAGE("Successfully added soul gem") : _ERROR("ERROR: Failed to add soul gem!");
 					}
 				}
 			} else {
-				_ERROR("ERROR: No entry data!");
+				_ERROR("ERROR: No entry data found when attempting to find candidates!");
 				return false;
 			}
 		}
@@ -108,60 +116,66 @@ namespace iEquip_SoulSeeker
 	}
 
 
-	// TODO: Add function to find first soul in list for exception case
-	// DO NOT call this when there are no candidates!
-	TESForm* findOptimalCandidate(SoulGem& candidates, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
+	// Do NOT call this when there are no candidates!
+	// Do NOT call this without validating the parameters!
+	InventoryEntryData* findOptimalCandidate(SoulGem& a_candidates, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
-		TESForm* returnForm;
+		InventoryEntryData* returnData;
 		switch (a_fillMethod) {
-		case kSmallerSoulsFirt:
+		case kFillMethod_SmallerSoulsFirt:
 			for (UInt32 soulSize = kSoulSize_Petty; soulSize <= a_reqCharge; ++soulSize) {
-				if (returnForm = candidates.findSoul(soulSize, a_partialFill)) {
-					return returnForm;
+				if (returnData = a_candidates.findSoul(soulSize, a_partialFill)) {
+					return returnData;
 				}
 			}
 			// Search failed, loosening requirements
-			return findOptimalCandidate(candidates, kSoulSize_Grand, kSmallerSoulsFirt, true, true);
-		case kUseLargestSoul:
+			return findOptimalCandidate(a_candidates, kSoulSize_Grand, kFillMethod_SmallerSoulsFirt, true, true);
+		case kFillMethod_UseLargestSoul:
 			for (UInt32 soulSize = a_reqCharge; soulSize >= kSoulSize_Petty; --soulSize) {
-				if (returnForm = candidates.findSoul(soulSize, a_partialFill)) {
-					return returnForm;
+				if (returnData = a_candidates.findSoul(soulSize, a_partialFill)) {
+					return returnData;
 				}
 			}
 			// Search failed, loosening requirements
-			return findOptimalCandidate(candidates, kSoulSize_Grand, kUseLargestSoul, true, true);
+			for (UInt32 soulSize = a_reqCharge + 1; soulSize <= kSoulSize_Grand; ++soulSize) {
+				if (returnData = a_candidates.findSoul(soulSize, true)) {
+					return returnData;
+				}
+			}
 		default:
+			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")";
+			_ERROR(msg.c_str());
 			return 0;
 		}
+		_ERROR("ERROR: A search failed to find a gem!");
+		return 0;
 	}
 
 
-	void removeExtraSoul(ExtraContainerChanges::Data* containerData, UInt32 formID, UInt32 soulSize)
+	// Do NOT call this if the soul gem is a prefilled type!
+	void removeExtraSoul(ExtraContainerChanges::Data* a_containerData, InventoryEntryData* a_entry)
 	{
 		InventoryEntryData* entryData = 0;
 		BaseExtraList* extraList = 0;
-		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
-			entryData = containerData->objList->GetNthItem(i);
+		for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
+			entryData = a_containerData->objList->GetNthItem(i);
 			if (entryData) {
 				if (entryData->type->formType == kFormType_SoulGem &&
-					entryData->type->formID == formID &&
-					CALL_MEMBER_FN(entryData, GetSoulLevel)() == soulSize) {
-					if (isPlayerFilled(formID)) {
-						extraList = entryData->extendDataList->GetNthItem(0);
-						extraList->Remove(kExtraData_Soul, extraList->m_data);
-					}
-
+					entryData->type->formID == a_entry->type->formID &&
+					CALL_MEMBER_FN(entryData, GetSoulLevel)() == CALL_MEMBER_FN(a_entry, GetSoulLevel)()) {
+					extraList = entryData->extendDataList->GetNthItem(0);
+					extraList->Remove(kExtraData_Soul, extraList->m_data);
 				}
 			} else {
-				_ERROR("ERROR: No entry data!");
+				_ERROR("ERROR: No entry data found when attempting to remove extra soul!");
 			}
 		}
 	}
 
 
-	bool isPlayerFilled(UInt32 formID)
+	bool isPlayerFilled(UInt32 a_formID)
 	{
-		switch (formID) {
+		switch (a_formID) {
 		case kSoulGem_Petty:
 			return true;
 		case kSoulGem_PettyFilled:
@@ -190,20 +204,16 @@ namespace iEquip_SoulSeeker
 			return true;
 		case kSoulGem_BlackStar:
 			return true;
+		default:
+			return false;
 		}
 	}
 
 
-	bool RegisterFuncs(VMClassRegistry* registry)
+	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
-		registry->RegisterFunction(
-			new NativeFunction4<StaticFunctionTag, BSFixedString, UInt32, UInt32, bool, bool>("BringMeASoul", "iEquip_SoulSeeker", iEquip_SoulSeeker::BringMeASoul, registry));
-
-		registry->RegisterFunction(
-			new NativeFunction0<StaticFunctionTag, TESForm*>("iEquip_getForm", "iEquip_SoulSeeker", iEquip_SoulSeeker::iEquip_getForm, registry));
-
-		registry->RegisterFunction(
-			new NativeFunction0<StaticFunctionTag, UInt32>("iEquip_getSoulSize", "iEquip_SoulSeeker", iEquip_SoulSeeker::iEquip_getSoulSize, registry));
+		a_registry->RegisterFunction(
+			new NativeFunction4<StaticFunctionTag, TESForm*, UInt32, UInt32, bool, bool>("BringMeASoul", "iEquip_SoulSeeker", iEquip_SoulSeeker::BringMeASoul, a_registry));
 
 		return true;
 	}

@@ -1,11 +1,8 @@
-﻿#include "skse64/PluginAPI.h"
-#include "skse64/GameEvents.h"
-#include "skse64/GameMenus.h"
-#include "skse64/GameReferences.h"
-#include "skse64/ScaleformMovie.h"
-#include "skse64_common/skse_version.h"
-#include "skse64_common/Utilities.h"
-#include <shlobj.h>
+﻿#include "common/IDebugLog.h"  // gLog, IDebugLog
+#include "skse64/PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEInterface, PluginInfo
+#include "skse64_common/skse_version.h"  // RUNTIME_VERSION
+
+#include <shlobj.h>  // CSIDL_MYDOCUMENTS
 
 #include "iEquip_SoulSeeker.h"
 
@@ -18,7 +15,7 @@ extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log");
-		gLog.SetPrintLevel(IDebugLog::kLevel_Error);
+		gLog.SetPrintLevel(IDebugLog::kLevel_Warning);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
 		_MESSAGE("iEquip_SoulSeeker");
@@ -34,7 +31,7 @@ extern "C" {
 		if (skse->isEditor) {
 			_MESSAGE("Loaded in editor, marking as incompatible");
 			return false;
-		} else if (skse->runtimeVersion != RUNTIME_VERSION_1_5_50) {
+		} else if (skse->runtimeVersion != RUNTIME_VERSION_1_5_53) {
 			_MESSAGE("Unsupported runtime version %08X", skse->runtimeVersion);
 			return false;
 		}
@@ -51,7 +48,7 @@ extern "C" {
 		g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
 
 		//Check if the function registration was a success...
-		bool btest = false;//g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
+		bool btest = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
 
 		if (btest) {
 			_MESSAGE("Registery succeeded!");
