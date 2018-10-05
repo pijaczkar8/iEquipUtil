@@ -131,35 +131,62 @@ namespace iEquip_SoulSeeker
 	// Do NOT call this without validating the parameters!
 	InventoryEntryData* findOptimalCandidate(SoulGem& a_candidates, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
-		InventoryEntryData* returnData;
+		InventoryEntryData* returnData = 0;
+		if (a_wasteOK) {
+			a_reqCharge = kSoulSize_Grand;
+		}
 		switch (a_fillMethod) {
 		case kFillMethod_SmallerSoulsFirt:
-			for (UInt32 soulSize = kSoulSize_Petty; soulSize <= a_reqCharge; ++soulSize) {
-				if (returnData = a_candidates.findSoul(soulSize, a_partialFill)) {
-					return returnData;
-				}
+			if (returnData = soulSearchUp(a_candidates, kSoulSize_Petty, a_reqCharge, a_partialFill)) {
+				return returnData;
 			}
 			_DMESSAGE("Search failed, loosening requirements\n");
-			return findOptimalCandidate(a_candidates, kSoulSize_Grand, kFillMethod_SmallerSoulsFirt, true, true);
+			return soulSearchUp(a_candidates, kSoulSize_Petty, kSoulSize_Grand, true);
 		case kFillMethod_UseLargestSoul:
-			for (UInt32 soulSize = a_reqCharge; soulSize >= kSoulSize_Petty; --soulSize) {
-				if (returnData = a_candidates.findSoul(soulSize, a_partialFill)) {
-					return returnData;
-				}
+			if (returnData = soulSearchDown(a_candidates, a_reqCharge, kSoulSize_Petty, a_partialFill)) {
+				return returnData;
 			}
 			_DMESSAGE("Search failed, loosening requirements\n");
-			for (UInt32 soulSize = a_reqCharge + 1; soulSize <= kSoulSize_Grand; ++soulSize) {
-				if (returnData = a_candidates.findSoul(soulSize, true)) {
+			if (!a_partialFill) {
+				if (returnData = soulSearchDown(a_candidates, a_reqCharge, kSoulSize_Petty, true)) {
 					return returnData;
 				}
+				_DMESSAGE("Search failed, loosening requirements\n");
+			}
+			if (returnData = soulSearchDown(a_candidates, a_reqCharge + 1, kSoulSize_Grand, true)) {
+				return returnData;
 			}
 		default:
 			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")\n";
 			_ERROR(msg.c_str());
-			return 0;
+			return returnData;
 		}
 		_ERROR("ERROR: A search failed to find a gem!\n");
-		return 0;
+		return returnData;
+	}
+
+
+	InventoryEntryData* soulSearchUp(SoulGem& a_candidates, UInt32 a_soulBegin, UInt32 a_soulEnd, bool a_partialFill)
+	{
+		InventoryEntryData* returnData = 0;
+		for (UInt32 soulSize = a_soulBegin; soulSize <= a_soulEnd; ++soulSize) {
+			if (returnData = a_candidates.findSoul(soulSize, a_partialFill)) {
+				return returnData;
+			}
+		}
+		return returnData;
+	}
+
+
+	InventoryEntryData* soulSearchDown(SoulGem& a_candidates, UInt32 a_soulBegin, UInt32 a_soulEnd, bool a_partialFill)
+	{
+		InventoryEntryData* returnData = 0;
+		for (UInt32 soulSize = a_soulBegin; soulSize >= a_soulEnd; --soulSize) {
+			if (returnData = a_candidates.findSoul(soulSize, a_partialFill)) {
+				return returnData;
+			}
+		}
+		return returnData;
 	}
 
 
