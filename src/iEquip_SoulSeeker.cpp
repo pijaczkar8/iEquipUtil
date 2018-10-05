@@ -81,7 +81,7 @@ namespace iEquip_SoulSeeker
 
 	/**
 	 * @brief Gets the soul size of the last returned soul.
-	 * Returns the size of the last returned soul if the search was a success, otherwise returns 0.
+	 * @return Returns the size of the last returned soul if the search was a success, otherwise returns 0.
 	 **/
 	UInt32 GetSoulSize(StaticFunctionTag* a_base)
 	{
