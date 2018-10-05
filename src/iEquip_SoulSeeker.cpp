@@ -23,7 +23,7 @@ namespace iEquip_SoulSeeker
 	 * @param a_fillMethod The method used to fill the soulgem. Valid inputs 0-1.
 	 * @param a_partialFill Determines whether partially filled soul gems can be returned.
 	 * @param a_wasteOK Determines whether soulgems exceeding the requred size can be returned.
-	 * @return Returns the Form to be removed. Call SoulFound to determine if the search was a success.
+	 * @return Returns the Form to be removed. Call GetSoulSize to determine if the search was a success.
 	 **/
 	TESForm* BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{

@@ -6,7 +6,7 @@ ScriptName iEquip_SoulSeeker
 ; @param a_fillMethod The method used to fill the soulgem. Valid inputs 0-1.
 ; @param a_partialFill Determines whether partially filled soul gems can be returned.
 ; @param a_wasteOK Determines whether soulgems exceeding the requred size can be returned.
-; @return Returns the Form to be removed. Call SoulFound to determine if the search was a success.
+; @return Returns the Form to be removed. Call GetSoulSize to determine if the search was a success.
 Form Function BringMeASoul(Int a_reqCharge, Int a_fillMethod, Bool a_partialFill, Bool a_wasteOK) Global Native
 
 
