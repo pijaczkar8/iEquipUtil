@@ -141,7 +141,9 @@ namespace iEquip_SoulSeeker
 				return returnData;
 			}
 			_DMESSAGE("Search failed, loosening requirements\n");
-			return soulSearchUp(a_candidates, kSoulSize_Petty, kSoulSize_Grand, true);
+			if (soulSearchUp(a_candidates, kSoulSize_Petty, kSoulSize_Grand, true)) {
+				return returnData;
+			}
 		case kFillMethod_UseLargestSoul:
 			if (returnData = soulSearchDown(a_candidates, a_reqCharge, kSoulSize_Petty, a_partialFill)) {
 				return returnData;
