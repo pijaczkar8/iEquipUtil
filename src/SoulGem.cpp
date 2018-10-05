@@ -6,9 +6,112 @@
 
 #include <vector>  // vector
 
+#include "Utility.h"  // GIST, GISTIndex
+
 
 namespace iEquip_SoulSeeker
 {
+	GemUtil::GemUtil()
+	{
+		fillCompatGems(kSoulSize_Petty, petty);
+		fillCompatGems(kSoulSize_Lesser, lesser);
+		fillCompatGems(kSoulSize_Common, common);
+		fillCompatGems(kSoulSize_Greater, greater);
+		fillCompatGems(kSoulSize_Grand, grand);
+	}
+
+
+	void GemUtil::GISTFound()
+	{
+		addGISTGems(kSoulSize_Petty, petty);
+		addGISTGems(kSoulSize_Lesser, lesser);
+		addGISTGems(kSoulSize_Common, common);
+		addGISTGems(kSoulSize_Greater, greater);
+		addGISTGems(kSoulSize_Grand, grand);
+	}
+
+
+	void GemUtil::fillCompatGems(UInt32 a_soulSize, GemInfo& a_gemInfo)
+	{
+		switch (a_soulSize) {
+		case kSoulSize_Petty:
+			a_gemInfo.compat.emplace_back(kSoulGem_PettyFilled);
+			a_gemInfo.compat.emplace_back(kSoulGem_Petty);
+			if (a_soulSize == kSoulSize_Petty) {
+				a_gemInfo.maxFill = a_gemInfo.compat.size();
+			}
+		case kSoulSize_Lesser:
+			a_gemInfo.compat.emplace_back(kSoulGem_LesserFilled);
+			a_gemInfo.compat.emplace_back(kSoulGem_Lesser);
+			if (a_soulSize == kSoulSize_Lesser) {
+				a_gemInfo.maxFill = a_gemInfo.compat.size();
+			}
+		case kSoulSize_Common:
+			a_gemInfo.compat.emplace_back(kSoulGem_CommonFilled);
+			a_gemInfo.compat.emplace_back(kSoulGem_Common);
+			if (a_soulSize == kSoulSize_Common) {
+				a_gemInfo.maxFill = a_gemInfo.compat.size();
+			}
+		case kSoulSize_Greater:
+			a_gemInfo.compat.emplace_back(kSoulGem_GreaterFilled);
+			a_gemInfo.compat.emplace_back(kSoulGem_Greater);
+			if (a_soulSize == kSoulSize_Greater) {
+				a_gemInfo.maxFill = a_gemInfo.compat.size();
+			}
+		case kSoulSize_Grand:
+			a_gemInfo.compat.emplace_back(kSoulGem_GrandFilled);
+			a_gemInfo.compat.emplace_back(kSoulGem_Grand);
+			a_gemInfo.compat.emplace_back(kSoulGem_BlackFilled);
+			a_gemInfo.compat.emplace_back(kSoulGem_Black);
+			a_gemInfo.compat.emplace_back(kSoulGem_AzurasStar);
+			a_gemInfo.compat.emplace_back(kSoulGem_BlackStar);
+			if (a_soulSize == kSoulSize_Grand) {
+				a_gemInfo.maxFill = a_gemInfo.compat.size();
+			}
+			break;
+		default:
+			std::string msg = "ERROR: In GemUtil::fillCompatGems : Invalid soul size!" + numToHexString(a_soulSize, 4) + "\n";
+			_ERROR(msg.c_str());
+		}
+	}
+
+
+	void GemUtil::addGISTGems(UInt32 a_soulSize, GemInfo& a_gemInfo)
+	{
+		switch (a_soulSize) {
+		case kSoulSize_Petty:
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTBlackFilledPetty + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGrandFilledPetty + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGreaterFilledPetty + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTCommonFilledPetty + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTLesserFilledPetty + GISTindex);
+			break;
+		case kSoulSize_Lesser:
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTBlackFilledLesser + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGrandFilledLesser + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGreaterFilledLesser + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTCommonFilledLesser + GISTindex);
+			break;
+		case kSoulSize_Common:
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTBlackFilledCommon + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGrandFilledCommon + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGreaterFilledCommon + GISTindex);
+			break;
+		case kSoulSize_Greater:
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTBlackFilledGreater + GISTindex);
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTGrandFilledGreater + GISTindex);
+			break;
+		case kSoulSize_Grand:
+			a_gemInfo.compat.emplace_back(kSoulGem_GISTBlackFilledGrand + GISTindex);
+			a_gemInfo.maxFill = a_gemInfo.compat.size();
+			break;
+		default:
+			std::string msg = "ERROR: In GemUtil::addGISTGems : Invalid soul size!" + numToHexString(a_soulSize, 4) + "\n";
+			_ERROR(msg.c_str());
+		}
+	}
+
+
 	Gem::Gem(UInt32 a_soulGemType) :
 		soulGemType(a_soulGemType)
 	{}
@@ -32,27 +135,23 @@ namespace iEquip_SoulSeeker
 	{
 		switch (soulSize) {
 		case kSoulSize_Petty:
-			compatGems.emplace_back(kSoulGem_PettyFilled);
-			compatGems.emplace_back(kSoulGem_Petty);
+			compatGems = gemUtil.petty.compat;
+			break;
 		case kSoulSize_Lesser:
-			compatGems.emplace_back(kSoulGem_LesserFilled);
-			compatGems.emplace_back(kSoulGem_Lesser);
+			compatGems = gemUtil.lesser.compat;
+			break;
 		case kSoulSize_Common:
-			compatGems.emplace_back(kSoulGem_CommonFilled);
-			compatGems.emplace_back(kSoulGem_Common);
+			compatGems = gemUtil.common.compat;
+			break;
 		case kSoulSize_Greater:
-			compatGems.emplace_back(kSoulGem_GreaterFilled);
-			compatGems.emplace_back(kSoulGem_Greater);
+			compatGems = gemUtil.greater.compat;
+			break;
 		case kSoulSize_Grand:
-			compatGems.emplace_back(kSoulGem_GrandFilled);
-			compatGems.emplace_back(kSoulGem_Grand);
-			compatGems.emplace_back(kSoulGem_BlackFilled);
-			compatGems.emplace_back(kSoulGem_Black);
-			compatGems.emplace_back(kSoulGem_AzurasStar);
-			compatGems.emplace_back(kSoulGem_BlackStar);
+			compatGems = gemUtil.grand.compat;
 			break;
 		default:
-			_ERROR("ERROR: In Soul::Soul : Invalid soul level!");
+			std::string msg = "ERROR: In Soul::Soul : Invalid soul size!" + numToHexString(a_soulSize, 4) + "\n";
+			_ERROR(msg.c_str());
 		}
 	}
 
@@ -75,7 +174,8 @@ namespace iEquip_SoulSeeker
 				return gem.addGem(a_entry);
 			}
 		}
-		_ERROR("ERROR: In Soul::addSoul : Invalid soulgem type!");
+		std::string msg = "ERROR: In Soul::addSoul : Invalid soulgem type!" + numToHexString(a_entry->type->formID, 4) + "\n";
+		_ERROR(msg.c_str());
 		return false;
 	}
 
@@ -92,7 +192,7 @@ namespace iEquip_SoulSeeker
 					return entry;
 				}
 			}
-			_ERROR("ERROR: In Soul::findGem : Unexpectedly exited for loop!");
+			_ERROR("ERROR: In Soul::findGem : Unexpectedly exited for loop!\n");
 		}
 		return 0;
 	}
@@ -126,7 +226,7 @@ namespace iEquip_SoulSeeker
 				return soul.addSoul(a_entry);
 			}
 		}
-		_ERROR("ERROR: In SoulGem::addSoulGem : Invalid soul level!");
+		_ERROR("ERROR: In SoulGem::addSoulGem : Invalid soul size!\n");
 		return false;
 	}
 
@@ -141,16 +241,17 @@ namespace iEquip_SoulSeeker
 	{
 		switch (a_soulSize) {
 		case kSoulSize_Petty:
-			return 2;
+			return gemUtil.petty.maxFill;
 		case kSoulSize_Lesser:
-			return 2;
+			return gemUtil.lesser.maxFill;
 		case kSoulSize_Common:
-			return 2;
+			return gemUtil.common.maxFill;
 		case kSoulSize_Greater:
-			return 2;
+			return gemUtil.greater.maxFill;
 		case kSoulSize_Grand:
-			return 6;
+			return gemUtil.grand.maxFill;
 		default:
+			_ERROR("ERROR: In getMaxFillCount : Invalid soul size!\n");
 			return 0;
 		}
 	}

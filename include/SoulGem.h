@@ -20,7 +20,6 @@ namespace iEquip_SoulSeeker
 
 
 	// Player filled soulgems have the same ID as unfilled soulgems
-	// I might have to refactor this to account for load order, I don't know what happens if someone edits the soulgems.
 	enum SoulGemType : UInt32
 	{
 		kSoulGem_Petty = 0x0002E4E2,
@@ -36,7 +35,23 @@ namespace iEquip_SoulSeeker
 		kSoulGem_Black = 0x0002E500,
 		kSoulGem_BlackFilled = 0x0002E504,
 		kSoulGem_AzurasStar = 0x00063B27,
-		kSoulGem_BlackStar = 0x00063B29
+		kSoulGem_BlackStar = 0x00063B29,
+
+		kSoulGem_GISTBlackFilledGrand = 0x000012D2,
+		kSoulGem_GISTBlackFilledGreater = 0x00000D62,
+		kSoulGem_GISTBlackFilledCommon = 0x00000D63,
+		kSoulGem_GISTBlackFilledLesser = 0x00000D64,
+		kSoulGem_GISTBlackFilledPetty = 0x00000D65,
+		kSoulGem_GISTGrandFilledGreater = 0x00000D66,
+		kSoulGem_GISTGrandFilledCommon = 0x00000D67,
+		kSoulGem_GISTGrandFilledLesser = 0x00000D68,
+		kSoulGem_GISTGrandFilledPetty = 0x00000D69,
+		kSoulGem_GISTGreaterFilledCommon = 0x00000D6A,
+		kSoulGem_GISTGreaterFilledLesser = 0x00000D6B,
+		kSoulGem_GISTGreaterFilledPetty = 0x00000D6C,
+		kSoulGem_GISTCommonFilledLesser = 0x00000D6D,
+		kSoulGem_GISTCommonFilledPetty = 0x00000D6E,
+		kSoulGem_GISTLesserFilledPetty = 0x00000D6F,
 	};
 
 
@@ -49,6 +64,30 @@ namespace iEquip_SoulSeeker
 
 		UInt32 soulGemType;
 		std::vector<InventoryEntryData*> entryData;
+	};
+
+
+	class GemUtil
+	{
+	public:
+		GemUtil();
+		void GISTFound();
+
+		struct GemInfo
+		{
+			UInt32 maxFill;
+			std::vector<Gem> compat;
+		};
+
+		GemInfo petty;
+		GemInfo lesser;
+		GemInfo common;
+		GemInfo greater;
+		GemInfo grand;
+
+	private:
+		void fillCompatGems(UInt32 a_soulSize, GemInfo& a_gemInfo);
+		void addGISTGems(UInt32 a_soulSize, GemInfo& a_gemInfo);
 	};
 
 
@@ -75,6 +114,9 @@ namespace iEquip_SoulSeeker
 
 		std::vector<Soul> souls;
 	};
+
+
+	extern GemUtil gemUtil;
 
 
 	UInt32 getMaxFillCount(UInt32 a_soulSize);

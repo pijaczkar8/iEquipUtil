@@ -19,18 +19,16 @@ namespace iEquip_SoulSeeker
 {
 	/**
 	 * @brief Fetch the most optimal soulgem to fill an enchanted weapon
-	 * @param a_reqCharge The required soul to fetch. Valid inputs are defined in SoulSize.
-	 * @param a_fillMethod The method used to fill the soulgem. Valid inputs are defined in FillMethod.
+	 * @param a_reqCharge The required soul to fetch. Valid inputs 1-5.
+	 * @param a_fillMethod The method used to fill the soulgem. Valid inputs 0-1.
 	 * @param a_partialFill Determines whether partially filled soul gems can be returned.
 	 * @param a_wasteOK Determines whether soulgems exceeding the requred size can be returned.
-	 * @return Returns an empty string if successful, otherwise returns an exception.
+	 * @return Returns the Form to be removed. Call SoulFound to determine if the search was a success.
 	 **/
 	TESForm* BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
-		// TODO: Remove dbg info
 		{
 			std::string msg;
-			_DMESSAGE("");
 			msg = "a_reqCharge == " + std::to_string(a_reqCharge);
 			_DMESSAGE(msg.c_str());
 			msg = "a_fillMethod == " + std::to_string(a_fillMethod);
@@ -41,32 +39,34 @@ namespace iEquip_SoulSeeker
 			_DMESSAGE(msg.c_str());
 			_DMESSAGE("");
 		}
-		// TODO: Remove dbg info
+
+		lastFoundSoulSize = 0;
+		optimalCandidate = 0;
 
 		if (!validateParams(a_reqCharge, a_fillMethod, a_partialFill)) {
-			_ERROR("ERROR: Parameters failed to validate!");
+			_ERROR("ERROR: Parameters failed to validate!\n");
 			return 0;
 		}
 
 		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : NULL;
 		if (!containerData) {
-			_ERROR("ERROR: No container data!");
+			_ERROR("ERROR: No container data!\n");
 			return 0;
 		}
 
 		SoulGem candidates;
 		if (!findCandidates(containerData, candidates)) {
-			_ERROR("ERROR: Failed to find candidates!");
+			_ERROR("ERROR: Failed to find candidates!\n");
 			return 0;
 		} else if (candidates.empty()) {
-			_WARNING("WARNING: No suitable soul gems!");
+			_WARNING("WARNING: No suitable soul gems!\n");
 			return 0;
 		}
 
-		InventoryEntryData* optimalCandidate = findOptimalCandidate(candidates, a_reqCharge, a_fillMethod, a_partialFill, a_wasteOK);
+		optimalCandidate = findOptimalCandidate(candidates, a_reqCharge, a_fillMethod, a_partialFill, a_wasteOK);
 		if (!optimalCandidate) {
-			_ERROR("ERROR: Failed to find an optimal candidate!");
+			_ERROR("ERROR: Failed to find an optimal candidate!\n");
 			return 0;
 		}
 
@@ -74,18 +74,29 @@ namespace iEquip_SoulSeeker
 			removeExtraSoul(containerData, optimalCandidate);
 		}
 
-		return optimalCandidate->type;
+		lastFoundSoulSize = CALL_MEMBER_FN(optimalCandidate, GetSoulLevel)();
+		return isReusable(optimalCandidate->type->formID) ? 0 : optimalCandidate->type;
+	}
+
+
+	/**
+	 * @brief Gets the soul size of the last returned soul.
+	 * Returns the size of the last returned soul if the search was a success, otherwise returns 0.
+	 **/
+	UInt32 GetSoulSize(StaticFunctionTag* a_base)
+	{
+		return lastFoundSoulSize;
 	}
 
 
 	bool validateParams(UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill)
 	{
 		if (a_reqCharge < kSoulSize_Petty || a_reqCharge > kSoulSize_Grand) {
-			std::string msg = "ERROR: Invalid soul size! (" + std::to_string(a_reqCharge) + ")";
+			std::string msg = "ERROR: Invalid soul size! (" + std::to_string(a_reqCharge) + ")\n";
 			_ERROR(msg.c_str());
 			return false;
 		} else if (!(a_fillMethod == kFillMethod_SmallerSoulsFirt || a_fillMethod == kFillMethod_UseLargestSoul)) {
-			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")";
+			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")\n";
 			_ERROR(msg.c_str());
 			return false;
 		} else {
@@ -104,11 +115,11 @@ namespace iEquip_SoulSeeker
 				if (entryData->type->formType == kFormType_SoulGem) {
 					soulSize = CALL_MEMBER_FN(entryData, GetSoulLevel)();
 					if (soulSize > 0) {
-						a_candidates.addSoulGem(entryData, soulSize) ? _DMESSAGE("Successfully added soul gem") : _ERROR("ERROR: Failed to add soul gem!");
+						a_candidates.addSoulGem(entryData, soulSize) ? _DMESSAGE("Successfully added soul gem\n") : _ERROR("ERROR: Failed to add soul gem!");
 					}
 				}
 			} else {
-				_ERROR("ERROR: No entry data found when attempting to find candidates!");
+				_ERROR("ERROR: No entry data found when attempting to find candidates!\n");
 				return false;
 			}
 		}
@@ -128,7 +139,7 @@ namespace iEquip_SoulSeeker
 					return returnData;
 				}
 			}
-			// Search failed, loosening requirements
+			_DMESSAGE("Search failed, loosening requirements\n");
 			return findOptimalCandidate(a_candidates, kSoulSize_Grand, kFillMethod_SmallerSoulsFirt, true, true);
 		case kFillMethod_UseLargestSoul:
 			for (UInt32 soulSize = a_reqCharge; soulSize >= kSoulSize_Petty; --soulSize) {
@@ -136,18 +147,18 @@ namespace iEquip_SoulSeeker
 					return returnData;
 				}
 			}
-			// Search failed, loosening requirements
+			_DMESSAGE("Search failed, loosening requirements\n");
 			for (UInt32 soulSize = a_reqCharge + 1; soulSize <= kSoulSize_Grand; ++soulSize) {
 				if (returnData = a_candidates.findSoul(soulSize, true)) {
 					return returnData;
 				}
 			}
 		default:
-			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")";
+			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")\n";
 			_ERROR(msg.c_str());
 			return 0;
 		}
-		_ERROR("ERROR: A search failed to find a gem!");
+		_ERROR("ERROR: A search failed to find a gem!\n");
 		return 0;
 	}
 
@@ -157,17 +168,18 @@ namespace iEquip_SoulSeeker
 	{
 		InventoryEntryData* entryData = 0;
 		BaseExtraList* extraList = 0;
+		UInt32 soulLevel = CALL_MEMBER_FN(a_entry, GetSoulLevel)();
 		for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
 			entryData = a_containerData->objList->GetNthItem(i);
 			if (entryData) {
 				if (entryData->type->formType == kFormType_SoulGem &&
 					entryData->type->formID == a_entry->type->formID &&
-					CALL_MEMBER_FN(entryData, GetSoulLevel)() == CALL_MEMBER_FN(a_entry, GetSoulLevel)()) {
+					CALL_MEMBER_FN(entryData, GetSoulLevel)() == soulLevel) {
 					extraList = entryData->extendDataList->GetNthItem(0);
 					extraList->Remove(kExtraData_Soul, extraList->m_data);
 				}
 			} else {
-				_ERROR("ERROR: No entry data found when attempting to remove extra soul!");
+				_ERROR("ERROR: No entry data found when attempting to remove extra soul!\n");
 			}
 		}
 	}
@@ -210,10 +222,26 @@ namespace iEquip_SoulSeeker
 	}
 
 
+	bool isReusable(UInt32 a_formID)
+	{
+		switch (a_formID) {
+		case kSoulGem_AzurasStar:
+			return true;
+		case kSoulGem_BlackStar:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
 			new NativeFunction4<StaticFunctionTag, TESForm*, UInt32, UInt32, bool, bool>("BringMeASoul", "iEquip_SoulSeeker", iEquip_SoulSeeker::BringMeASoul, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction0<StaticFunctionTag, UInt32>("GetSoulSize", "iEquip_SoulSeeker", iEquip_SoulSeeker::GetSoulSize, a_registry));
 
 		return true;
 	}

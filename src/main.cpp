@@ -1,18 +1,42 @@
 ﻿#include "common/IDebugLog.h"  // gLog, IDebugLog
-#include "skse64/PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEInterface, PluginInfo
+#include "common/ITypes.h"  // UInt32
+#include "skse64/PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEInterface, PluginInfo, SKSEMessagingInterface
 #include "skse64_common/skse_version.h"  // RUNTIME_VERSION
 
-#include <shlobj.h>  // CSIDL_MYDOCUMENTS
+#include <ShlObj.h>  // CSIDL_MYDOCUMENTS
+#include <string>  // string
 
-#include "iEquip_SoulSeeker.h"
+#include "iEquip_SoulSeeker.h"  // RegisterFuncs
+#include "Utility.h"  // checkForGIST
+#include "SoulGem.h"  // gemUtil
 
 
 static PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 static SKSEPapyrusInterface* g_papyrus = 0;
+static SKSEMessagingInterface* g_messaging = 0;
+iEquip_SoulSeeker::GemUtil iEquip_SoulSeeker::gemUtil;
+
+
+void MessageHandler(SKSEMessagingInterface::Message * a_msg)
+{
+	switch (a_msg->type) {
+	case SKSEMessagingInterface::kMessage_DataLoaded:
+	{
+		_DMESSAGE("Data loaded!");
+		if (iEquip_SoulSeeker::checkForGIST()) {
+			_DMESSAGE("GIST present\n");
+			iEquip_SoulSeeker::gemUtil.GISTFound();
+		} else {
+			_DMESSAGE("GIST not found\n");
+		}
+		break;
+	}
+	}
+}
 
 
 extern "C" {
-	bool SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
+	bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log");
 		gLog.SetPrintLevel(IDebugLog::kLevel_Warning);
@@ -21,18 +45,18 @@ extern "C" {
 		_MESSAGE("iEquip_SoulSeeker");
 
 		// populate info structure
-		info->infoVersion = PluginInfo::kInfoVersion;
-		info->name = "iEquip_SoulSeeker";
-		info->version = 1;
+		a_info->infoVersion = PluginInfo::kInfoVersion;
+		a_info->name = "iEquip_SoulSeeker";
+		a_info->version = 1;
 
 		// store plugin handle so we can identify ourselves later
-		g_pluginHandle = skse->GetPluginHandle();
+		g_pluginHandle = a_skse->GetPluginHandle();
 
-		if (skse->isEditor) {
-			_MESSAGE("Loaded in editor, marking as incompatible");
+		if (a_skse->isEditor) {
+			_FATALERROR("Loaded in editor, marking as incompatible");
 			return false;
-		} else if (skse->runtimeVersion != RUNTIME_VERSION_1_5_53) {
-			_MESSAGE("Unsupported runtime version %08X", skse->runtimeVersion);
+		} else if (a_skse->runtimeVersion != RUNTIME_VERSION_1_5_50) {
+			_FATALERROR("Unsupported runtime version %08X", a_skse->runtimeVersion);
 			return false;
 		}
 
@@ -41,19 +65,21 @@ extern "C" {
 	}
 
 
-	bool SKSEPlugin_Load(const SKSEInterface* skse)
+	bool SKSEPlugin_Load(const SKSEInterface* a_skse)
 	{
 		_MESSAGE("iEquip_SoulSeeker loaded");
 
-		g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
+		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 
 		//Check if the function registration was a success...
 		bool btest = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
 
 		if (btest) {
-			_MESSAGE("Registery succeeded!");
+			_MESSAGE("Papyrus registration succeeded!\n");
+			g_messaging = (SKSEMessagingInterface *)a_skse->QueryInterface(kInterface_Messaging);
+			g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler);
 		} else {
-			_MESSAGE("Registry failed!");
+			_ERROR("Papyrus registration failed!");
 		}
 
 		return true;
