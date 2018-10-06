@@ -21,7 +21,7 @@
 namespace iEquip_SoulSeeker
 {
 	bool GIST = false;
-	UInt32 GISTindex = 0x0;
+	UInt32 GISTIndex = 0x0;
 
 
 	bool checkForGIST()
@@ -64,8 +64,8 @@ namespace iEquip_SoulSeeker
 						std::string name = line.substr(0, lastDelim);
 						if (name == "GIST soul trap") {
 							GIST = true;
-							GISTindex = modIndex;
-							GISTindex *= 0x1000000;
+							GISTIndex = modIndex;
+							GISTIndex *= 0x1000000;
 							break;
 						}
 					}
