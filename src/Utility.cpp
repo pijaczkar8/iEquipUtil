@@ -18,7 +18,7 @@
 #include <string>  // string, strlen
 
 
-namespace iEquip_SoulSeeker
+namespace iEquip_Utility
 {
 	bool GIST = false;
 	UInt32 GISTIndex = 0x0;
@@ -84,7 +84,7 @@ namespace iEquip_SoulSeeker
 	}
 
 
-	std::string numToHexString(long a_num, int a_bytes)
+	std::string numToHexString(UInt64 a_num, UInt64 a_bytes)
 	{
 		// Convert to hex
 		std::stringstream sstream;

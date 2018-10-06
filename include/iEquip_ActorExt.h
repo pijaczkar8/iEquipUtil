@@ -18,9 +18,9 @@ namespace iEquip_ActorExt
 	};
 
 
-	void EquipPoisonedItemByID(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_itemID, SInt32 a_slotID, bool a_preventUnequip, bool a_equipSound);
+	void EquipPoisonedItemByID(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_itemID, SInt32 a_slotID, bool a_preventUnequip, bool a_equipSound, TESForm* a_poison);
 	BGSEquipSlot* GetEquipSlotByID(SInt32 a_slotID);
-	BaseExtraList* findPoisonedItemByID(ExtraContainerChanges::Data* a_containerData, SInt32 a_itemID);
+	BaseExtraList* findPoisonedItemByID(ExtraContainerChanges::Data* a_containerData, SInt32 a_itemID, TESForm* a_poison);
 	bool CanEquipBothHands(Actor* a_actor, TESForm* a_item);
 	bool RegisterFuncs(VMClassRegistry* a_registry);
 }

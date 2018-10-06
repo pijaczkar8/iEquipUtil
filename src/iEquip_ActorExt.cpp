@@ -3,17 +3,22 @@
 #include "common/ITypes.h"  // SInt32
 #include "skse64/GameBSExtraData.h"  // BaseExtraList
 #include "skse64/GameData.h"  // EquipManager
-#include "skse64/GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
+#include "skse64/GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData, ExtraPoison
 #include "skse64/GameForms.h"  // TESForm, BGSEquipSlot
 #include "skse64/GameReferences.h"  // Actor
 #include "skse64/GameRTTI.h"  // DYNAMIC_CAST
 #include "skse64/PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "skse64/PapyrusVM.h"  // VMClassRegistry
 
+#include "Utility.h"  // numToHexString
+
+
+#include <sstream>  // stringstream
+
 
 namespace iEquip_ActorExt
 {
-	void EquipPoisonedItemByID(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_itemID, SInt32 a_slotID, bool a_preventUnequip, bool a_equipSound)
+	void EquipPoisonedItemByID(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_itemID, SInt32 a_slotID, bool a_preventUnequip, bool a_equipSound, TESForm* a_poison)
 	{
 		if (!a_item || !a_item->Has3D() || a_itemID == 0 || a_item->IsAmmo()) {
 			_ERROR("ERROR: In EquipPoisonedItemById() : Invalid item!");
@@ -39,7 +44,7 @@ namespace iEquip_ActorExt
 		BGSEquipSlot* targetEquipSlot = GetEquipSlotByID(a_slotID);
 		bool isTargetSlotInUse = false;
 
-		BaseExtraList* extraList = findPoisonedItemByID(containerData, a_itemID);
+		BaseExtraList* extraList = findPoisonedItemByID(containerData, a_itemID, a_poison);
 		if (!extraList) {
 			_ERROR("ERROR: In EquipPoisonedItemById() : No extra list!");
 			return;
@@ -84,7 +89,7 @@ namespace iEquip_ActorExt
 	}
 
 
-	BaseExtraList* findPoisonedItemByID(ExtraContainerChanges::Data* a_containerData, SInt32 a_itemID)
+	BaseExtraList* findPoisonedItemByID(ExtraContainerChanges::Data* a_containerData, SInt32 a_itemID, TESForm* a_poison)
 	{
 		InventoryEntryData* entryData = 0;
 		BaseExtraList* extraList = 0;
@@ -97,7 +102,10 @@ namespace iEquip_ActorExt
 				for (UInt32 j = 0; j < entryData->extendDataList->Count(); ++j) {
 					extraList = entryData->extendDataList->GetNthItem(j);
 					if (extraList && extraList->HasType(kExtraData_Poison)) {
-						return extraList;
+						ExtraPoison* extraPoison = reinterpret_cast<ExtraPoison*>(extraList->m_data);
+						if (extraPoison->poison->formID == a_poison->formID) {
+							return extraList;
+						}
 					}
 				}
 			}
@@ -131,7 +139,7 @@ namespace iEquip_ActorExt
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
-			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, SInt32, bool, bool>("EquipPoisonedItemByID", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemByID, a_registry));
+			new NativeFunction7<StaticFunctionTag, void, Actor*, TESForm*, SInt32, SInt32, bool, bool, TESForm*>("EquipPoisonedItemByID", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemByID, a_registry));
 
 		return true;
 	}

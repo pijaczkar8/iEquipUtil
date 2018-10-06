@@ -114,7 +114,8 @@ EndState
 State ActorExt_T
 	Event OnSelectST()
 		Form steelSword = Game.GetForm(0x00013989)
-		iEquip_ActorExt.EquipPoisonedItemByID(PlayerRef, steelSword, 0x00013989, 1, False, True)
+		Form weakPoison = Game.GetForm(0x0003A5A4)
+		iEquip_ActorExt.EquipPoisonedItemByID(PlayerRef, steelSword, 0x00013989, 1, False, True, weakPoison)
 		Debug.Trace("SoulSeekerDBG: EquipPoisonedItemByID called!")
 	EndEvent
 

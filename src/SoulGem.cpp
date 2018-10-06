@@ -70,7 +70,7 @@ namespace iEquip_SoulSeeker
 			}
 			break;
 		default:
-			std::string msg = "ERROR: In GemUtil::fillCompatGems : Invalid soul size!" + numToHexString(a_soulSize, 4) + "\n";
+			std::string msg = "ERROR: In GemUtil::fillCompatGems : Invalid soul size!" + iEquip_Utility::numToHexString(a_soulSize, 4) + "\n";
 			_ERROR(msg.c_str());
 		}
 	}
@@ -78,6 +78,8 @@ namespace iEquip_SoulSeeker
 
 	void GemUtil::addGISTGems(UInt32 a_soulSize, GemInfo& a_gemInfo)
 	{
+		using iEquip_Utility::GISTIndex;
+
 		switch (a_soulSize) {
 		case kSoulSize_Petty:
 			a_gemInfo.compat.emplace_back(kSoulGem_GISTLesserFilledPetty + GISTIndex);
@@ -106,7 +108,7 @@ namespace iEquip_SoulSeeker
 			a_gemInfo.maxFill = a_gemInfo.compat.size();
 			break;
 		default:
-			std::string msg = "ERROR: In GemUtil::addGISTGems : Invalid soul size!" + numToHexString(a_soulSize, 4) + "\n";
+			std::string msg = "ERROR: In GemUtil::addGISTGems : Invalid soul size!" + iEquip_Utility::numToHexString(a_soulSize, 4) + "\n";
 			_ERROR(msg.c_str());
 		}
 	}
@@ -150,7 +152,7 @@ namespace iEquip_SoulSeeker
 			compatGems = gemUtil.grand.compat;
 			break;
 		default:
-			std::string msg = "ERROR: In Soul::Soul : Invalid soul size!" + numToHexString(a_soulSize, 4) + "\n";
+			std::string msg = "ERROR: In Soul::Soul : Invalid soul size!" + iEquip_Utility::numToHexString(a_soulSize, 4) + "\n";
 			_ERROR(msg.c_str());
 		}
 	}
@@ -174,7 +176,7 @@ namespace iEquip_SoulSeeker
 				return gem.addGem(a_entry);
 			}
 		}
-		std::string msg = "ERROR: In Soul::addSoul : Invalid soulgem type!" + numToHexString(a_entry->type->formID, 4) + "\n";
+		std::string msg = "ERROR: In Soul::addSoul : Invalid soulgem type!" + iEquip_Utility::numToHexString(a_entry->type->formID, 4) + "\n";
 		_ERROR(msg.c_str());
 		return false;
 	}

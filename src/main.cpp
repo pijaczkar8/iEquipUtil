@@ -23,7 +23,7 @@ void MessageHandler(SKSEMessagingInterface::Message * a_msg)
 	switch (a_msg->type) {
 	case SKSEMessagingInterface::kMessage_DataLoaded:
 	{
-		if (iEquip_SoulSeeker::checkForGIST()) {
+		if (iEquip_Utility::checkForGIST()) {
 			_DMESSAGE("GIST present\n");
 			iEquip_SoulSeeker::gemUtil.GISTFound();
 		} else {

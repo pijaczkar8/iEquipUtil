@@ -33,9 +33,9 @@ namespace iEquip_SoulSeeker
 			_DMESSAGE(msg.c_str());
 			msg = "a_fillMethod == " + std::to_string(a_fillMethod);
 			_DMESSAGE(msg.c_str());
-			msg = "a_partialFill == " + boolToString(a_partialFill);
+			msg = "a_partialFill == " + iEquip_Utility::boolToString(a_partialFill);
 			_DMESSAGE(msg.c_str());
-			msg = "a_wasteOK == " + boolToString(a_wasteOK);
+			msg = "a_wasteOK == " + iEquip_Utility::boolToString(a_wasteOK);
 			_DMESSAGE(msg.c_str());
 			_DMESSAGE("");
 		}

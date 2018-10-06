@@ -8,4 +8,5 @@ ScriptName iEquip_ActorExt
 ; @param a_slotID The slot ID to equip the item to.
 ; @param a_preventUnequip Prevents the actor from unequipping the item (I don't think this does anything).
 ; @param a_equipSound Plays the equip sound when the item is equipped.
-Function EquipPoisonedItemByID(Actor a_actor, Form a_item, Int a_itemID, Int a_slotID, Bool a_preventUnequip, Bool a_equipSound) Native Global
+; @param a_poison The poison applied to the weapon.
+Function EquipPoisonedItemByID(Actor a_actor, Form a_item, Int a_itemID, Int a_slotID, Bool a_preventUnequip, Bool a_equipSound, Form a_poison) Native Global
