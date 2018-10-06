@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/ITypes.h"  // UInt32
+#include "ITypes.h"  // UInt32
 
 #include <string>  // string
 

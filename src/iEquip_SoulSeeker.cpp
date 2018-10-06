@@ -1,18 +1,29 @@
 #include "iEquip_SoulSeeker.h"
 
-#include "common/IDebugLog.h"  // gLog
-#include "common/ITypes.h"  // UInt32
-#include "skse64/GameAPI.h"  // g_thePlayer
-#include "skse64/GameBSExtraData.h"  // ExtraDataType, BaseExtraList
-#include "skse64/GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
-#include "skse64/GameForms.h"  // TESForm, FormType
-#include "skse64/PapyrusNativeFunctions.h"  // StaticFunctionTag
-#include "skse64/PapyrusVM.h"  // VMClassRegistry
+#include "IDebugLog.h"  // gLog
+#include "ITypes.h"  // UInt32
+#include "GameAPI.h"  // g_thePlayer
+#include "GameBSExtraData.h"  // ExtraDataType, BaseExtraList
+#include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
+#include "GameForms.h"  // TESForm, FormType
+#include "PapyrusNativeFunctions.h"  // StaticFunctionTag
+#include "PapyrusVM.h"  // VMClassRegistry
+#include "Utilities.h"  // CALL_MEMBER_FN
 
 #include <string>  // string
 
-#include "SoulGem.h"  // SoulGem, SoulSize, SoulGemType
-#include "Utility.h"  // boolToString
+#include "iEquip_SoulSeekerLib.h"  // SoulGem, SoulSize, SoulGemType
+#include "iEquip_Utility.h"  // boolToString
+
+
+#if _WIN64
+#define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
+CALL_MEMBER_FN(entryData, fn)
+#else
+#include "InventoryEntryData.h"
+#define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
+CALL_MEMBER_FN(reinterpret_cast<RE::InventoryEntryData*>(entryData), fn)
+#endif
 
 
 namespace iEquip_SoulSeeker
@@ -74,7 +85,7 @@ namespace iEquip_SoulSeeker
 			removeExtraSoul(containerData, optimalCandidate);
 		}
 
-		lastFoundSoulSize = CALL_MEMBER_FN(optimalCandidate, GetSoulLevel)();
+		lastFoundSoulSize = CALL_MEMBER_FN_ENTRYDATA(optimalCandidate, GetSoulLevel)();
 		return isReusable(optimalCandidate->type->formID) ? 0 : optimalCandidate->type;
 	}
 
@@ -113,7 +124,7 @@ namespace iEquip_SoulSeeker
 			entryData = a_containerData->objList->GetNthItem(i);
 			if (entryData) {
 				if (entryData->type->formType == kFormType_SoulGem) {
-					soulSize = CALL_MEMBER_FN(entryData, GetSoulLevel)();
+					soulSize = CALL_MEMBER_FN_ENTRYDATA(entryData, GetSoulLevel)();
 					if (soulSize > 0) {
 						a_candidates.addSoulGem(entryData, soulSize) ? _DMESSAGE("Successfully added soul gem\n") : _ERROR("ERROR: Failed to add soul gem!");
 					}
@@ -195,13 +206,13 @@ namespace iEquip_SoulSeeker
 	{
 		InventoryEntryData* entryData = 0;
 		BaseExtraList* extraList = 0;
-		UInt32 soulLevel = CALL_MEMBER_FN(a_entry, GetSoulLevel)();
+		UInt32 soulLevel = CALL_MEMBER_FN_ENTRYDATA(a_entry, GetSoulLevel)();
 		for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
 			entryData = a_containerData->objList->GetNthItem(i);
 			if (entryData) {
 				if (entryData->type->formType == kFormType_SoulGem &&
 					entryData->type->formID == a_entry->type->formID &&
-					CALL_MEMBER_FN(entryData, GetSoulLevel)() == soulLevel) {
+					CALL_MEMBER_FN_ENTRYDATA(entryData, GetSoulLevel)() == soulLevel) {
 					extraList = entryData->extendDataList->GetNthItem(0);
 					extraList->Remove(kExtraData_Soul, extraList->m_data);
 				}

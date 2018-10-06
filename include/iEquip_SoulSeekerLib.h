@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/ITypes.h"  // UInt8, UInt32
-#include "skse64/GameExtraData.h"  // InventoryEntryData
+#include "ITypes.h"  // UInt8, UInt32
+#include "GameExtraData.h"  // InventoryEntryData
 
 #include <vector> // vector
 

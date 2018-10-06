@@ -13,6 +13,9 @@
     <ClCompile Include="src\Utility.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\iEquip_ActorExt.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -33,6 +36,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Utility.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\iEquip_ActorExt.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

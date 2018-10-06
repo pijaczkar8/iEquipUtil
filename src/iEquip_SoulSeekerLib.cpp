@@ -1,12 +1,12 @@
-#include "SoulGem.h"
+#include "iEquip_SoulSeekerLib.h"
 
-#include "common/IDebugLog.h"  // gLog
-#include "common/ITypes.h"  // UInt32
-#include "skse64/GameExtraData.h"  // InventoryEntryData
+#include "IDebugLog.h"  // gLog
+#include "ITypes.h"  // UInt32
+#include "GameExtraData.h"  // InventoryEntryData
 
 #include <vector>  // vector
 
-#include "Utility.h"  // GIST, GISTIndex
+#include "iEquip_Utility.h"  // GIST, GISTIndex
 
 
 namespace iEquip_SoulSeeker

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "common/ITypes.h"  // SInt32
-#include "skse64/GameExtraData.h"  // ExtraContainerChanges
-#include "skse64/GameForms.h"  // TESForm
-#include "skse64/GameReferences.h"  // Actor
-#include "skse64/PapyrusNativeFunctions.h"  // StaticFunctionTag
-#include "skse64/PapyrusVM.h"  // VMClassRegistry
+#include "ITypes.h"  // SInt32
+#include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
+#include "GameForms.h"  // TESForm
+#include "GameReferences.h"  // Actor
+#include "PapyrusNativeFunctions.h"  // StaticFunctionTag
+#include "PapyrusVM.h"  // VMClassRegistry
 
 
 namespace iEquip_ActorExt
@@ -18,9 +18,9 @@ namespace iEquip_ActorExt
 	};
 
 
-	void EquipPoisonedItemByID(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_itemID, SInt32 a_slotID, bool a_preventUnequip, bool a_equipSound, TESForm* a_poison);
+	void EquipItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, TESForm* a_extraForm, bool a_preventUnequip, bool a_equipSound);
 	BGSEquipSlot* GetEquipSlotByID(SInt32 a_slotID);
-	BaseExtraList* findPoisonedItemByID(ExtraContainerChanges::Data* a_containerData, SInt32 a_itemID, TESForm* a_poison);
+	BaseExtraList* findExtraListByForm(InventoryEntryData* a_entryData, TESForm* a_extraForm);
 	bool CanEquipBothHands(Actor* a_actor, TESForm* a_item);
 	bool RegisterFuncs(VMClassRegistry* a_registry);
 }

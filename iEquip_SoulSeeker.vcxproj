@@ -123,6 +123,7 @@
     <None Include="exports.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\iEquip_ActorExt.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\iEquip_SoulSeeker.cpp" />
     <ClCompile Include="src\SoulGem.cpp" />
@@ -140,6 +141,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\iEquip_ActorExt.h" />
     <ClInclude Include="include\iEquip_SoulSeeker.h" />
     <ClInclude Include="include\SoulGem.h" />
     <ClInclude Include="include\Utility.h" />

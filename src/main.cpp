@@ -1,15 +1,23 @@
-﻿#include "common/IDebugLog.h"  // gLog, IDebugLog
-#include "common/ITypes.h"  // UInt32
-#include "skse64/PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEInterface, PluginInfo, SKSEMessagingInterface
-#include "skse64_common/skse_version.h"  // RUNTIME_VERSION
+﻿#include "IDebugLog.h"  // gLog, IDebugLog
+#include "ITypes.h"  // UInt32
+#include "PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEInterface, PluginInfo, SKSEMessagingInterface
+#include "skse_version.h"  // RUNTIME_VERSION
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
-#include <string>  // string
 
 #include "iEquip_SoulSeeker.h"  // RegisterFuncs
 #include "iEquip_ActorExt.h"  // RegisterFuncs
-#include "Utility.h"  // checkForGIST
-#include "SoulGem.h"  // gemUtil
+#include "iEquip_Utility.h"  // checkForGIST
+#include "iEquip_SoulSeekerLib.h"  // gemUtil
+
+
+#if _WIN64
+constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_50;
+constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
+#else
+constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
+constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker.log";
+#endif
 
 
 static PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
@@ -38,7 +46,7 @@ void MessageHandler(SKSEMessagingInterface::Message * a_msg)
 extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
 	{
-		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log");
+		gLog.OpenRelative(CSIDL_MYDOCUMENTS, IEQUIP_LOG_PATH);
 		gLog.SetPrintLevel(IDebugLog::kLevel_Warning);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
@@ -55,7 +63,7 @@ extern "C" {
 		if (a_skse->isEditor) {
 			_FATALERROR("Loaded in editor, marking as incompatible");
 			return false;
-		} else if (a_skse->runtimeVersion != RUNTIME_VERSION_1_5_50) {
+		} else if (a_skse->runtimeVersion != IEQUIP_RUNTIME_VER_COMPAT) {
 			_FATALERROR("Unsupported runtime version %08X", a_skse->runtimeVersion);
 			return false;
 		}

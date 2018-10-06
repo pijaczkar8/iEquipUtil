@@ -1,12 +1,12 @@
 #pragma once
 
-#include "common/ITypes.h"  // UInt32
-#include "skse64/GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
-#include "skse64/GameForms.h"  // TESForm
-#include "skse64/PapyrusNativeFunctions.h"  // StaticFunctionTag
-#include "skse64/PapyrusVM.h"  // VMClassRegistry
+#include "ITypes.h"  // UInt32
+#include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
+#include "GameForms.h"  // TESForm
+#include "PapyrusNativeFunctions.h"  // StaticFunctionTag
+#include "PapyrusVM.h"  // VMClassRegistry
 
-#include "SoulGem.h"  // SoulGem
+#include "iEquip_SoulSeekerLib.h"  // SoulGem
 
 
 namespace iEquip_SoulSeeker

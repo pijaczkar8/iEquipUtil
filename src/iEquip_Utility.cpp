@@ -1,11 +1,11 @@
-#include "Utility.h"
+#include "iEquip_Utility.h"
 
-#include "common/IDebugLog.h"  // gLog
-#include "common/IErrors.h"  // ASSERT
-#include "common/IFileStream.h"  // IFileStream
-#include "common/ITypes.h"  // UInt32
-#include "skse64/GameData.h"  // DataHandler
-#include "skse64/GlobalLocks.h"  // g_loadGameLock
+#include "IDebugLog.h"  // gLog
+#include "IErrors.h"  // ASSERT
+#include "IFileStream.h"  // IFileStream
+#include "ITypes.h"  // UInt32
+#include "GameData.h"  // DataHandler
+#include "GlobalLocks.h"  // g_loadGameLock
 
 #include <minwindef.h>  // MAX_PATH
 #include <ShlObj.h>  // SHGetFolderPath, CSIDL_LOCAL_APPDATA, SHGFP_TYPE_CURRENT
@@ -15,7 +15,16 @@
 #include <cstring>  // strlen
 #include <ios>  // hex
 #include <sstream>  // stringstream
-#include <string>  // string, strlen
+#include <string>  // string
+
+
+#if _WIN64
+constexpr auto SKYRIM_PLUGINS_TXT = "\\Skyrim Special Edition\\plugins.txt";
+constexpr auto MOD_INDEX_BEG = 0x04;  // main, update, and DLC
+#else
+constexpr auto SKYRIM_PLUGINS_TXT = "\\Skyrim\\plugins.txt";
+constexpr auto MOD_INDEX_BEG = 0x00;
+#endif
 
 
 namespace iEquip_Utility
@@ -30,11 +39,11 @@ namespace iEquip_Utility
 		ASSERT(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, appdataPath)));
 
 		std::string	modlistPath = appdataPath;
-		modlistPath += "\\Skyrim Special Edition\\plugins.txt";
+		modlistPath += SKYRIM_PLUGINS_TXT;
 
 		// Parse mod list file to acquire GIST presence
 		IFileStream modlistFile;
-		UInt32 modIndex = 0x04;  // main, update, and DLC
+		UInt32 modIndex = MOD_INDEX_BEG;  // main, update, and DLC
 		if (modlistFile.Open(modlistPath.c_str())) {
 			while (!modlistFile.HitEOF()) {
 				char buf[512];
@@ -47,6 +56,7 @@ namespace iEquip_Utility
 				// Determine extension type
 				std::string line = buf;
 
+#if _WIN64
 				// SE: added this
 				if (line.length() > 0) {
 					if (line.front() != '*')
@@ -54,6 +64,7 @@ namespace iEquip_Utility
 
 					line = line.substr(1); // Remove the * from name
 				}
+#endif
 
 				std::string::size_type lastDelim = line.rfind('.');
 				if (lastDelim != std::string::npos) {
