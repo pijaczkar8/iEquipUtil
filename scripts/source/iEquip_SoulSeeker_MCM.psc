@@ -36,6 +36,8 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("SoulSeeker_Common_T", "Remove Common", "")
 		AddTextOptionST("SoulSeeker_Greater_T", "Remove Greater", "")
 		AddTextOptionST("SoulSeeker_Grand_T", "Remove Grand", "")
+		AddHeaderOption("")
+		AddTextOptionST("ActorExt_T", "Equip poisoned item", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -99,6 +101,21 @@ EndState
 State SoulSeeker_Grand_T
 	Event OnSelectST()
 		InvokeBringMeASoul(5)
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State ActorExt_T
+	Event OnSelectST()
+		Form steelSword = Game.GetForm(0x00013989)
+		iEquip_ActorExt.EquipPoisonedItemByID(PlayerRef, steelSword, 0x00013989, 1, False, True)
+		Debug.Trace("SoulSeekerDBG: EquipPoisonedItemByID called!")
 	EndEvent
 
 	Event OnDefaultST()

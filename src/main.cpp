@@ -7,6 +7,7 @@
 #include <string>  // string
 
 #include "iEquip_SoulSeeker.h"  // RegisterFuncs
+#include "iEquip_ActorExt.h"  // RegisterFuncs
 #include "Utility.h"  // checkForGIST
 #include "SoulGem.h"  // gemUtil
 
@@ -22,7 +23,6 @@ void MessageHandler(SKSEMessagingInterface::Message * a_msg)
 	switch (a_msg->type) {
 	case SKSEMessagingInterface::kMessage_DataLoaded:
 	{
-		_DMESSAGE("Data loaded!");
 		if (iEquip_SoulSeeker::checkForGIST()) {
 			_DMESSAGE("GIST present\n");
 			iEquip_SoulSeeker::gemUtil.GISTFound();
@@ -72,14 +72,16 @@ extern "C" {
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 
 		//Check if the function registration was a success...
-		bool btest = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
+		bool tesSoulSeeker = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
+		bool tesActorExt = g_papyrus->Register(iEquip_ActorExt::RegisterFuncs);
 
-		if (btest) {
+		if (tesSoulSeeker && tesActorExt) {
 			_MESSAGE("Papyrus registration succeeded!\n");
 			g_messaging = (SKSEMessagingInterface *)a_skse->QueryInterface(kInterface_Messaging);
 			g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler);
 		} else {
 			_ERROR("Papyrus registration failed!");
+			return false;
 		}
 
 		return true;
