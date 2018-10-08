@@ -95,7 +95,7 @@ namespace iEquip_Utility
 	}
 
 
-	std::string numToHexString(UInt64 a_num, UInt64 a_bytes)
+	std::string numToHexString(UInt64 a_num, UInt64 a_bytes = 4)
 	{
 		// Convert to hex
 		std::stringstream sstream;

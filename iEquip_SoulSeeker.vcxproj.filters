@@ -7,13 +7,19 @@
     <ClCompile Include="src\iEquip_SoulSeeker.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\SoulGem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utility.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\iEquip_ActorExt.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\iEquip_ActorExtLib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\iEquip_SoulSeekerLib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\iEquip_Utility.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE_EnchantmentItem.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,13 +38,22 @@
     <ClInclude Include="include\iEquip_SoulSeeker.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\SoulGem.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Utility.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\iEquip_ActorExt.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\iEquip_ActorExtLib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\iEquip_SoulSeekerLib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\iEquip_Utility.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE_BaseExtraData.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE_EnchantmentItem.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

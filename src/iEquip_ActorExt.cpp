@@ -11,22 +11,95 @@
 #include "ITypes.h"  // SInt32
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
+#include "PapyrusWornObject.h"  // referenceUtils
 #include "Utilities.h"  // CALL_MEMBER_FN
 
 #include "iEquip_Utility.h"  // numToHexString
+#include "RE_BaseExtraData.h"  // RE::BaseExtraData
+#include "iEquip_ActorExtLib.h"  // IActorEquipItem
 
 
 namespace iEquip_ActorExt
 {
-	void EquipItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, TESForm* a_extraForm, bool a_preventUnequip, bool a_equipSound)
+	EnchantmentItem* GetEnchantment(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item)
 	{
-		if (!a_item || !a_item->Has3D()) {
-			_ERROR("ERROR: In EquipItemEx() : Invalid form!");
-			return;
+		if (!a_actor) {
+			_ERROR("ERROR: In GetEnchantment() : Invalid actor!");
+			return 0;
+		} else if (!a_item) {
+			_ERROR("ERROR: In GetEnchantment() : Invalid item!");
+			return 0;
 		}
 
-		if (!a_extraForm) {
-			_ERROR("ERROR: In EquipItemEx() : Invalid extra form!");
+		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
+		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
+		if (!containerData) {
+			_ERROR("ERROR: In GetEnchantment() : No container data!");
+			return 0;
+		}
+
+		// Copy/merge of extraData can fail in edge cases. Obtain it ourselves.
+		InventoryEntryData* entryData = findEntryData(containerData, a_item);
+		if (!entryData) {
+			_ERROR("ERROR: In GetEnchantment() : No entry data!");
+			return 0;
+		}
+
+		if (entryData->countDelta > 0) {
+			BaseExtraList* extraList = 0;
+			for (UInt32 i = 0; i < entryData->extendDataList->Count(); ++i) {
+				extraList = entryData->extendDataList->GetNthItem(i);
+				if (extraList && extraList->HasType(kExtraData_Enchantment)) {
+					RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
+					while (extraData) {
+						if (extraData->form->formType == kFormType_Enchantment) {
+							ExtraEnchantment* extraEnchantment = reinterpret_cast<ExtraEnchantment*>(extraData);
+							return extraEnchantment->enchant;
+						}
+						extraData = extraData->next;
+					}
+				}
+			}
+			_ERROR("ERROR: In GetEnchantment() : Enchantment not found!");
+			return 0;
+		} else {
+			_ERROR("ERROR: In GetEnchantment() : Entry data count is too small!");
+			return 0;
+		}
+	}
+
+
+	void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, bool a_preventUnequip, bool a_equipSound)
+	{
+		ActorEquipPoisonedItem equipPoison(a_poison);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipPoison, a_preventUnequip, a_equipSound);
+	}
+
+
+	void EquipEnchantedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
+	{
+		ActorEquipEnchantedItem equipEnch(a_enchantment);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipEnch, a_preventUnequip, a_equipSound);
+	}
+
+
+	void EquipPoisonedAndEnchantedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
+	{
+		ActorEquipPoisonedAndEnchantedItem equipPoisonAndEnch(a_poison, a_enchantment);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipPoisonAndEnch, a_preventUnequip, a_equipSound);
+	}
+
+
+	void EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipItem* a_iActorEquipItem, bool a_preventUnequip, bool a_equipSound)
+	{
+		if (!a_actor) {
+			_ERROR("ERROR: In EquipItemEx() : Invalid actor!");
+			return;
+		} else if (!a_item || !a_item->Has3D()) {
+			_ERROR("ERROR: In EquipItemEx() : Invalid item!");
+			return;
+		} else if (!a_iActorEquipItem->validate()) {
+			_ERROR("ERROR: In EquipItemEx() : Failed validation!");
 			return;
 		}
 
@@ -43,14 +116,14 @@ namespace iEquip_ActorExt
 			return;
 		}
 
-		// Copy/merge of extraData and container base. Free after use.
-		InventoryEntryData* entryData = containerData->CreateEquipEntryData(a_item);
+		// Copy/merge of extraData can fail in edge cases. Obtain it ourselves.
+		InventoryEntryData* entryData = findEntryData(containerData, a_item);
 		if (!entryData) {
 			_ERROR("ERROR: In EquipItemEx() : No entry data!");
 			return;
 		}
 
-		BGSEquipSlot* targetEquipSlot = GetEquipSlotByID(a_slotID);
+		BGSEquipSlot* targetEquipSlot = getEquipSlotByID(a_slotID);
 
 		SInt32 itemCount = entryData->countDelta;
 
@@ -92,16 +165,14 @@ namespace iEquip_ActorExt
 			else {
 				isTargetSlotInUse = false;
 				curEquipList = 0;
-				extraList = findExtraListByForm(entryData, a_extraForm);
-				if (!extraList) {
-					_ERROR("ERROR: In EquipItemEx() : No extra list!");
-					return;
-				}
+			}
+
+			extraList = a_iActorEquipItem->findExtraListByForm(entryData);
+			if (!extraList) {
+				_ERROR("ERROR: In EquipItemEx() : No extra list!");
+				return;
 			}
 		}
-
-		// Free temp equip entryData
-		entryData->Delete();
 
 		// Normally EquipManager would update CannotWear, if equip is skipped we do it here
 		if (isTargetSlotInUse) {
@@ -128,7 +199,22 @@ namespace iEquip_ActorExt
 	}
 
 
-	BGSEquipSlot* GetEquipSlotByID(SInt32 a_slotID)
+	InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item)
+	{
+		InventoryEntryData* entryData = 0;
+		for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
+			entryData = a_containerData->objList->GetNthItem(i);
+			if (entryData) {
+				if (entryData->type->formID == a_item->formID) {
+					return entryData;
+				}
+			}
+		}
+		return 0;
+	}
+
+
+	BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID)
 	{
 		switch (a_slotID) {
 		case kSlotId_Right:
@@ -138,44 +224,6 @@ namespace iEquip_ActorExt
 		default:
 			return 0;
 		}
-	}
-
-
-	BaseExtraList* findExtraListByForm(InventoryEntryData* a_entryData, TESForm* a_extraForm)
-	{
-		// Validate form type
-		UInt32 type;
-		switch (a_extraForm->formType) {
-		case kFormType_Potion:
-			type = kExtraData_Poison;
-			break;
-		case kFormType_Enchantment:
-			type = kExtraData_Enchantment;
-			break;
-		default:
-			_ERROR("ERROR: In findExtraListByForm() : Invalid form type!");
-			return 0;
-		}
-
-		// Locate correct extra list
-		BaseExtraList* extraList = 0;
-		for (UInt32 i = 0; i < a_entryData->extendDataList->Count(); ++i) {
-			extraList = a_entryData->extendDataList->GetNthItem(i);
-			if (extraList && extraList->HasType(type)) {
-				if (type == kExtraData_Poison) {
-					ExtraPoison* extraPoison = reinterpret_cast<ExtraPoison*>(extraList->m_data);
-					if (extraPoison->poison->formID == a_extraForm->formID) {
-						break;
-					}
-				} else if (type == kExtraData_Enchantment) {
-					ExtraEnchantment* extraEnchant = reinterpret_cast<ExtraEnchantment*>(extraList->m_data);
-					if (extraEnchant->enchant->formID == a_extraForm->formID) {
-						break;
-					}
-				}
-			}
-		}
-		return extraList;
 	}
 
 
@@ -204,7 +252,16 @@ namespace iEquip_ActorExt
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
-			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, TESForm*, bool, bool>("EquipItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipItemEx, a_registry));
+			new NativeFunction2<StaticFunctionTag, EnchantmentItem*, Actor*, TESForm*>("GetEnchantment", "iEquip_ActorExt", iEquip_ActorExt::GetEnchantment, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, bool, bool>("EquipEnchantedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipEnchantedItemEx, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction7<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, EnchantmentItem*, bool, bool>("EquipPoisonedAndEnchantedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedAndEnchantedItemEx, a_registry));
 
 		return true;
 	}

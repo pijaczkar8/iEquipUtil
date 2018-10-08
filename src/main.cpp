@@ -4,6 +4,7 @@
 #include "skse_version.h"  // RUNTIME_VERSION
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
+#include <string>  // string
 
 #include "iEquip_SoulSeeker.h"  // RegisterFuncs
 #include "iEquip_ActorExt.h"  // RegisterFuncs
@@ -12,11 +13,13 @@
 
 
 #if _WIN64
-constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_50;
+constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_53;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
+constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
 #else
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
-constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker.log";
+constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker_LE.log";
+constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
 #endif
 
 
@@ -47,14 +50,14 @@ extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, IEQUIP_LOG_PATH);
-		gLog.SetPrintLevel(IDebugLog::kLevel_Warning);
+		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
-		_MESSAGE("iEquip_SoulSeeker");
+		_MESSAGE(IEQUIP_NAME);
 
 		// populate info structure
 		a_info->infoVersion = PluginInfo::kInfoVersion;
-		a_info->name = "iEquip_SoulSeeker";
+		a_info->name = IEQUIP_NAME;
 		a_info->version = 1;
 
 		// store plugin handle so we can identify ourselves later
@@ -75,7 +78,9 @@ extern "C" {
 
 	bool SKSEPlugin_Load(const SKSEInterface* a_skse)
 	{
-		_MESSAGE("iEquip_SoulSeeker loaded");
+		std::string msg = IEQUIP_NAME;
+		msg += " loaded";
+		_MESSAGE(msg.c_str());
 
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 

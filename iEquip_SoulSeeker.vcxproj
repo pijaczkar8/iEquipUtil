@@ -89,7 +89,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(ProjectDir)include;$(SolutionDir)skse64;$(SolutionDir)skse64_common;$(SolutionDir)..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PLUGIN_EXAMPLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -124,10 +124,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\iEquip_ActorExt.cpp" />
+    <ClCompile Include="src\iEquip_ActorExtLib.cpp" />
+    <ClCompile Include="src\iEquip_SoulSeekerLib.cpp" />
+    <ClCompile Include="src\iEquip_Utility.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\iEquip_SoulSeeker.cpp" />
-    <ClCompile Include="src\SoulGem.cpp" />
-    <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\RE_EnchantmentItem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\common_vc14.vcxproj">
@@ -142,9 +144,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\iEquip_ActorExt.h" />
+    <ClInclude Include="include\iEquip_ActorExtLib.h" />
     <ClInclude Include="include\iEquip_SoulSeeker.h" />
-    <ClInclude Include="include\SoulGem.h" />
-    <ClInclude Include="include\Utility.h" />
+    <ClInclude Include="include\iEquip_SoulSeekerLib.h" />
+    <ClInclude Include="include\iEquip_Utility.h" />
+    <ClInclude Include="include\RE_BaseExtraData.h" />
+    <ClInclude Include="include\RE_EnchantmentItem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
