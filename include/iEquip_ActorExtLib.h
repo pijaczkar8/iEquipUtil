@@ -8,6 +8,19 @@
 
 namespace iEquip_ActorExt
 {
+	enum
+	{
+		kSlotId_Default = 0,
+		kSlotId_Right = 1,
+		kSlotId_Left = 2
+	};
+
+
+	InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item);
+	BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID);
+	bool CanEquipBothHands(Actor* a_actor, TESForm* a_item);
+
+
 	class IActorEquipItem
 	{
 	public:

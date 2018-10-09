@@ -6,21 +6,69 @@
 #include "GameForms.h"  // TESForm, BGSEquipSlot
 #include "GameObjects.h"  // AlchemyItem
 #include "GameReferences.h"  // Actor
-#include "GameRTTI.h"  // DYNAMIC_CAST
 #include "IDebugLog.h"  // gLog
 #include "ITypes.h"  // SInt32
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
-#include "PapyrusWornObject.h"  // referenceUtils
 #include "Utilities.h"  // CALL_MEMBER_FN
 
-#include "iEquip_Utility.h"  // numToHexString
-#include "RE_BaseExtraData.h"  // RE::BaseExtraData
 #include "iEquip_ActorExtLib.h"  // IActorEquipItem
+#include "iEquip_Utility.h"  // ExtraListLocator
+#include "RE_BaseExtraData.h"  // RE::BaseExtraData
+
+
+using iEquip_Utility::ExtraListLocator;
 
 
 namespace iEquip_ActorExt
 {
+	TESForm* GetEquippedArrows(StaticFunctionTag* a_base, Actor* a_actor)
+	{
+		if (!a_actor) {
+			_ERROR("ERROR: In GetEnchantment() : Invalid actor!");
+			return 0;
+		}
+
+		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
+		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
+		if (!containerData) {
+			_ERROR("ERROR: In GetEnchantment() : No container data!");
+			return 0;
+		}
+
+		InventoryEntryData* entryData = 0;
+		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
+			entryData = containerData->objList->GetNthItem(i);
+			if (entryData) {
+				if (entryData->type->IsAmmo()) {
+					return entryData->type;
+				}
+			}
+		}
+		return 0;
+
+		if (entryData->countDelta > 0) {
+			ExtraListLocator extraListLocator(entryData, { kFormType_Enchantment }, { });
+			BaseExtraList* extraList = 0;
+			while (extraList = extraListLocator.found()) {
+				RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
+				while (extraData) {
+					if (extraData->form->formType == kFormType_Enchantment) {
+						ExtraEnchantment* extraEnchantment = reinterpret_cast<ExtraEnchantment*>(extraData);
+						return extraEnchantment->enchant;
+					}
+					extraData = extraData->next;
+				}
+			}
+			_ERROR("ERROR: In GetEnchantment() : Enchantment not found!");
+			return 0;
+		} else {
+			_ERROR("ERROR: In GetEnchantment() : Entry data count is too small!");
+			return 0;
+		}
+	}
+
+
 	EnchantmentItem* GetEnchantment(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item)
 	{
 		if (!a_actor) {
@@ -46,18 +94,16 @@ namespace iEquip_ActorExt
 		}
 
 		if (entryData->countDelta > 0) {
+			ExtraListLocator extraListLocator(entryData, { kFormType_Enchantment }, { });
 			BaseExtraList* extraList = 0;
-			for (UInt32 i = 0; i < entryData->extendDataList->Count(); ++i) {
-				extraList = entryData->extendDataList->GetNthItem(i);
-				if (extraList && extraList->HasType(kExtraData_Enchantment)) {
-					RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
-					while (extraData) {
-						if (extraData->form->formType == kFormType_Enchantment) {
-							ExtraEnchantment* extraEnchantment = reinterpret_cast<ExtraEnchantment*>(extraData);
-							return extraEnchantment->enchant;
-						}
-						extraData = extraData->next;
+			while (extraList = extraListLocator.found()) {
+				RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
+				while (extraData) {
+					if (extraData->form->formType == kFormType_Enchantment) {
+						ExtraEnchantment* extraEnchantment = reinterpret_cast<ExtraEnchantment*>(extraData);
+						return extraEnchantment->enchant;
 					}
+					extraData = extraData->next;
 				}
 			}
 			_ERROR("ERROR: In GetEnchantment() : Enchantment not found!");
@@ -196,56 +242,6 @@ namespace iEquip_ActorExt
 		if (!isTargetSlotInUse && hasItemMinCount) {
 			CALL_MEMBER_FN(equipManager, EquipItem)(a_actor, a_item, extraList, equipCount, targetEquipSlot, a_equipSound, a_preventUnequip, false, 0);
 		}
-	}
-
-
-	InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item)
-	{
-		InventoryEntryData* entryData = 0;
-		for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
-			entryData = a_containerData->objList->GetNthItem(i);
-			if (entryData) {
-				if (entryData->type->formID == a_item->formID) {
-					return entryData;
-				}
-			}
-		}
-		return 0;
-	}
-
-
-	BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID)
-	{
-		switch (a_slotID) {
-		case kSlotId_Right:
-			return GetRightHandSlot();
-		case kSlotId_Left:
-			return GetLeftHandSlot();
-		default:
-			return 0;
-		}
-	}
-
-
-	bool CanEquipBothHands(Actor* a_actor, TESForm* a_item)
-	{
-		BGSEquipType * equipType = DYNAMIC_CAST(a_item, TESForm, BGSEquipType);
-		if (!equipType) {
-			return false;
-		}
-
-		BGSEquipSlot * equipSlot = equipType->GetEquipSlot();
-		if (!equipSlot) {
-			return false;
-		}
-
-		if (equipSlot == GetEitherHandSlot()) {  // 1H
-			return true;
-		} else if (equipSlot == GetLeftHandSlot() || equipSlot == GetRightHandSlot()) {  // 2H
-			return (a_actor->race->data.raceFlags & TESRace::kRace_CanDualWield) && a_item->IsWeapon();
-		}
-
-		return false;
 	}
 
 

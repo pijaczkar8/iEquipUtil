@@ -118,10 +118,11 @@ State ActorExt_T
 		Potion weakPoison = Game.GetForm(0x0003A5A4) As Potion
 		Enchantment fierySoulTrap = Game.GetForm(0x00040003) As Enchantment
 		Enchantment absorbHealth = Game.GetForm(0x0010FB91) As Enchantment
+		Form tmpForm = iEquip_ActorExt.GetEnchantment(PlayerRef, NONE)
 		;Weapon weap = PlayerRef.GetEquippedWeapon(True)
-		Enchantment ench = iEquip_ActorExt.WornObjectGetEnchantment(PlayerRef, 0, 0)
+		;Enchantment ench = iEquip_ActorExt.WornObjectGetEnchantment(PlayerRef, 0, 0)
 		;iEquip_ActorExt.EquipItemEx(PlayerRef, steelSword, 1, absorbHealth)
-		iEquip_ActorExt.EquipEnchantedItemEx(PlayerRef, steelSword, 1, ench)
+		;iEquip_ActorExt.EquipEnchantedItemEx(PlayerRef, steelSword, 1, ench)
 		Debug.Trace("SoulSeekerDBG: EquipItemEx called!")
 	EndEvent
 

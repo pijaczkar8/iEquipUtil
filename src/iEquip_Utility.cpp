@@ -4,7 +4,9 @@
 #include "IErrors.h"  // ASSERT
 #include "IFileStream.h"  // IFileStream
 #include "ITypes.h"  // UInt32
+#include "GameBSExtraData.h"  // BSExtraData
 #include "GameData.h"  // DataHandler
+#include "GameExtraData.h"  // InventoryEntryData
 #include "GlobalLocks.h"  // g_loadGameLock
 
 #include <minwindef.h>  // MAX_PATH
@@ -13,6 +15,7 @@
 
 #include <cctype>  // toupper
 #include <cstring>  // strlen
+#include <vector>  // vector
 #include <ios>  // hex
 #include <sstream>  // stringstream
 #include <string>  // string
@@ -30,7 +33,7 @@ constexpr auto MOD_INDEX_BEG = 0x00;
 namespace iEquip_Utility
 {
 	bool GIST = false;
-	UInt32 GISTIndex = 0x0;
+	SInt32 GISTIndex = 0x0;
 
 
 	bool checkForGIST()
@@ -95,7 +98,7 @@ namespace iEquip_Utility
 	}
 
 
-	std::string numToHexString(UInt64 a_num, UInt64 a_bytes = 4)
+	std::string numToHexString(UInt64 a_num, UInt64 a_bytes)
 	{
 		// Convert to hex
 		std::stringstream sstream;
@@ -113,5 +116,53 @@ namespace iEquip_Utility
 		}
 
 		return hexStr;
+	}
+
+
+	ExtraListLocator::ExtraListLocator(InventoryEntryData* a_entryData, std::vector<UInt32> a_whitelist, std::vector<UInt32> a_blacklist) :
+		_entryData(a_entryData),
+		_whiteList(a_whitelist),
+		_blackList(a_blacklist),
+		_pos(0)
+	{}
+
+
+	ExtraListLocator::~ExtraListLocator()
+	{}
+
+
+	BaseExtraList* ExtraListLocator::found()
+	{
+		BaseExtraList* extraList = 0;
+		while (_pos < _entryData->extendDataList->Count()) {
+			extraList = _entryData->extendDataList->GetNthItem(_pos);
+			if (extraList && checkWhiteList(extraList) && checkBlackList(extraList)) {
+				return extraList;
+			}
+			++_pos;
+		}
+		return 0;
+	}
+
+
+	bool ExtraListLocator::checkWhiteList(BaseExtraList* a_extraList)
+	{
+		for (auto type : _whiteList) {
+			if (!a_extraList->HasType(type)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	bool ExtraListLocator::checkBlackList(BaseExtraList* a_extraList)
+	{
+		for (auto type : _blackList) {
+			if (a_extraList->HasType(type)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
