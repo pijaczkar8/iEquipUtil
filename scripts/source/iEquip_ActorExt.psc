@@ -1,9 +1,6 @@
 ScriptName iEquip_ActorExt
 
 
-Enchantment Function GetEnchantment(Actor a_actor, Form a_item) Global Native
-
-
 ; @brief Force equips the item with the specified FormID and applied poison to the specified slot.
 ; @param a_actor The actor to equip the item to.
 ; @param a_item The item to equip.

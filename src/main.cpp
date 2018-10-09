@@ -13,7 +13,7 @@
 
 
 #if _WIN64
-constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_53;
+constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_50;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
 #else

@@ -22,99 +22,6 @@ using iEquip_Utility::ExtraListLocator;
 
 namespace iEquip_ActorExt
 {
-	TESForm* GetEquippedArrows(StaticFunctionTag* a_base, Actor* a_actor)
-	{
-		if (!a_actor) {
-			_ERROR("ERROR: In GetEnchantment() : Invalid actor!");
-			return 0;
-		}
-
-		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
-		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
-		if (!containerData) {
-			_ERROR("ERROR: In GetEnchantment() : No container data!");
-			return 0;
-		}
-
-		InventoryEntryData* entryData = 0;
-		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
-			entryData = containerData->objList->GetNthItem(i);
-			if (entryData) {
-				if (entryData->type->IsAmmo()) {
-					return entryData->type;
-				}
-			}
-		}
-		return 0;
-
-		if (entryData->countDelta > 0) {
-			ExtraListLocator extraListLocator(entryData, { kFormType_Enchantment }, { });
-			BaseExtraList* extraList = 0;
-			while (extraList = extraListLocator.found()) {
-				RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
-				while (extraData) {
-					if (extraData->form->formType == kFormType_Enchantment) {
-						ExtraEnchantment* extraEnchantment = reinterpret_cast<ExtraEnchantment*>(extraData);
-						return extraEnchantment->enchant;
-					}
-					extraData = extraData->next;
-				}
-			}
-			_ERROR("ERROR: In GetEnchantment() : Enchantment not found!");
-			return 0;
-		} else {
-			_ERROR("ERROR: In GetEnchantment() : Entry data count is too small!");
-			return 0;
-		}
-	}
-
-
-	EnchantmentItem* GetEnchantment(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item)
-	{
-		if (!a_actor) {
-			_ERROR("ERROR: In GetEnchantment() : Invalid actor!");
-			return 0;
-		} else if (!a_item) {
-			_ERROR("ERROR: In GetEnchantment() : Invalid item!");
-			return 0;
-		}
-
-		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
-		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
-		if (!containerData) {
-			_ERROR("ERROR: In GetEnchantment() : No container data!");
-			return 0;
-		}
-
-		// Copy/merge of extraData can fail in edge cases. Obtain it ourselves.
-		InventoryEntryData* entryData = findEntryData(containerData, a_item);
-		if (!entryData) {
-			_ERROR("ERROR: In GetEnchantment() : No entry data!");
-			return 0;
-		}
-
-		if (entryData->countDelta > 0) {
-			ExtraListLocator extraListLocator(entryData, { kFormType_Enchantment }, { });
-			BaseExtraList* extraList = 0;
-			while (extraList = extraListLocator.found()) {
-				RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
-				while (extraData) {
-					if (extraData->form->formType == kFormType_Enchantment) {
-						ExtraEnchantment* extraEnchantment = reinterpret_cast<ExtraEnchantment*>(extraData);
-						return extraEnchantment->enchant;
-					}
-					extraData = extraData->next;
-				}
-			}
-			_ERROR("ERROR: In GetEnchantment() : Enchantment not found!");
-			return 0;
-		} else {
-			_ERROR("ERROR: In GetEnchantment() : Entry data count is too small!");
-			return 0;
-		}
-	}
-
-
 	void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, bool a_preventUnequip, bool a_equipSound)
 	{
 		ActorEquipPoisonedItem equipPoison(a_poison);
@@ -247,9 +154,6 @@ namespace iEquip_ActorExt
 
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
-		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, EnchantmentItem*, Actor*, TESForm*>("GetEnchantment", "iEquip_ActorExt", iEquip_ActorExt::GetEnchantment, a_registry));
-
 		a_registry->RegisterFunction(
 			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));
 
