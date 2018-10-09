@@ -20,7 +20,7 @@
 #define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
 CALL_MEMBER_FN(entryData, fn)
 #else
-#include "InventoryEntryData.h"
+#include "RE_InventoryEntryData.h"
 #define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
 CALL_MEMBER_FN(reinterpret_cast<RE::InventoryEntryData*>(entryData), fn)
 #endif
@@ -60,7 +60,7 @@ namespace iEquip_SoulSeeker
 		}
 
 		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
-		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : NULL;
+		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
 		if (!containerData) {
 			_ERROR("ERROR: No container data!\n");
 			return 0;

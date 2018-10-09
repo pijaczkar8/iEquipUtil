@@ -1,6 +1,6 @@
 ﻿#include "IDebugLog.h"  // gLog, IDebugLog
 #include "ITypes.h"  // UInt32
-#include "PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEInterface, PluginInfo, SKSEMessagingInterface
+#include "PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEMessagingInterface, SKSEInterface, PluginInfo
 #include "skse_version.h"  // RUNTIME_VERSION
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS

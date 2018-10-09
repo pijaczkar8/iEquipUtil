@@ -9,12 +9,12 @@
 #include "PapyrusActor.h"
 #include "IDebugLog.h"  // gLog
 
-#include "iEquip_Utility.h"  // ExtraDataLocator
+#include "iEquip_ExtraLocator.h"  // ExtraListLocator
 #include "RE_BaseExtraData.h"  // RE::BaseExtraData
 #include "RE_EnchantmentItem.h"  // RE::EnchantmentItem
 
 
-using iEquip_Utility::ExtraListLocator;
+using iEquip_ExtraLocator::ExtraListLocator;
 
 
 namespace iEquip_ActorExt
