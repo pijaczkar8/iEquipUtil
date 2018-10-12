@@ -1,10 +1,10 @@
 ScriptName iEquip_ActorExt
 
 
-; @brief Checks if the given weapon is a bound weapon or not.
-; @param a_weap The weapon to check.
-; @return Returns true if the weapon is bound. Returns false if the weapon is invalid or not bound.
-Bool Function IsWeaponBound(Weapon a_weap) Native Global
+; @brief Retrieves the ammo the actor has equipped.
+; @param a_actor The actor to check for ammo.
+; @return Returns the equipped ammo if the actor has any. Returns NONE if no ammo is equipped.
+Ammo Function GetEquippedAmmo(Actor a_actor) Global Native
 
 
 ; @brief Force equips the item with the specified FormID and applied poison to the specified slot.
@@ -24,7 +24,6 @@ Function EquipPoisonedItemEx(Actor a_actor, Form a_item, Int a_slotID, Potion a_
 ; @param a_enchantment The form of the enchantment applied to the item.
 ; @param a_preventUnequip Prevents the actor from unequipping the item.
 ; @param a_equipSound Plays the equip sound when the item is equipped.
-; @notes a_enchantment must be a direct reference to the enchantment applied to the weapon. You must call GetEnchantment() on the weapon and pass in the return value. I'll look into reworking this.
 Function EquipEnchantedItemEx(Actor a_actor, Form a_item, Int a_slotID, Enchantment a_enchantment, Bool a_preventUnequip = False, Bool a_equipSound = True) Native Global
 
 

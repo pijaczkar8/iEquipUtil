@@ -4,7 +4,7 @@
 #include "GameData.h"  // EquipManager
 #include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData, ExtraPoison
 #include "GameForms.h"  // TESForm, BGSEquipSlot
-#include "GameObjects.h"  // AlchemyItem, TESObjectWEAP
+#include "GameObjects.h"  // AlchemyItem, TESAmmo
 #include "GameReferences.h"  // Actor
 #include "IDebugLog.h"  // gLog
 #include "ITypes.h"  // SInt32
@@ -12,22 +12,48 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 #include "Utilities.h"  // CALL_MEMBER_FN
 
-#include <bitset>  // bitset
-
 #include "iEquip_ActorExtLib.h"  // IActorEquipItem
+#include "iEquip_ExtraLocator.h"  // ExtraLocator
+#include "RE_BaseExtraData.h"  // RE::ExtraWorn
+
+
+#include <sstream>
+#include <string>  // TODO
+#include "iEquip_Utility.h"
+
+
+using iEquip_ExtraLocator::ExtraListLocator;
 
 
 namespace iEquip_ActorExt
 {
-	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
+	TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
 	{
-		if (!a_weap) {
-			_ERROR("ERROR: In IsWeaponBound() : Invalid weapon!");
-			return false;
+		if (!a_actor) {
+			_ERROR("ERROR: In GetEquippedArrows() : Invalid actor!");
+			return 0;
 		}
 
-		std::bitset<16> bits(a_weap->gameData.flags1);
-		return (bits.test(13));
+		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
+		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
+		if (!containerData) {
+			_ERROR("ERROR: In GetEquippedArrows() : No container data!");
+			return 0;
+		}
+
+		InventoryEntryData* entryData = 0;
+		BaseExtraList* extraList = 0;
+		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
+			entryData = containerData->objList->GetNthItem(i);
+			if (entryData && entryData->type->IsAmmo()) {
+				ExtraListLocator extraListLocator(entryData, { kExtraData_Worn }, { });
+				if (extraList = extraListLocator.found()) {
+					return static_cast<TESAmmo*>(entryData->type);
+				}
+			}
+		}
+
+		return 0;
 	}
 
 
@@ -164,7 +190,7 @@ namespace iEquip_ActorExt
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
-			new NativeFunction1<StaticFunctionTag, bool, TESObjectWEAP*>("IsWeaponBound", "iEquip_ActorExt", iEquip_ActorExt::IsWeaponBound, a_registry));
+			new NativeFunction1<StaticFunctionTag, TESAmmo*, Actor*>("GetEquippedAmmo", "iEquip_ActorExt", iEquip_ActorExt::GetEquippedAmmo, a_registry));
 
 		a_registry->RegisterFunction(
 			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));

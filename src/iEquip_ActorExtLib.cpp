@@ -11,7 +11,6 @@
 
 #include "iEquip_ExtraLocator.h"  // ExtraListLocator
 #include "RE_BaseExtraData.h"  // RE::BaseExtraData
-#include "RE_EnchantmentItem.h"  // RE::EnchantmentItem
 
 
 using iEquip_ExtraLocator::ExtraListLocator;

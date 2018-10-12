@@ -39,7 +39,7 @@ Event OnPageReset(String a_page)
 		AddHeaderOption("")
 		AddTextOptionST("ActorExt_Equip_T", "Equip item with extra list", "")
 		AddTextOptionST("ActorExt_IsBound_T", "Check if right hand is bound", "")
-		AddTextOptionST("ActorExt_IsEquipped_T", "Check if form is equipped", "")
+		AddTextOptionST("ActorExt_GetEquipped_T", "List all equipped forms", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -139,7 +139,7 @@ EndState
 State ActorExt_IsBound_T
 	Event OnSelectST()
 		Weapon weap = PlayerRef.GetEquippedWeapon()
-		If (iEquip_ActorExt.IsWeaponBound(weap))
+		If (iEquip_WeaponExt.IsWeaponBound(weap))
 			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is bound!")
 		Else
 			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is not bound!")
@@ -154,13 +154,14 @@ State ActorExt_IsBound_T
 EndState
 
 
-State ActorExt_IsEquipped_T
+State ActorExt_GetEquipped_T
 	Event OnSelectST()
-		;Form item = PlayerRef.GetNthForm(1)
-		If (iEquip_ActorExt.IsEquipped())
-			Debug.Trace("SoulSeekerDBG: IsEquipped() called!")
+		Form myForm = NONE
+		myForm = iEquip_ActorExt.GetEquippedAmmo(PlayerRef)
+		If (myForm)
+			Debug.Trace("SoulSeekerDBG: GetEquippedAmmo() success!")
 		Else
-			Debug.Trace("SoulSeekerDBG: IsEquipped() call failed!")
+			Debug.Trace("SoulSeekerDBG: GetEquippedAmmo() failed!")
 		EndIf
 	EndEvent
 

@@ -25,11 +25,10 @@ namespace iEquip_ExtraLocator
 	{
 		BaseExtraList* extraList = 0;
 		while (_pos < _entryData->extendDataList->Count()) {
-			extraList = _entryData->extendDataList->GetNthItem(_pos);
+			extraList = _entryData->extendDataList->GetNthItem(_pos++);
 			if (extraList && checkWhiteList(extraList) && checkBlackList(extraList)) {
 				return extraList;
 			}
-			++_pos;
 		}
 		return 0;
 	}

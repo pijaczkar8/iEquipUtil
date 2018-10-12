@@ -6,10 +6,11 @@
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
 #include <string>  // string
 
-#include "iEquip_SoulSeeker.h"  // RegisterFuncs
 #include "iEquip_ActorExt.h"  // RegisterFuncs
-#include "iEquip_Utility.h"  // checkForGIST
+#include "iEquip_SoulSeeker.h"  // RegisterFuncs
 #include "iEquip_SoulSeekerLib.h"  // gemUtil
+#include "iEquip_Utility.h"  // checkForGIST
+#include "iEquip_WeaponExt.h"  // RegisterFuncs
 
 
 #if _WIN64
@@ -50,7 +51,7 @@ extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, IEQUIP_LOG_PATH);
-		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
+		gLog.SetPrintLevel(IDebugLog::kLevel_Error);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
 		_MESSAGE(IEQUIP_NAME);
@@ -85,10 +86,11 @@ extern "C" {
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 
 		//Check if the function registration was a success...
-		bool tesSoulSeeker = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
-		bool tesActorExt = g_papyrus->Register(iEquip_ActorExt::RegisterFuncs);
+		bool testActorExt = g_papyrus->Register(iEquip_ActorExt::RegisterFuncs);
+		bool testSoulSeeker = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
+		bool testWeaponExt = g_papyrus->Register(iEquip_WeaponExt::RegisterFuncs);
 
-		if (tesSoulSeeker && tesActorExt) {
+		if (testSoulSeeker && testActorExt && testWeaponExt) {
 			_MESSAGE("Papyrus registration succeeded!\n");
 			g_messaging = (SKSEMessagingInterface *)a_skse->QueryInterface(kInterface_Messaging);
 			g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler);
