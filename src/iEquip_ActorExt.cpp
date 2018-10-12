@@ -4,7 +4,7 @@
 #include "GameData.h"  // EquipManager
 #include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData, ExtraPoison
 #include "GameForms.h"  // TESForm, BGSEquipSlot
-#include "GameObjects.h"  // AlchemyItem
+#include "GameObjects.h"  // AlchemyItem, TESObjectWEAP
 #include "GameReferences.h"  // Actor
 #include "IDebugLog.h"  // gLog
 #include "ITypes.h"  // SInt32
@@ -12,16 +12,25 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 #include "Utilities.h"  // CALL_MEMBER_FN
 
+#include <bitset>  // bitset
+
 #include "iEquip_ActorExtLib.h"  // IActorEquipItem
-#include "iEquip_Utility.h"  // ExtraListLocator
-#include "RE_BaseExtraData.h"  // RE::BaseExtraData
-
-
-using iEquip_Utility::ExtraListLocator;
 
 
 namespace iEquip_ActorExt
 {
+	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
+	{
+		if (!a_weap) {
+			_ERROR("ERROR: In IsWeaponBound() : Invalid weapon!");
+			return false;
+		}
+
+		std::bitset<16> bits(a_weap->gameData.flags1);
+		return (bits.test(13));
+	}
+
+
 	void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, bool a_preventUnequip, bool a_equipSound)
 	{
 		ActorEquipPoisonedItem equipPoison(a_poison);
@@ -154,6 +163,9 @@ namespace iEquip_ActorExt
 
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
+		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, bool, TESObjectWEAP*>("IsWeaponBound", "iEquip_ActorExt", iEquip_ActorExt::IsWeaponBound, a_registry));
+
 		a_registry->RegisterFunction(
 			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));
 

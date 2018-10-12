@@ -37,7 +37,9 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("SoulSeeker_Greater_T", "Remove Greater", "")
 		AddTextOptionST("SoulSeeker_Grand_T", "Remove Grand", "")
 		AddHeaderOption("")
-		AddTextOptionST("ActorExt_T", "Equip item with extra list", "")
+		AddTextOptionST("ActorExt_Equip_T", "Equip item with extra list", "")
+		AddTextOptionST("ActorExt_IsBound_T", "Check if right hand is bound", "")
+		AddTextOptionST("ActorExt_IsEquipped_T", "Check if form is equipped", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -111,19 +113,55 @@ State SoulSeeker_Grand_T
 EndState
 
 
-State ActorExt_T
+State ActorExt_Equip_T
 	Event OnSelectST()
 		Form steelSword = Game.GetForm(0x00013989)
 		Form dwarvenAbsorpSword = Game.GetForm(0X000ACC2A)
 		Potion weakPoison = Game.GetForm(0x0003A5A4) As Potion
 		Enchantment fierySoulTrap = Game.GetForm(0x00040003) As Enchantment
 		Enchantment absorbHealth = Game.GetForm(0x0010FB91) As Enchantment
-		Form tmpForm = iEquip_ActorExt.GetEnchantment(PlayerRef, NONE)
+		;Form tmpForm = iEquip_ActorExt.GetEnchantment(PlayerRef, NONE)
 		;Weapon weap = PlayerRef.GetEquippedWeapon(True)
 		;Enchantment ench = iEquip_ActorExt.WornObjectGetEnchantment(PlayerRef, 0, 0)
 		;iEquip_ActorExt.EquipItemEx(PlayerRef, steelSword, 1, absorbHealth)
 		;iEquip_ActorExt.EquipEnchantedItemEx(PlayerRef, steelSword, 1, ench)
 		Debug.Trace("SoulSeekerDBG: EquipItemEx called!")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State ActorExt_IsBound_T
+	Event OnSelectST()
+		Weapon weap = PlayerRef.GetEquippedWeapon()
+		If (iEquip_ActorExt.IsWeaponBound(weap))
+			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is bound!")
+		Else
+			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is not bound!")
+		EndIf
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State ActorExt_IsEquipped_T
+	Event OnSelectST()
+		;Form item = PlayerRef.GetNthForm(1)
+		If (iEquip_ActorExt.IsEquipped())
+			Debug.Trace("SoulSeekerDBG: IsEquipped() called!")
+		Else
+			Debug.Trace("SoulSeekerDBG: IsEquipped() call failed!")
+		EndIf
 	EndEvent
 
 	Event OnDefaultST()

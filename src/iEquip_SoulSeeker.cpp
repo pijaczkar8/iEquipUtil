@@ -38,19 +38,6 @@ namespace iEquip_SoulSeeker
 	 **/
 	TESForm* BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
-		{
-			std::string msg;
-			msg = "a_reqCharge == " + std::to_string(a_reqCharge);
-			_DMESSAGE(msg.c_str());
-			msg = "a_fillMethod == " + std::to_string(a_fillMethod);
-			_DMESSAGE(msg.c_str());
-			msg = "a_partialFill == " + iEquip_Utility::boolToString(a_partialFill);
-			_DMESSAGE(msg.c_str());
-			msg = "a_wasteOK == " + iEquip_Utility::boolToString(a_wasteOK);
-			_DMESSAGE(msg.c_str());
-			_DMESSAGE("");
-		}
-
 		lastFoundSoulSize = 0;
 		optimalCandidate = 0;
 

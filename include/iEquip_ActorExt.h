@@ -3,6 +3,7 @@
 #include "ITypes.h"  // SInt32
 #include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
 #include "GameForms.h"  // TESForm
+#include "GameObjects.h"  // TESObjectWEAP
 #include "GameReferences.h"  // Actor
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag
 #include "PapyrusVM.h"  // VMClassRegistry
@@ -12,6 +13,7 @@
 
 namespace iEquip_ActorExt
 {
+	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
 	void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, bool a_preventUnequip, bool a_equipSound);
 	void EquipEnchantedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound);
 	void EquipPoisonedAndEnchantedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound);
