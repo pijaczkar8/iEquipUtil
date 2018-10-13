@@ -271,17 +271,6 @@ Function InvokeBringMeASoul(Int a_reqCharge)
 	Int fillMethod = SoulSeeker_FillMethod.GetValue() As Int
 		Bool partialFill = SoulSeeker_PartialFill.GetValue() As Bool
 		Bool wasteOK = SoulSeeker_WasteOK.GetValue() As Bool
-		Form targetSoulGem = NONE
-		targetSoulGem = iEquip_SoulSeeker.BringMeASoul(a_reqCharge, fillMethod, partialFill, wasteOK)
-		Int soulSize = iEquip_SoulSeeker.GetSoulSize()
-		If (soulSize != 0)
-			If (targetSoulGem)
-				PlayerRef.RemoveItem(targetSoulGem, 1, False)
-			Else
-				Debug.Trace("SoulSeekerDBG: BringMeASoul() returned a NONE form!")
-			EndIf
-			Debug.Trace("SoulSeekerDBG: GetSoulSize() returned soulSize == " + soulSize)
-		Else
-			Debug.Trace("SoulSeekerDBG: BringMeASoul() failed to find a soul!")
-		EndIf
+		Int soulSize = iEquip_SoulSeeker.BringMeASoul(a_reqCharge, fillMethod, partialFill, wasteOK)
+		Debug.Trace("SoulSeekerDBG: BringMeASoul() returned soulsize == " + soulSize)
 EndFunction

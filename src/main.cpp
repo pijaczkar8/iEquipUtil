@@ -27,24 +27,6 @@ constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
 static PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 static SKSEPapyrusInterface* g_papyrus = 0;
 static SKSEMessagingInterface* g_messaging = 0;
-iEquip_SoulSeeker::GemUtil iEquip_SoulSeeker::gemUtil;
-
-
-void MessageHandler(SKSEMessagingInterface::Message * a_msg)
-{
-	switch (a_msg->type) {
-	case SKSEMessagingInterface::kMessage_DataLoaded:
-	{
-		if (iEquip_Utility::checkForGIST()) {
-			_DMESSAGE("GIST present\n");
-			iEquip_SoulSeeker::gemUtil.GISTFound();
-		} else {
-			_DMESSAGE("GIST not found\n");
-		}
-		break;
-	}
-	}
-}
 
 
 extern "C" {
@@ -92,8 +74,6 @@ extern "C" {
 
 		if (testSoulSeeker && testActorExt && testWeaponExt) {
 			_MESSAGE("Papyrus registration succeeded!\n");
-			g_messaging = (SKSEMessagingInterface *)a_skse->QueryInterface(kInterface_Messaging);
-			g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler);
 		} else {
 			_ERROR("Papyrus registration failed!");
 			return false;
