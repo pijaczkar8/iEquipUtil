@@ -14,12 +14,6 @@
 
 #include "iEquip_ActorExtLib.h"  // IActorEquipItem
 #include "iEquip_ExtraLocator.h"  // ExtraLocator
-#include "RE_BaseExtraData.h"  // RE::ExtraWorn
-
-
-#include <sstream>
-#include <string>  // TODO
-#include "iEquip_Utility.h"
 
 
 using iEquip_ExtraLocator::ExtraListLocator;
@@ -42,25 +36,19 @@ namespace iEquip_ActorExt
 		}
 
 		InventoryEntryData* entryData = 0;
-		BaseExtraList* extraList = 0;
+		BaseExtraList* xList = 0;
+		ExtraListLocator xListLocator(0, { kExtraData_Worn }, { });
 		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
 			entryData = containerData->objList->GetNthItem(i);
 			if (entryData && entryData->type->IsAmmo()) {
-				ExtraListLocator extraListLocator(entryData, { kExtraData_Worn }, { });
-				if (extraList = extraListLocator.found()) {
+				xListLocator.setEntryData(entryData);
+				if (xList = xListLocator.found()) {
 					return static_cast<TESAmmo*>(entryData->type);
 				}
 			}
 		}
 
 		return 0;
-	}
-
-
-	void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, bool a_preventUnequip, bool a_equipSound)
-	{
-		ActorEquipPoisonedItem equipPoison(a_poison);
-		EquipItemEx(a_actor, a_item, a_slotID, &equipPoison, a_preventUnequip, a_equipSound);
 	}
 
 
@@ -71,10 +59,17 @@ namespace iEquip_ActorExt
 	}
 
 
-	void EquipPoisonedAndEnchantedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
+	void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
 	{
-		ActorEquipPoisonedAndEnchantedItem equipPoisonAndEnch(a_poison, a_enchantment);
-		EquipItemEx(a_actor, a_item, a_slotID, &equipPoisonAndEnch, a_preventUnequip, a_equipSound);
+		ActorEquipPoisonedItem equipPoison(a_poison, a_count);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipPoison, a_preventUnequip, a_equipSound);
+	}
+
+
+	void EquipEnchantedAndPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
+	{
+		ActorEquipEnchantedAndPoisonedItem equipEnchAndPoison(a_enchantment, a_poison, a_count);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipEnchAndPoison, a_preventUnequip, a_equipSound);
 	}
 
 
@@ -126,7 +121,7 @@ namespace iEquip_ActorExt
 		BaseExtraList* leftEquipList = 0;
 
 		BaseExtraList* curEquipList = 0;
-		BaseExtraList* extraList = 0;
+		BaseExtraList* xList = 0;
 
 		if (hasItemMinCount) {
 			entryData->GetExtraWornBaseLists(&rightEquipList, &leftEquipList);
@@ -135,19 +130,16 @@ namespace iEquip_ActorExt
 			if (leftEquipList && rightEquipList) {
 				isTargetSlotInUse = true;
 				curEquipList = (targetEquipSlot == GetLeftHandSlot()) ? leftEquipList : rightEquipList;
-				extraList = 0;
 			}
 			// Case 2: Type already equipped in right hand.
 			else if (rightEquipList) {
 				isTargetSlotInUse = targetEquipSlot == GetRightHandSlot();
 				curEquipList = rightEquipList;
-				extraList = 0;
 			}
 			// Case 3: Type already equipped in left hand.
 			else if (leftEquipList) {
 				isTargetSlotInUse = targetEquipSlot == GetLeftHandSlot();
 				curEquipList = leftEquipList;
-				extraList = 0;
 			}
 			// Case 4: Type not equipped yet.
 			else {
@@ -155,8 +147,8 @@ namespace iEquip_ActorExt
 				curEquipList = 0;
 			}
 
-			extraList = a_iActorEquipItem->findExtraListByForm(entryData);
-			if (!extraList) {
+			xList = a_iActorEquipItem->findExtraListByForm(entryData);
+			if (!xList) {
 				_ERROR("ERROR: In EquipItemEx() : No extra list!");
 				return;
 			}
@@ -172,6 +164,7 @@ namespace iEquip_ActorExt
 			}
 
 			// Slot in use, nothing left to do
+			_ERROR("ERROR: In EquipItemEx() : Slot in use!");
 			return;
 		}
 
@@ -182,7 +175,9 @@ namespace iEquip_ActorExt
 		}
 
 		if (!isTargetSlotInUse && hasItemMinCount) {
-			CALL_MEMBER_FN(equipManager, EquipItem)(a_actor, a_item, extraList, equipCount, targetEquipSlot, a_equipSound, a_preventUnequip, false, 0);
+			CALL_MEMBER_FN(equipManager, EquipItem)(a_actor, a_item, xList, equipCount, targetEquipSlot, a_equipSound, a_preventUnequip, false, 0);
+		} else {
+			_ERROR("ERROR: In EquipItemEx() : Item does not have min count!");
 		}
 	}
 
@@ -193,13 +188,13 @@ namespace iEquip_ActorExt
 			new NativeFunction1<StaticFunctionTag, TESAmmo*, Actor*>("GetEquippedAmmo", "iEquip_ActorExt", iEquip_ActorExt::GetEquippedAmmo, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));
-
-		a_registry->RegisterFunction(
 			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, bool, bool>("EquipEnchantedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipEnchantedItemEx, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction7<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, EnchantmentItem*, bool, bool>("EquipPoisonedAndEnchantedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedAndEnchantedItemEx, a_registry));
+			new NativeFunction7<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, UInt32, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction8<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, AlchemyItem*, UInt32, bool, bool>("EquipEnchantedAndPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipEnchantedAndPoisonedItemEx, a_registry));
 
 		return true;
 	}

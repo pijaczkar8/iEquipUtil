@@ -34,6 +34,19 @@ namespace iEquip_ExtraLocator
 	}
 
 
+	void ExtraListLocator::setEntryData(InventoryEntryData* a_entryData)
+	{
+		_entryData = a_entryData;
+		resetPos();
+	}
+
+
+	void ExtraListLocator::resetPos()
+	{
+		_pos = 0;
+	}
+
+
 	bool ExtraListLocator::checkWhiteList(BaseExtraList* a_extraList)
 	{
 		for (auto& type : _whiteList) {

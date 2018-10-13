@@ -4,8 +4,6 @@
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
 
-#include <bitset>  // bitset
-
 
 namespace iEquip_WeaponExt
 {
@@ -16,8 +14,7 @@ namespace iEquip_WeaponExt
 			return false;
 		}
 
-		std::bitset<16> bits(a_weap->gameData.flags1);
-		return (bits.test(13));
+		return ((a_weap->gameData.flags1 & TESObjectWEAP::GameData::kFlags_BoundWeapon) == TESObjectWEAP::GameData::kFlags_BoundWeapon);
 	}
 
 

@@ -6,11 +6,10 @@
 #include "GameForms.h"  // TESForm
 #include "GameObjects.h"  // AlchemyItem, EnchantmentItem
 #include "GameRTTI.h"  // DYNAMIC_CAST
-#include "PapyrusActor.h"
 #include "IDebugLog.h"  // gLog
 
 #include "iEquip_ExtraLocator.h"  // ExtraListLocator
-#include "RE_BaseExtraData.h"  // RE::BaseExtraData
+#include "RE_ExtraPoison.h"  // RE::ExtraPoison
 
 
 using iEquip_ExtraLocator::ExtraListLocator;
@@ -68,50 +67,6 @@ namespace iEquip_ActorExt
 	}
 
 
-	ActorEquipPoisonedItem::ActorEquipPoisonedItem(AlchemyItem* a_poison) :
-		_poison(a_poison)
-	{}
-
-
-	ActorEquipPoisonedItem::~ActorEquipPoisonedItem()
-	{}
-
-
-	bool ActorEquipPoisonedItem::validate()
-	{
-		if (!_poison) {
-			_ERROR("ERROR: In ActorEquipPoisonedItem::validate() : _poison is a NONE form!");
-			return false;
-		} else if (_poison->formType != kFormType_Potion) {
-			_ERROR("ERROR: In ActorEquipPoisonedItem::validate() : _poison is not a potion!");
-			return false;
-		}
-		return true;
-	}
-
-
-	BaseExtraList* ActorEquipPoisonedItem::findExtraListByForm(InventoryEntryData* a_entryData)
-	{
-		ExtraListLocator extraListLocator(a_entryData, { kExtraData_Poison }, { kExtraData_Enchantment });
-		BaseExtraList* extraList = 0;
-		while (extraList = extraListLocator.found()) {
-			RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
-			bool extraPoisonFound = false;
-			while (extraData) {
-				if (extraData->form->formID == _poison->formID) {
-					extraPoisonFound = true;
-					break;
-				}
-				extraData = extraData->next;
-			}
-			if (extraPoisonFound) {
-				return extraList;
-			}
-		}
-		return 0;
-	}
-
-
 	ActorEquipEnchantedItem::ActorEquipEnchantedItem(EnchantmentItem* a_enchantment) :
 		_enchantment(a_enchantment)
 	{}
@@ -136,65 +91,117 @@ namespace iEquip_ActorExt
 
 	BaseExtraList* ActorEquipEnchantedItem::findExtraListByForm(InventoryEntryData* a_entryData)
 	{
-		ExtraListLocator extraListLocator(a_entryData, { kExtraData_Enchantment }, { kExtraData_Poison });
-		BaseExtraList* extraList = 0;
-		while (extraList = extraListLocator.found()) {
-			RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
-			bool extraEnchantmentFound = false;
-			while (extraData) {
-				if (extraData->form->formID == _enchantment->formID) {
-					extraEnchantmentFound = true;
-					break;
+		ExtraListLocator xListLocator(a_entryData, { kExtraData_Enchantment }, { kExtraData_Poison, kExtraData_Worn, kExtraData_WornLeft });
+		BaseExtraList* xList = 0;
+		while (xList = xListLocator.found()) {
+			BSExtraData* xData = xList->m_data;
+			bool xEnchantmentFound = false;
+			while (xData) {
+				if (xData->GetType() == kExtraData_Enchantment) {
+					ExtraEnchantment* xEnchantment = static_cast<ExtraEnchantment*>(xData);
+					if (xEnchantment->enchant->formID == _enchantment->formID) {
+						xEnchantmentFound = true;
+						break;
+					}
 				}
-				extraData = extraData->next;
+				xData = xData->next;
 			}
-			if (extraEnchantmentFound) {
-				return extraList;
+			if (xEnchantmentFound) {
+				return xList;
 			}
 		}
 		return 0;
 	}
 
 
-	ActorEquipPoisonedAndEnchantedItem::ActorEquipPoisonedAndEnchantedItem(AlchemyItem* a_poison, EnchantmentItem* a_enchantment) :
-		ActorEquipPoisonedItem(a_poison),
-		ActorEquipEnchantedItem(a_enchantment)
+	ActorEquipPoisonedItem::ActorEquipPoisonedItem(AlchemyItem* a_poison, UInt32 a_count) :
+		_poison(a_poison),
+		_count(a_count)
 	{}
 
 
-	ActorEquipPoisonedAndEnchantedItem::~ActorEquipPoisonedAndEnchantedItem()
+	ActorEquipPoisonedItem::~ActorEquipPoisonedItem()
 	{}
 
 
-	bool ActorEquipPoisonedAndEnchantedItem::validate()
+	bool ActorEquipPoisonedItem::validate()
+	{
+		if (!_poison) {
+			_ERROR("ERROR: In ActorEquipPoisonedItem::validate() : _poison is a NONE form!");
+			return false;
+		} else if (_poison->formType != kFormType_Potion) {
+			_ERROR("ERROR: In ActorEquipPoisonedItem::validate() : _poison is not a potion!");
+			return false;
+		}
+		return true;
+	}
+
+
+	BaseExtraList* ActorEquipPoisonedItem::findExtraListByForm(InventoryEntryData* a_entryData)
+	{
+		ExtraListLocator xListLocator(a_entryData, { kExtraData_Poison }, { kExtraData_Enchantment, kExtraData_Worn, kExtraData_WornLeft });
+		BaseExtraList* xList = 0;
+		while (xList = xListLocator.found()) {
+			BSExtraData* xData = xList->m_data;
+			bool xPoisonFound = false;
+			while (xData) {
+				if (xData->GetType() == kExtraData_Poison) {
+					RE::ExtraPoison* xPoison = static_cast<RE::ExtraPoison*>(xData);
+					if (xPoison->poison->formID == _poison->formID && xPoison->count == _count) {
+						xPoisonFound = true;
+						break;
+					}
+				}
+				xData = xData->next;
+			}
+			if (xPoisonFound) {
+				return xList;
+			}
+		}
+		return 0;
+	}
+
+
+	ActorEquipEnchantedAndPoisonedItem::ActorEquipEnchantedAndPoisonedItem(EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count) :
+		ActorEquipEnchantedItem(a_enchantment),
+		ActorEquipPoisonedItem(a_poison, a_count)
+	{}
+
+
+	ActorEquipEnchantedAndPoisonedItem::~ActorEquipEnchantedAndPoisonedItem()
+	{}
+
+
+	bool ActorEquipEnchantedAndPoisonedItem::validate()
 	{
 		return (ActorEquipPoisonedItem::validate() && ActorEquipEnchantedItem::validate());
 	}
 
 
-	BaseExtraList* ActorEquipPoisonedAndEnchantedItem::findExtraListByForm(InventoryEntryData* a_entryData)
+	BaseExtraList* ActorEquipEnchantedAndPoisonedItem::findExtraListByForm(InventoryEntryData* a_entryData)
 	{
-		ExtraListLocator extraListLocator(a_entryData, { kExtraData_Poison, kExtraData_Enchantment }, { });
-		BaseExtraList* extraList = 0;
-		while (extraList = extraListLocator.found()) {
-			RE::BSExtraData* extraData = reinterpret_cast<RE::BSExtraData*>(extraList->m_data);
-			bool extraPoisonFound = false;
-			bool extraEnchantmentFound = false;
-			while (extraData) {
-				if (extraData->form->formType == kFormType_Potion) {
-					if (extraData->form->formID == _poison->formID) {
-						extraPoisonFound = true;
+		ExtraListLocator xListLocator(a_entryData, { kExtraData_Enchantment, kExtraData_Poison }, { kExtraData_Worn, kExtraData_WornLeft });
+		BaseExtraList* xList = 0;
+		while (xList = xListLocator.found()) {
+			BSExtraData* xData = xList->m_data;
+			bool xEnchantmentFound = false;
+			bool xPoisonFound = false;
+			while (xData) {
+				if (xData->GetType() == kExtraData_Enchantment) {
+					ExtraEnchantment* xEnchantment = static_cast<ExtraEnchantment*>(xData);
+					if (xEnchantment->enchant->formID == _enchantment->formID) {
+						xEnchantmentFound = true;
 					}
-				} else if (extraData->form->formType == kFormType_Enchantment) {
-					ExtraEnchantment* extraEnchant = reinterpret_cast<ExtraEnchantment*>(extraData);
-					if (extraEnchant && extraEnchant->enchant == _enchantment) {
-						extraEnchantmentFound = true;
+				} else if (xData->GetType() == kExtraData_Poison) {
+					RE::ExtraPoison* xPoison = static_cast<RE::ExtraPoison*>(xData);
+					if (xPoison->poison->formID == _poison->formID && xPoison->count == _count) {
+						xPoisonFound = true;
 					}
 				}
-				extraData = extraData->next;
+				xData = xData->next;
 			}
-			if (extraPoisonFound && extraEnchantmentFound) {
-				return extraList;
+			if (xPoisonFound && xEnchantmentFound) {
+				return xList;
 			}
 		}
 		return 0;

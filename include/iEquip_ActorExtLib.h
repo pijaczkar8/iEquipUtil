@@ -4,6 +4,7 @@
 #include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
 #include "GameForms.h"  // TESForm
 #include "GameObjects.h"  // AlchemyItem, EnchantmentItem
+#include "ITypes.h"  // UInt32
 
 
 namespace iEquip_ActorExt
@@ -32,20 +33,6 @@ namespace iEquip_ActorExt
 	};
 
 
-	class ActorEquipPoisonedItem : virtual public IActorEquipItem
-	{
-	public:
-		explicit ActorEquipPoisonedItem(AlchemyItem* a_poison);
-		virtual ~ActorEquipPoisonedItem();
-
-		virtual bool validate() override;
-		virtual BaseExtraList* findExtraListByForm(InventoryEntryData* a_entryData) override;
-
-	protected:
-		AlchemyItem* _poison;
-	};
-
-
 	class ActorEquipEnchantedItem : virtual public IActorEquipItem
 	{
 	public:
@@ -60,11 +47,26 @@ namespace iEquip_ActorExt
 	};
 
 
-	class ActorEquipPoisonedAndEnchantedItem : public ActorEquipPoisonedItem, public ActorEquipEnchantedItem
+	class ActorEquipPoisonedItem : virtual public IActorEquipItem
 	{
 	public:
-		explicit ActorEquipPoisonedAndEnchantedItem(AlchemyItem* a_poison, EnchantmentItem* a_enchantment);
-		virtual ~ActorEquipPoisonedAndEnchantedItem();
+		explicit ActorEquipPoisonedItem(AlchemyItem* a_poison, UInt32 a_count);
+		virtual ~ActorEquipPoisonedItem();
+
+		virtual bool validate() override;
+		virtual BaseExtraList* findExtraListByForm(InventoryEntryData* a_entryData) override;
+
+	protected:
+		AlchemyItem* _poison;
+		UInt32 _count;
+	};
+
+
+	class ActorEquipEnchantedAndPoisonedItem : public ActorEquipEnchantedItem, public ActorEquipPoisonedItem
+	{
+	public:
+		explicit ActorEquipEnchantedAndPoisonedItem(EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count);
+		virtual ~ActorEquipEnchantedAndPoisonedItem();
 
 		virtual bool validate() override;
 		virtual BaseExtraList* findExtraListByForm(InventoryEntryData* a_entryData) override;

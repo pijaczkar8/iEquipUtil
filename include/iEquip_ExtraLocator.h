@@ -6,8 +6,6 @@
 
 #include <vector>  // vector
 
-#include "RE_BaseExtraData.h"  // RE::BSExtraData
-
 
 namespace iEquip_ExtraLocator
 {
@@ -18,6 +16,8 @@ namespace iEquip_ExtraLocator
 		~ExtraListLocator();
 
 		BaseExtraList* found();
+		void setEntryData(InventoryEntryData* a_entryData);
+		void resetPos();
 
 	private:
 		bool checkWhiteList(BaseExtraList* a_extraList);

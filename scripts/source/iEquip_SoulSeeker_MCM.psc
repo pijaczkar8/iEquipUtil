@@ -37,9 +37,11 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("SoulSeeker_Greater_T", "Remove Greater", "")
 		AddTextOptionST("SoulSeeker_Grand_T", "Remove Grand", "")
 		AddHeaderOption("")
-		AddTextOptionST("ActorExt_Equip_T", "Equip item with extra list", "")
-		AddTextOptionST("ActorExt_IsBound_T", "Check if right hand is bound", "")
-		AddTextOptionST("ActorExt_GetEquipped_T", "List all equipped forms", "")
+		AddTextOptionST("ActorExt_EquipEnch_T", "Equip enchanted item", "")
+		AddTextOptionST("ActorExt_EquipPoisoned_T", "Equip poisoned item", "")
+		AddTextOptionST("ActorExt_EquipEnchAndPoisoned_T", "Equip enchanted and poisoned item", "")
+		AddTextOptionST("ActorExt_GetEquipped_T", "Get equipped ammo form", "")
+		AddTextOptionST("WeaponExt_IsWeaponBound_T", "Check if right hand is bound", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -113,19 +115,12 @@ State SoulSeeker_Grand_T
 EndState
 
 
-State ActorExt_Equip_T
+State ActorExt_EquipEnch_T
 	Event OnSelectST()
 		Form steelSword = Game.GetForm(0x00013989)
-		Form dwarvenAbsorpSword = Game.GetForm(0X000ACC2A)
-		Potion weakPoison = Game.GetForm(0x0003A5A4) As Potion
-		Enchantment fierySoulTrap = Game.GetForm(0x00040003) As Enchantment
-		Enchantment absorbHealth = Game.GetForm(0x0010FB91) As Enchantment
-		;Form tmpForm = iEquip_ActorExt.GetEnchantment(PlayerRef, NONE)
-		;Weapon weap = PlayerRef.GetEquippedWeapon(True)
-		;Enchantment ench = iEquip_ActorExt.WornObjectGetEnchantment(PlayerRef, 0, 0)
-		;iEquip_ActorExt.EquipItemEx(PlayerRef, steelSword, 1, absorbHealth)
-		;iEquip_ActorExt.EquipEnchantedItemEx(PlayerRef, steelSword, 1, ench)
-		Debug.Trace("SoulSeekerDBG: EquipItemEx called!")
+		Enchantment ench = WornObject.GetEnchantment(PlayerRef, 0, 0)
+		iEquip_ActorExt.EquipEnchantedItemEx(PlayerRef, steelSword, 1, ench)
+		Debug.Trace("SoulSeekerDBG: EquipEnchantedItemEx called!")
 	EndEvent
 
 	Event OnDefaultST()
@@ -136,14 +131,29 @@ State ActorExt_Equip_T
 EndState
 
 
-State ActorExt_IsBound_T
+State ActorExt_EquipPoisoned_T
 	Event OnSelectST()
-		Weapon weap = PlayerRef.GetEquippedWeapon()
-		If (iEquip_WeaponExt.IsWeaponBound(weap))
-			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is bound!")
-		Else
-			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is not bound!")
-		EndIf
+		Form steelSword = Game.GetForm(0x00013989)
+		Potion weakPoison = Game.GetForm(0x0003A5A4) As Potion
+		iEquip_ActorExt.EquipPoisonedItemEx(PlayerRef, steelSword, 1, weakPoison)
+		Debug.Trace("SoulSeekerDBG: EquipPoisonedItemEx called!")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State ActorExt_EquipEnchAndPoisoned_T
+	Event OnSelectST()
+		Form steelSword = Game.GetForm(0x00013989)
+		Potion weakPoison = Game.GetForm(0x0003A5A4) As Potion
+		Enchantment ench = WornObject.GetEnchantment(PlayerRef, 0, 0)
+		iEquip_ActorExt.EquipEnchantedAndPoisonedItemEx(PlayerRef, steelSword, 1, ench, weakPoison)
+		Debug.Trace("SoulSeekerDBG: EquipEnchantedAndPoisonedItemEx called!")
 	EndEvent
 
 	Event OnDefaultST()
@@ -162,6 +172,24 @@ State ActorExt_GetEquipped_T
 			Debug.Trace("SoulSeekerDBG: GetEquippedAmmo() success!")
 		Else
 			Debug.Trace("SoulSeekerDBG: GetEquippedAmmo() failed!")
+		EndIf
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State WeaponExt_IsWeaponBound_T
+	Event OnSelectST()
+		Weapon weap = PlayerRef.GetEquippedWeapon()
+		If (iEquip_WeaponExt.IsWeaponBound(weap))
+			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is bound!")
+		Else
+			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is not bound!")
 		EndIf
 	EndEvent
 
