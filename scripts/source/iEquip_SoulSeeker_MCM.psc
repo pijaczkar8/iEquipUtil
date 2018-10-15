@@ -42,6 +42,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("ActorExt_EquipEnchAndPoisoned_T", "Equip enchanted and poisoned item", "")
 		AddTextOptionST("ActorExt_GetEquipped_T", "Get equipped ammo form", "")
 		AddTextOptionST("WeaponExt_IsWeaponBound_T", "Check if right hand is bound", "")
+		AddTextOptionST("FormExt_RegisterBoundWeaponEquipped_T", "Register for OnBoundWeaponEquipped event", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -201,6 +202,20 @@ State WeaponExt_IsWeaponBound_T
 EndState
 
 
+State FormExt_RegisterBoundWeaponEquipped_T
+	Event OnSelectST()
+		iEquip_FormExt.RegisterForBoundWeaponEquippedEvent(Self)
+		Debug.Trace("SoulSeekerDBG: Registered for OnBoundWeaponEquipped")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
 State SoulSeeker_FillMethod_S
 	Event OnSliderOpenST()
 		SetSliderDialogStartValue(SoulSeeker_FillMethod.GetValue() As Float)
@@ -269,8 +284,13 @@ EndFunction
 
 Function InvokeBringMeASoul(Int a_reqCharge)
 	Int fillMethod = SoulSeeker_FillMethod.GetValue() As Int
-		Bool partialFill = SoulSeeker_PartialFill.GetValue() As Bool
-		Bool wasteOK = SoulSeeker_WasteOK.GetValue() As Bool
-		Int soulSize = iEquip_SoulSeeker.BringMeASoul(a_reqCharge, fillMethod, partialFill, wasteOK)
-		Debug.Trace("SoulSeekerDBG: BringMeASoul() returned soulsize == " + soulSize)
+	Bool partialFill = SoulSeeker_PartialFill.GetValue() As Bool
+	Bool wasteOK = SoulSeeker_WasteOK.GetValue() As Bool
+	Int soulSize = iEquip_SoulSeeker.BringMeASoul(a_reqCharge, fillMethod, partialFill, wasteOK)
+	Debug.Trace("SoulSeekerDBG: BringMeASoul() returned soulsize == " + soulSize)
 EndFunction
+
+
+Event OnBoundWeaponEquipped()
+	Debug.Trace("SoulSeekerDBG: OnBoundWeaponEquipped event recieved!")
+EndEvent

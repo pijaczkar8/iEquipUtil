@@ -1,0 +1,4 @@
+ScriptName iEquip_FormExt
+
+
+Function RegisterForBoundWeaponEquippedEvent(Form a_thisForm) Global Native

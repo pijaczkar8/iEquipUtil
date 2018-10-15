@@ -11,9 +11,6 @@
 #include <string>  // string
 
 
-#include <sstream>  // TODO
-
-
 namespace iEquip_SoulSeeker
 {
 	Gem::Gem()
@@ -133,14 +130,7 @@ namespace iEquip_SoulSeeker
 
 	bool isReusable(TESSoulGem* a_form)
 	{
-		BGSKeyword* reusableSoulGem = static_cast<BGSKeyword*>(BGSDefaultObjectManager::GetSingleton()->objects[0xD8]);
-
-#if 0
-		std::stringstream ss;
-		ss << BGSDefaultObjectManager::GetSingleton();
-		_DMESSAGE(ss.str().c_str());
-#endif
-
+		static BGSKeyword* reusableSoulGem = static_cast<BGSKeyword*>(BGSDefaultObjectManager::GetSingleton()->objects[0xD8]);
 		return a_form->keyword.HasKeyword(reusableSoulGem);
 	}
 }

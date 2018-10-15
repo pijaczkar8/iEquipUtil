@@ -34,12 +34,13 @@ using iEquip_ExtraLocator::ExtraListLocator;
 namespace iEquip_SoulSeeker
 {
 	/**
-	 * @brief Fetch the most optimal soulgem to fill an enchanted weapon
+	 * @brief Fetches the most optimal soulgem to fill an enchanted weapon.
 	 * @param a_reqCharge The required soul to fetch. Valid inputs 1-5.
 	 * @param a_fillMethod The method used to fill the soulgem. Valid inputs 0-1.
 	 * @param a_partialFill Determines whether partially filled soul gems can be returned.
 	 * @param a_wasteOK Determines whether soulgems exceeding the requred size can be returned.
-	 * @return Returns the Form to be removed. Call GetSoulSize to determine if the search was a success.
+	 * @return Returns the soul size of the found soul. Returns -1 if the search was a failure.
+	 * @notes This function will remove the soulgem automatically.
 	 **/
 	SInt32 BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
@@ -70,11 +71,11 @@ namespace iEquip_SoulSeeker
 			return -1;
 		}
 
+		int soulSize = CALL_MEMBER_FN_ENTRYDATA(optimalCandidate, GetSoulLevel)();
 		if (optimalCandidate->extendDataList) {
 			removeExtraSoul(containerData, optimalCandidate);
 		}
 
-		int soulSize = CALL_MEMBER_FN_ENTRYDATA(optimalCandidate, GetSoulLevel)();
 		TESSoulGem* gem = static_cast<TESSoulGem*>(optimalCandidate->type);
 		if (!isReusable(gem)) {
 			TESObjectREFR* tmpObjRef = static_cast<TESObjectREFR*>(*g_thePlayer);

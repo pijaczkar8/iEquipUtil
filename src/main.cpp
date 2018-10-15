@@ -1,5 +1,8 @@
-﻿#include "IDebugLog.h"  // gLog, IDebugLog
-#include "ITypes.h"  // UInt32
+﻿#include "GameEvents.h"  // BSTEventSink, EventResult, EventDispatcher
+#include "GameForms.h"  // TESQuest
+#include "GameTypes.h"  // BSFixedString
+#include "IDebugLog.h"  // gLog, IDebugLog
+#include "PapyrusEvents.h"  // SKSEModCallbackEvent, g_modCallbackEventDispatcher
 #include "PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEMessagingInterface, SKSEInterface, PluginInfo
 #include "skse_version.h"  // RUNTIME_VERSION
 
@@ -7,10 +10,13 @@
 #include <string>  // string
 
 #include "iEquip_ActorExt.h"  // RegisterFuncs
+#include "iEquip_FormExt.h"  // registry, RegisterFuncs
 #include "iEquip_SoulSeeker.h"  // RegisterFuncs
-#include "iEquip_SoulSeekerLib.h"  // gemUtil
-#include "iEquip_Utility.h"  // checkForGIST
 #include "iEquip_WeaponExt.h"  // RegisterFuncs
+#include "RE_GameEvents.h"  // RE::TESEquipEvent
+
+
+#include <sstream>  // TODO
 
 
 #if _WIN64
@@ -27,6 +33,53 @@ constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
 static PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 static SKSEPapyrusInterface* g_papyrus = 0;
 static SKSEMessagingInterface* g_messaging = 0;
+
+
+class EquipEventHandler : public BSTEventSink<RE::TESEquipEvent>
+{
+public:
+	virtual EventResult ReceiveEvent(RE::TESEquipEvent* a_evn, EventDispatcher<RE::TESEquipEvent>* a_dispatcher)
+	{
+		if (a_evn->akSource != *g_thePlayer) {
+			return kEvent_Continue;
+		} else if (a_evn->checkIfBoundWeapEquipped()) {
+			static BSFixedString eventName = "BoundWeaponEquipped";
+			for (auto& form : iEquip_FormExt::registry) {
+				// TODO
+				std::stringstream ss;
+				ss << form;
+				_DMESSAGE(ss.str().c_str());
+				// TODO
+
+				SKSEModCallbackEvent evn(eventName, "", 0.0, form);
+				g_modCallbackEventDispatcher.SendEvent(&evn);
+				_DMESSAGE("BoundWeaponEquipped event dispatched\n");
+			}
+		}
+		return kEvent_Continue;
+	}
+};
+
+
+EquipEventHandler g_equipEventHandler;
+
+
+void MessageHandler(SKSEMessagingInterface::Message* a_msg)
+{
+	switch (a_msg->type) {
+	case SKSEMessagingInterface::kMessage_PreLoadGame:
+		//iEquip_QuestExt::registry.clear();
+		//_DMESSAGE("registry cleared\n");
+		break;
+	case SKSEMessagingInterface::kMessage_InputLoaded:
+	{
+		EventDispatcherList* tmpEventDispatcherList = GetEventDispatcherList();
+		RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(tmpEventDispatcherList);
+		eventDispatcherList->equipDispatcher.AddEventSink(&g_equipEventHandler);
+		break;
+	}
+	}
+}
 
 
 extern "C" {
@@ -47,10 +100,10 @@ extern "C" {
 		g_pluginHandle = a_skse->GetPluginHandle();
 
 		if (a_skse->isEditor) {
-			_FATALERROR("Loaded in editor, marking as incompatible");
+			_FATALERROR("FATAL ERROR: Loaded in editor, marking as incompatible!");
 			return false;
 		} else if (a_skse->runtimeVersion != IEQUIP_RUNTIME_VER_COMPAT) {
-			_FATALERROR("Unsupported runtime version %08X", a_skse->runtimeVersion);
+			_FATALERROR("FATAL ERROR: Unsupported runtime version %08X!", a_skse->runtimeVersion);
 			return false;
 		}
 
@@ -67,15 +120,28 @@ extern "C" {
 
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 
-		//Check if the function registration was a success...
 		bool testActorExt = g_papyrus->Register(iEquip_ActorExt::RegisterFuncs);
-		bool testSoulSeeker = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
-		bool testWeaponExt = g_papyrus->Register(iEquip_WeaponExt::RegisterFuncs);
+		testActorExt ? _DMESSAGE("iEquip_ActorExt registration succeeded!") : _DMESSAGE("iEquip_ActorExt registration failed!");
 
-		if (testSoulSeeker && testActorExt && testWeaponExt) {
-			_MESSAGE("Papyrus registration succeeded!\n");
+		bool testFormExt = g_papyrus->Register(iEquip_FormExt::RegisterFuncs);
+		testFormExt ? _DMESSAGE("iEquip_FormExt registration succeeded!") : _DMESSAGE("iEquip_FormExt registration failed!");
+
+		bool testSoulSeeker = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
+		testSoulSeeker ? _DMESSAGE("iEquip_SoulSeeker registration succeeded!") : _DMESSAGE("iEquip_SoulSeeker registration failed!");
+
+		bool testWeaponExt = g_papyrus->Register(iEquip_WeaponExt::RegisterFuncs);
+		testWeaponExt ? _DMESSAGE("iEquip_WeaponExt registration succeeded!") : _DMESSAGE("iEquip_WeaponExt registration failed!");
+
+		if (!testSoulSeeker || !testFormExt || !testActorExt || !testWeaponExt) {
+			_FATALERROR("FATAL ERROR: Papyrus registration failed!");
+			return false;
+		}
+
+		g_messaging = (SKSEMessagingInterface *)a_skse->QueryInterface(kInterface_Messaging);
+		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {
+			_MESSAGE("Messaging interface registration succeeded!\n");
 		} else {
-			_ERROR("Papyrus registration failed!");
+			_FATALERROR("FATAL ERROR: Messaging interface registration failed!");
 			return false;
 		}
 

@@ -51,7 +51,7 @@ namespace RE
 		virtual void	Unk_4E(void);
 		virtual void	Unk_4F(void);
 		virtual void	Unk_50(void);
-		virtual void	GetStartingPos(NiPoint3 * pos);
+		virtual void	Unk_51(void);
 		virtual void	Unk_52(void);
 		virtual void	Unk_53(void);
 		virtual void	Unk_54(void);
