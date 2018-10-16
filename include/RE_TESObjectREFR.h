@@ -12,11 +12,6 @@ namespace RE
 	public:
 		enum { kTypeID = kFormType_Reference };
 
-		enum
-		{
-			kFlag_Harvested = 0x2000,
-		};
-
 		enum RemoveType
 		{
 			kRemoveType_Remove,

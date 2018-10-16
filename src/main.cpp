@@ -1,4 +1,4 @@
-﻿#include "GameEvents.h"  // EventDispatcher
+﻿#include "GameEvents.h"  // EventDispatcherList
 #include "IDebugLog.h"  // gLog, IDebugLog
 #include "PapyrusEvents.h"  // SKSEModCallbackEvent
 #include "PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEMessagingInterface, SKSEInterface, PluginInfo
@@ -8,6 +8,7 @@
 #include <string>  // string
 
 #include "iEquip_ActorExt.h"  // RegisterFuncs
+#include "iEquip_AmmoExt.h"  // RegisterFuncs
 #include "iEquip_Events.h"  // g_equipEventHandler, g_callbackDispatcher
 #include "iEquip_FormExt.h"  // RegisterFuncs
 #include "iEquip_SoulSeeker.h"  // RegisterFuncs
@@ -19,10 +20,15 @@
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_50;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
+#define GET_DISPATCHER_LIST \
+reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList())
 #else
+#include "RE_ScriptEvent.h"
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker_LE.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
+#define GET_DISPATCHER_LIST \
+reinterpret_cast<RE::EventDispatcherList*>(RE::ScriptEventSourceHolder::GetInstance())
 #endif
 
 
@@ -40,8 +46,7 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
 	{
-		EventDispatcherList* tmpEventDispatcherList = GetEventDispatcherList();
-		RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(tmpEventDispatcherList);
+		RE::EventDispatcherList* eventDispatcherList = GET_DISPATCHER_LIST;
 		eventDispatcherList->equipDispatcher.AddEventSink(&iEquip_Events::g_equipEventHandler);
 		break;
 	}
@@ -91,6 +96,9 @@ extern "C" {
 		bool testActorExt = g_papyrus->Register(iEquip_ActorExt::RegisterFuncs);
 		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful!") : _ERROR("[ERROR] iEquip_ActorExt registration failed!");
 
+		bool testAmmoExt = g_papyrus->Register(iEquip_AmmoExt::RegisterFuncs);
+		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful!") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!");
+
 		bool testFormExt = g_papyrus->Register(iEquip_FormExt::RegisterFuncs);
 		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful!") : _ERROR("[ERROR] iEquip_FormExt registration failed!");
 
@@ -100,7 +108,7 @@ extern "C" {
 		bool testWeaponExt = g_papyrus->Register(iEquip_WeaponExt::RegisterFuncs);
 		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful!") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!");
 
-		if (!testActorExt || !testFormExt || !testSoulSeeker || !testWeaponExt) {
+		if (!testActorExt || !testAmmoExt || !testFormExt || !testSoulSeeker || !testWeaponExt) {
 			_FATALERROR("[FATAL ERROR] Papyrus registration failed!");
 			return false;
 		}

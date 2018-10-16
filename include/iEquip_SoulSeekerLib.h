@@ -58,5 +58,5 @@ namespace iEquip_SoulSeeker
 	};
 
 
-	bool isReusable(TESSoulGem* a_form);
+	bool isReusable(TESSoulGem* a_gem);
 }

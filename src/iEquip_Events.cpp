@@ -5,10 +5,19 @@
 #include "ITypes.h"  // UInt32, SInt32
 #include "PapyrusArgs.h"  // PackValue()
 #include "PapyrusEvents.h"  // EventRegistration, SKSEModCallbackEvent, NullParameters, RegistrationSetHolder, NullParameters
-#include "PapyrusValue.h"  // VMValue
 #include "PapyrusVM.h"  // Output, VMClassRegistry, IFunctionArguments
 
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
+
+
+#if _WIN64
+// Moved from PapyrusVM in SSE
+#include "PapyrusValue.h"  // VMValue
+#endif
+
+#if 0
+#include <sstream>  // TODO
+#endif
 
 
 namespace iEquip_Events
@@ -60,6 +69,14 @@ namespace iEquip_Events
 
 	EventResult EquipEventHandler::ReceiveEvent(RE::TESEquipEvent* a_event, EventDispatcher<RE::TESEquipEvent>* a_dispatcher)
 	{
+#if 0
+		std::stringstream ss;
+		ss << "[DEBUG] event addr: " << a_event;
+		_DMESSAGE(ss.str().c_str());
+		ss.str("");
+		for (;;) {}
+#endif
+
 		if (a_event->akSource != *g_thePlayer) {
 			return kEvent_Continue;
 		} else if (a_event->checkIfBoundWeapEquipped()) {

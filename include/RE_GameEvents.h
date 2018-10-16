@@ -36,9 +36,36 @@ namespace RE
 		UInt64 unk58;  // 58
 		UInt64 unk60;  // 60 - 0x1 when equipping weapons/armor
 	};
+#else
+	class TESEquipEvent
+	{
+	public:
+		Actor* akSource;  // 00
+		UInt32 formID;  // 04
+
+		bool checkIfBoundWeapEquipped();
+
+		// Do NOT call this unless the event is thrown for a weapon!
+		UInt8 getWeaponType();
+
+	private:
+		// This section is incomplete
+		UInt64 unk10;  // 10 - 0xFF000000 when unequipping weapons/armor
+		UInt64 unk18;  // 18
+		UInt64 unk20;  // 20
+		TESForm* unk28;  // 28 - Valid when equipping/unequipping weapons/armor
+		UInt64 unk30;  // 30
+		UInt64 unk38;  // 38
+		UInt64 unk40;  // 40
+		UInt64 unk48;  // 48
+		UInt64 unk50;  // 50
+		UInt64 unk58;  // 58
+		UInt64 unk60;  // 60 - 0x1 when equipping weapons/armor
+	};
 #endif
 
 
+	// These are SSE offsets, but the event dispatcher is in the same position
 	class EventDispatcherList
 	{
 	public:

@@ -128,9 +128,9 @@ namespace iEquip_SoulSeeker
 	}
 
 
-	bool isReusable(TESSoulGem* a_form)
+	bool isReusable(TESSoulGem* a_gem)
 	{
 		static BGSKeyword* reusableSoulGem = static_cast<BGSKeyword*>(BGSDefaultObjectManager::GetSingleton()->objects[0xD8]);
-		return a_form->keyword.HasKeyword(reusableSoulGem);
+		return a_gem->keyword.HasKeyword(reusableSoulGem);
 	}
 }
