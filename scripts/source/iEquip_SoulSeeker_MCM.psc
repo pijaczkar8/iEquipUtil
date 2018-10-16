@@ -291,6 +291,6 @@ Function InvokeBringMeASoul(Int a_reqCharge)
 EndFunction
 
 
-Event OnBoundWeaponEquipped()
-	Debug.Trace("SoulSeekerDBG: OnBoundWeaponEquipped event recieved!")
+Event OnBoundWeaponEquipped(Int a_weaponType)
+	Debug.Trace("SoulSeekerDBG: OnBoundWeaponEquipped event recieved! (weaponType == " + a_weaponType + ")")
 EndEvent

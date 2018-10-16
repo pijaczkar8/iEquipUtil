@@ -3,7 +3,7 @@
 #include "GameEvents.h"  // EventDispatcher
 #include "GameForms.h"  // TESForm
 #include "GameReferences.h"  // Actor
-#include "ITypes.h"  // UInt32, UInt64
+#include "ITypes.h"  // UInt8, UInt32, UInt64
 
 
 namespace RE
@@ -18,6 +18,9 @@ namespace RE
 
 
 		bool checkIfBoundWeapEquipped();
+
+		// Do NOT call this unless the event is thrown for a weapon!
+		UInt8 getWeaponType();
 
 	private:
 		// This section is incomplete

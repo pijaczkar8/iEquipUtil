@@ -10,7 +10,7 @@ namespace iEquip_WeaponExt
 	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
 	{
 		if (!a_weap) {
-			_ERROR("ERROR: In IsWeaponBound() : Invalid weapon!");
+			_ERROR("[ERROR] In IsWeaponBound() : Invalid weapon!");
 			return false;
 		}
 

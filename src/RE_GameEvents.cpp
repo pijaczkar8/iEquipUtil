@@ -17,4 +17,11 @@ namespace RE
 		}
 		return 0;
 	}
+
+
+	UInt8 TESEquipEvent::getWeaponType()
+	{
+		TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(unk28);
+		return weap->gameData.type;
+	}
 }

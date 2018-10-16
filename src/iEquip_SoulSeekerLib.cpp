@@ -63,7 +63,7 @@ namespace iEquip_SoulSeeker
 		try {
 			return _compatGems.at(kSoulSize_Grand - gem->gemSize).addGem(a_entryData);
 		} catch (std::exception& e) {
-			std::string msg = "ERROR: In Soul::addSoul : Invalid soulgem size! (" + std::to_string(gem->gemSize) + ")";
+			std::string msg = "[ERROR] In Soul::addSoul : Invalid soulgem size! (" + std::to_string(gem->gemSize) + ")";
 			_ERROR(msg.c_str());
 			_ERROR(e.what());
 			_ERROR("\n");
@@ -81,7 +81,7 @@ namespace iEquip_SoulSeeker
 					return _compatGems[i].getEntryData();
 				}
 			}
-			_ERROR("ERROR: In Soul::findGem : Unexpectedly exited for loop!\n");
+			_ERROR("[ERROR] In Soul::findGem : Unexpectedly exited for loop!\n");
 		}
 		return 0;
 	}
@@ -113,7 +113,7 @@ namespace iEquip_SoulSeeker
 		try {
 			return _souls.at(a_soulSize - 1).addSoul(a_entryData);
 		} catch (std::exception& e ) {
-			std::string msg = "ERROR: In SoulGem::addSoulGem : Invalid soul size! (" + std::to_string(a_soulSize - 1) + ")";
+			std::string msg = "[ERROR] In SoulGem::addSoulGem : Invalid soul size! (" + std::to_string(a_soulSize - 1) + ")";
 			_ERROR(msg.c_str());
 			_ERROR(e.what());
 			_ERROR("\n");

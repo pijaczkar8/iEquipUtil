@@ -24,14 +24,14 @@ namespace iEquip_ActorExt
 	TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
 	{
 		if (!a_actor) {
-			_ERROR("ERROR: In GetEquippedArrows() : Invalid actor!");
+			_ERROR("[ERROR] In GetEquippedArrows() : Invalid actor!");
 			return 0;
 		}
 
 		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
 		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
 		if (!containerData) {
-			_ERROR("ERROR: In GetEquippedArrows() : No container data!");
+			_ERROR("[ERROR] In GetEquippedArrows() : No container data!");
 			return 0;
 		}
 
@@ -76,33 +76,33 @@ namespace iEquip_ActorExt
 	void EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipItem* a_iActorEquipItem, bool a_preventUnequip, bool a_equipSound)
 	{
 		if (!a_actor) {
-			_ERROR("ERROR: In EquipItemEx() : Invalid actor!");
+			_ERROR("[ERROR] In EquipItemEx() : Invalid actor!");
 			return;
 		} else if (!a_item || !a_item->Has3D()) {
-			_ERROR("ERROR: In EquipItemEx() : Invalid item!");
+			_ERROR("[ERROR] In EquipItemEx() : Invalid item!");
 			return;
 		} else if (!a_iActorEquipItem->validate()) {
-			_ERROR("ERROR: In EquipItemEx() : Failed validation!");
+			_ERROR("[ERROR] In EquipItemEx() : Failed validation!");
 			return;
 		}
 
 		EquipManager* equipManager = EquipManager::GetSingleton();
 		if (!equipManager) {
-			_ERROR("ERROR: In EquipItemEx() : EquipManager not found!");
+			_ERROR("[ERROR] In EquipItemEx() : EquipManager not found!");
 			return;
 		}
 
 		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
 		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
 		if (!containerData) {
-			_ERROR("ERROR: In EquipItemEx() : No container data!");
+			_ERROR("[ERROR] In EquipItemEx() : No container data!");
 			return;
 		}
 
 		// Copy/merge of extraData can fail in edge cases. Obtain it ourselves.
 		InventoryEntryData* entryData = findEntryData(containerData, a_item);
 		if (!entryData) {
-			_ERROR("ERROR: In EquipItemEx() : No entry data!");
+			_ERROR("[ERROR] In EquipItemEx() : No entry data!");
 			return;
 		}
 
@@ -149,7 +149,7 @@ namespace iEquip_ActorExt
 
 			xList = a_iActorEquipItem->findExtraListByForm(entryData);
 			if (!xList) {
-				_ERROR("ERROR: In EquipItemEx() : No extra list!");
+				_ERROR("[ERROR] In EquipItemEx() : No extra list!");
 				return;
 			}
 		}
@@ -164,7 +164,7 @@ namespace iEquip_ActorExt
 			}
 
 			// Slot in use, nothing left to do
-			_ERROR("ERROR: In EquipItemEx() : Slot in use!");
+			_ERROR("[ERROR] In EquipItemEx() : Slot in use!");
 			return;
 		}
 
@@ -177,7 +177,7 @@ namespace iEquip_ActorExt
 		if (!isTargetSlotInUse && hasItemMinCount) {
 			CALL_MEMBER_FN(equipManager, EquipItem)(a_actor, a_item, xList, equipCount, targetEquipSlot, a_equipSound, a_preventUnequip, false, 0);
 		} else {
-			_ERROR("ERROR: In EquipItemEx() : Item does not have min count!");
+			_ERROR("[ERROR] In EquipItemEx() : Item does not have min count!");
 		}
 	}
 

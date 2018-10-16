@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GameForms.h"  // TESForm
+#include "GameTypes.h"  // BSFixedString
+#include "PapyrusEvents.h"  // RegistrationMapHolder, ModCallbackParameters
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag
 #include "PapyrusVM.h"  // VMClassRegistry
 
@@ -9,9 +11,6 @@
 
 namespace iEquip_FormExt
 {
-	extern std::vector<TESForm*> registry;
-
-
 	void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm);
 	bool RegisterFuncs(VMClassRegistry* a_registry);
 }
