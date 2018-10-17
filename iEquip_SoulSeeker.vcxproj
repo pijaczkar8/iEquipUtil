@@ -125,11 +125,16 @@
   <ItemGroup>
     <ClCompile Include="src\iEquip_ActorExt.cpp" />
     <ClCompile Include="src\iEquip_ActorExtLib.cpp" />
+    <ClCompile Include="src\iEquip_AmmoExt.cpp" />
+    <ClCompile Include="src\iEquip_Events.cpp" />
+    <ClCompile Include="src\iEquip_ExtraLocator.cpp" />
+    <ClCompile Include="src\iEquip_FormExt.cpp" />
     <ClCompile Include="src\iEquip_SoulSeekerLib.cpp" />
     <ClCompile Include="src\iEquip_Utility.cpp" />
+    <ClCompile Include="src\iEquip_WeaponExt.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\iEquip_SoulSeeker.cpp" />
-    <ClCompile Include="src\RE_EnchantmentItem.cpp" />
+    <ClCompile Include="src\RE_GameEvents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\common_vc14.vcxproj">
@@ -145,11 +150,17 @@
   <ItemGroup>
     <ClInclude Include="include\iEquip_ActorExt.h" />
     <ClInclude Include="include\iEquip_ActorExtLib.h" />
+    <ClInclude Include="include\iEquip_AmmoExt.h" />
+    <ClInclude Include="include\iEquip_Events.h" />
+    <ClInclude Include="include\iEquip_ExtraLocator.h" />
+    <ClInclude Include="include\iEquip_FormExt.h" />
     <ClInclude Include="include\iEquip_SoulSeeker.h" />
     <ClInclude Include="include\iEquip_SoulSeekerLib.h" />
     <ClInclude Include="include\iEquip_Utility.h" />
-    <ClInclude Include="include\RE_BaseExtraData.h" />
-    <ClInclude Include="include\RE_EnchantmentItem.h" />
+    <ClInclude Include="include\iEquip_WeaponExt.h" />
+    <ClInclude Include="include\RE_ExtraPoison.h" />
+    <ClInclude Include="include\RE_GameEvents.h" />
+    <ClInclude Include="include\RE_TESObjectREFR.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

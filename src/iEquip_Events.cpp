@@ -15,6 +15,7 @@
 #include "PapyrusValue.h"  // VMValue
 #endif
 
+
 #if 0
 #include <sstream>  // TODO
 #endif
@@ -76,7 +77,6 @@ namespace iEquip_Events
 		ss.str("");
 		for (;;) {}
 #endif
-
 		if (a_event->akSource != *g_thePlayer) {
 			return kEvent_Continue;
 		} else if (a_event->checkIfBoundWeapEquipped()) {

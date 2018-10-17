@@ -51,6 +51,6 @@ namespace RE
 		virtual void	Unk_53(void);
 		virtual void	Unk_54(void);
 		virtual void	Unk_55(void);
-		virtual void	RemoveItem(UInt32* droppedItemHandle, TESForm* akItem, UInt32 aiCount, UInt32 mode, BaseExtraList* extraList, TESObjectREFR *moveToRef, UInt32 unk7, UInt32 unk8);
+		virtual void	RemoveItem(UInt32* droppedItemHandle, TESForm* akItem, UInt32 aiCount, UInt32 mode, BaseExtraList* extraList, TESObjectREFR* moveToRef, UInt32 unk7, UInt32 unk8);
 	};
 };
