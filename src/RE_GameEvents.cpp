@@ -1,40 +1,43 @@
 #include "RE_GameEvents.h"
 
+#include "GameForms.h"  // LookupFormByID
 #include "GameObjects.h"  // TESObjectWEAP
+#include "GameRTTI.h"  // DYNAMIC_CAST
 
 #include "iEquip_WeaponExt.h"  // IsWeaponBound()
 
 
 namespace RE
 {
+	TESObjectWEAP* TESEquipEvent::checkIfBoundWeapEquipped()
+	{
+		if (!isUnequipEvent()) {
+			TESForm* form = LookupFormByID(formID);
+			if (form) {
+				TESObjectWEAP* weap = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
+				if (weap && weap->formType == kFormType_Weapon) {
+					return iEquip_WeaponExt::IsWeaponBound(0, weap) ? weap : 0;
+				}
+			}
+		}
+		return 0;
+	}
+
+
 #if _WIN64
-	bool TESEquipEvent::checkIfBoundWeapEquipped()
+	bool TESEquipEvent::isUnequipEvent()
 	{
-		if (unk10 != 0xFF000000 && unk60 == 0x1) {
-			if (unk28->formType == kFormType_Weapon) {
-				TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(unk28);
-				return iEquip_WeaponExt::IsWeaponBound(0, weap);
-			}
-		}
-		return 0;
+		return unk10 == 0xFF000000;
 	}
+
 #else
-	bool TESEquipEvent::checkIfBoundWeapEquipped()
+	bool TESEquipEvent::isUnequipEvent()
 	{
-		if (unk10 != 0xFF000000 && unk60 == 0x1) {
-			if (unk28->formType == kFormType_Weapon) {
-				TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(unk28);
-				return iEquip_WeaponExt::IsWeaponBound(0, weap);
-			}
-		}
-		return 0;
+		return unk0C == 0x12000000;
 	}
+
+
+	EventDispatcher<TESEquipEvent>* g_equipEventDispatcher = (EventDispatcher<TESEquipEvent>*) 0x012E4EA0;
+
 #endif
-
-
-	UInt8 TESEquipEvent::getWeaponType()
-	{
-		TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(unk28);
-		return weap->gameData.type;
-	}
 }

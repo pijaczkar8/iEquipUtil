@@ -20,15 +20,19 @@
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_50;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
-#define GET_DISPATCHER_LIST \
-reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList())
+
+#define SINK_EVENT_HANDLER \
+RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList()); \
+eventDispatcherList->equipDispatcher.AddEventSink(&iEquip_Events::g_equipEventHandler)
+
 #else
-#include "RE_ScriptEvent.h"
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker_LE.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
-#define GET_DISPATCHER_LIST \
-reinterpret_cast<RE::EventDispatcherList*>(RE::ScriptEventSourceHolder::GetInstance())
+
+#define SINK_EVENT_HANDLER \
+RE::g_equipEventDispatcher->AddEventSink(&iEquip_Events::g_equipEventHandler)
+
 #endif
 
 
@@ -46,8 +50,7 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
 	{
-		RE::EventDispatcherList* eventDispatcherList = GET_DISPATCHER_LIST;
-		eventDispatcherList->equipDispatcher.AddEventSink(&iEquip_Events::g_equipEventHandler);
+		SINK_EVENT_HANDLER;
 		break;
 	}
 	}
@@ -58,7 +61,7 @@ extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface* a_skse, PluginInfo* a_info)
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, IEQUIP_LOG_PATH);
-		gLog.SetPrintLevel(IDebugLog::kLevel_Error);
+		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
 		_MESSAGE(IEQUIP_NAME);

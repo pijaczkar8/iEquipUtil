@@ -10,7 +10,8 @@ namespace iEquip_Events
 	class EquipEventHandler : public BSTEventSink<RE::TESEquipEvent>
 	{
 	public:
-		EventResult ReceiveEvent(RE::TESEquipEvent* a_event, EventDispatcher<RE::TESEquipEvent>* a_dispatcher);
+		virtual ~EquipEventHandler();
+		virtual EventResult ReceiveEvent(RE::TESEquipEvent* a_event, EventDispatcher<RE::TESEquipEvent>* a_dispatcher) override;
 	};
 
 

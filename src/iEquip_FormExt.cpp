@@ -7,8 +7,10 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 
 #include <vector>  // vector
+#include <string>  // string
 
 #include "iEquip_Events.h"  // g_callbackRegs
+#include "iEquip_Utility.h"  // iEquip_Utility::numToHexString()
 
 
 namespace iEquip_FormExt
@@ -16,11 +18,12 @@ namespace iEquip_FormExt
 	void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
 	{
 		if (!a_thisForm) {
-			_ERROR("[ERROR] In iEquip_FormExt::RegisterForBoundWeaponEquippedEvent() : Invalid form!");
+			_ERROR("[ERROR] In iEquip_FormExt::RegisterForBoundWeaponEquippedEvent() : Invalid form!\n");
 			return;
 		} else {
 			iEquip_Events::g_callbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);
-			_DMESSAGE("[DEBUG] Registered for OnBoundWeaponEquippedEvent");
+			std::string msg = "[DEBUG] Registered (0x" + iEquip_Utility::numToHexString(a_thisForm->formID) + ") for OnBoundWeaponEquippedEvent\n";
+			_DMESSAGE(msg.c_str());
 		}
 	}
 

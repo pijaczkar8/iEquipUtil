@@ -1,6 +1,7 @@
 #include "iEquip_Events.h"
 
 #include "GameEvents.h"  // EventResult, EventDispatcher
+#include "GameObjects.h"  // TESObjectWEAP
 #include "GameTypes.h"  // BSFixedString
 #include "ITypes.h"  // UInt32, SInt32
 #include "PapyrusArgs.h"  // PackValue()
@@ -13,11 +14,6 @@
 #if _WIN64
 // Moved from PapyrusVM in SSE
 #include "PapyrusValue.h"  // VMValue
-#endif
-
-
-#if 0
-#include <sstream>  // TODO
 #endif
 
 
@@ -68,22 +64,18 @@ namespace iEquip_Events
 	};
 
 
+	EquipEventHandler::~EquipEventHandler()
+	{}
+
+
 	EventResult EquipEventHandler::ReceiveEvent(RE::TESEquipEvent* a_event, EventDispatcher<RE::TESEquipEvent>* a_dispatcher)
 	{
-#if 0
-		std::stringstream ss;
-		ss << "[DEBUG] event addr: " << a_event;
-		_DMESSAGE(ss.str().c_str());
-		ss.str("");
-		for (;;) {}
-#endif
+		TESObjectWEAP* weap = 0;
 		if (a_event->akSource != *g_thePlayer) {
 			return kEvent_Continue;
-		} else if (a_event->checkIfBoundWeapEquipped()) {
+		} else if (weap = a_event->checkIfBoundWeapEquipped()) {
 			static BSFixedString callbackName = "OnBoundWeaponEquipped";
-			g_callbackRegs.ForEach(
-				EventQueueFunctor1<UInt32>(callbackName, a_event->getWeaponType())
-			);
+			g_callbackRegs.ForEach(EventQueueFunctor1<UInt32>(callbackName, weap->gameData.type));
 			_DMESSAGE("[DEBUG] BoundWeaponEquipped event dispatched\n");
 		}
 		return kEvent_Continue;
