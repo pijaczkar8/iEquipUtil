@@ -35,9 +35,9 @@ namespace iEquip_ActorExt
 	BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID)
 	{
 		switch (a_slotID) {
-		case kSlotId_Right:
+		case kSlotID_Right:
 			return GetRightHandSlot();
-		case kSlotId_Left:
+		case kSlotID_Left:
 			return GetLeftHandSlot();
 		default:
 			return 0;
@@ -45,7 +45,7 @@ namespace iEquip_ActorExt
 	}
 
 
-	bool CanEquipBothHands(Actor* a_actor, TESForm* a_item)
+	bool canEquipBothHands(Actor* a_actor, TESForm* a_item)
 	{
 		BGSEquipType * equipType = DYNAMIC_CAST(a_item, TESForm, BGSEquipType);
 		if (!equipType) {
@@ -64,6 +64,43 @@ namespace iEquip_ActorExt
 		}
 
 		return false;
+	}
+
+
+	UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap)
+	{
+		if (!a_actor) {
+			_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!");
+			return kSlotID_Default;
+		} else if (!a_weap) {
+			_ERROR("[ERROR] In GetEquippedHand() : a_weap is a NONE form!");
+			return kSlotID_Default;
+		}
+
+		TESForm* rightHand = a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Right];
+		TESForm* leftHand = a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Left];
+
+		UInt32 slotID = 0;
+		if (rightHand && rightHand->formID == a_weap->formID) {
+			slotID += kSlotID_Right;
+		}
+		if (leftHand && leftHand->formID == a_weap->formID) {
+			slotID += kSlotID_Left;
+		}
+		return slotID;
+	}
+
+
+	UInt32 getUnequippedSlots(Actor* a_actor)
+	{
+		if (!a_actor) {
+			_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!");
+			return kSlotID_Default;
+		}
+
+		UInt32 slotID = !a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Right] ? kSlotID_Right : kSlotID_Default;
+		slotID += !a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Left] ? kSlotID_Left : kSlotID_Default;
+		return slotID;
 	}
 
 

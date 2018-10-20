@@ -9,7 +9,7 @@
 
 #include "iEquip_ActorExt.h"  // RegisterFuncs
 #include "iEquip_AmmoExt.h"  // RegisterFuncs
-#include "iEquip_Events.h"  // g_equipEventHandler, g_callbackDispatcher
+#include "iEquip_Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "iEquip_FormExt.h"  // RegisterFuncs
 #include "iEquip_SoulSeeker.h"  // RegisterFuncs
 #include "iEquip_WeaponExt.h"  // RegisterFuncs
@@ -45,7 +45,8 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 {
 	switch (a_msg->type) {
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
-		iEquip_Events::g_callbackRegs.Clear();
+		iEquip_Events::g_boundWeaponEquippedCallbackRegs.Clear();
+		iEquip_Events::g_boundWeaponUnequippedCallbackRegs.Clear();
 		_DMESSAGE("[DEBUG] Registry cleared\n");
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
@@ -118,17 +119,9 @@ extern "C" {
 
 		g_messaging = (SKSEMessagingInterface*)a_skse->QueryInterface(kInterface_Messaging);
 		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {
-			_MESSAGE("[MESSAGE] Messaging interface registration successful!");
+			_MESSAGE("[MESSAGE] Messaging interface registration successful!\n");
 		} else {
 			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!");
-			return false;
-		}
-
-		iEquip_Events::g_callbackDispatcher = (EventDispatcher<SKSEModCallbackEvent>*)g_messaging->GetEventDispatcher(SKSEMessagingInterface::kDispatcher_ModEvent);
-		if (iEquip_Events::g_callbackDispatcher) {
-			_MESSAGE("[MESSAGE] Mod callback event dispatcher query successful!\n");
-		} else {
-			_FATALERROR("[FATAL ERROR] Mod callback event dispatcher query failed!");
 			return false;
 		}
 

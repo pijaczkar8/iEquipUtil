@@ -15,7 +15,7 @@ namespace iEquip_Events
 	};
 
 
-	extern RegistrationSetHolder<NullParameters> g_callbackRegs;
-	extern EventDispatcher<SKSEModCallbackEvent>* g_callbackDispatcher;
+	extern RegistrationSetHolder<NullParameters> g_boundWeaponEquippedCallbackRegs;
+	extern RegistrationSetHolder<NullParameters> g_boundWeaponUnequippedCallbackRegs;
 	extern EquipEventHandler g_equipEventHandler;
 }

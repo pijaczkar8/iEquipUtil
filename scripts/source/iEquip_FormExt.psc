@@ -6,6 +6,11 @@ ScriptName iEquip_FormExt
 Function RegisterForBoundWeaponEquippedEvent(Form a_thisForm) Global Native
 
 
+; @brief Registers the passed script to be notified when the player unequips a bound weapon.
+; @param a_thisForm The form to register for the event (i.e. Self).
+Function RegisterForBoundWeaponUnequippedEvent(Form a_thisForm) Global Native
+
+
 ; @brief Fires whenever the player equips a bound weapon.
 ; @param a_weaponType The type of weapon equipped.
 ; VALID TYPES:
@@ -29,5 +34,23 @@ Function RegisterForBoundWeaponEquippedEvent(Form a_thisForm) Global Native
 ; 17 - Bow
 ; 18 - Staff
 ; 19 - Crossbow
-Event OnBoundWeaponEquipped(Int a_weaponType)
+; @param a_equipSlot The slot the weapon is equipped to.
+; VALID SLOTS:
+; 0 - ERROR
+; 1 - Right hand
+; 2 - Left hand
+; 3 - Both hands
+Event OnBoundWeaponEquipped(Int a_weaponType, Int a_equipSlot)
+EndEvent
+
+
+; @brief Fires whenever the player unequips a bound weapon.
+; @param a_weap The weapon unequipped.
+; @param a_unequipSlot The slot the weapon was unequipped from.
+; VALID SLOTS:
+; 0 - ERROR
+; 1 - Right hand
+; 2 - Left hand
+; 3 - Both hands
+Event OnBoundWeaponUnequipped(Weapon a_weap, Int a_unequipSlot)
 EndEvent

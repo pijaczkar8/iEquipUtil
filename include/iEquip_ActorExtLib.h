@@ -11,15 +11,38 @@ namespace iEquip_ActorExt
 {
 	enum
 	{
-		kSlotId_Default = 0,
-		kSlotId_Right = 1,
-		kSlotId_Left = 2
+		kSlotID_Default = 0,
+		kSlotID_Right = 1,
+		kSlotID_Left = 2
 	};
 
 
 	InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item);
 	BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID);
-	bool CanEquipBothHands(Actor* a_actor, TESForm* a_item);
+	bool canEquipBothHands(Actor* a_actor, TESForm* a_item);
+
+	/* @brief Checks in which slots the given weapon is equipped by the given actor.
+	 * @param a_actor The actor to check.
+	 * @param a_weap The weapon to check for.
+	 * @return Returns the slot the weapon is equipped in.
+	 * RETURN TYPES:
+	 * 0 - Unequipped
+	 * 1 - Right hand
+	 * 2 - Left hand
+	 * 3 - Dual wield
+	 */
+	UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap);
+
+	/* @brief Checks which slots the given actor does not have a weapon equipped in.
+	 * @param a_actor The actor to check.
+	 * @return Returns the slot the weapons are equipped to.
+	 * RETURN TYPES:
+	 * 0 - Fists
+	 * 1 - Right hand
+	 * 2 - Left hand
+	 * 3 - Dual wield
+	 */
+	UInt32 getUnequippedSlots(Actor* a_actor);
 
 
 	class IActorEquipItem

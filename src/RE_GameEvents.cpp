@@ -9,29 +9,25 @@
 
 namespace RE
 {
-	TESObjectWEAP* TESEquipEvent::checkIfBoundWeapEquipped()
+	TESObjectWEAP* TESEquipEvent::checkIfBoundWeapEquipEvent()
 	{
-		if (!isUnequipEvent()) {
-			TESForm* form = LookupFormByID(formID);
-			if (form) {
-				TESObjectWEAP* weap = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
-				if (weap && weap->formType == kFormType_Weapon) {
-					return iEquip_WeaponExt::IsWeaponBound(0, weap) ? weap : 0;
-				}
-			}
+		TESForm* form = LookupFormByID(formID);
+		if (form && form->formType == kFormType_Weapon) {
+			TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(form);
+			return iEquip_WeaponExt::IsWeaponBound(0, weap) ? weap : 0;
 		}
 		return 0;
 	}
 
 
 #if _WIN64
-	bool TESEquipEvent::isUnequipEvent()
+	bool TESEquipEvent::isUnequipWeaponArmorEvent()
 	{
 		return unk10 == 0xFF000000;
 	}
 
 #else
-	bool TESEquipEvent::isUnequipEvent()
+	bool TESEquipEvent::isUnequipWeaponArmorEvent()
 	{
 		return unk0C == 0x12000000;
 	}

@@ -170,7 +170,7 @@ namespace iEquip_ActorExt
 
 		// For dual wield, prevent that 1 item can be equipped in two hands if its already equipped
 		bool isEquipped = (rightEquipList || leftEquipList);
-		if (targetEquipSlot && isEquipped && CanEquipBothHands(a_actor, a_item)) {
+		if (targetEquipSlot && isEquipped && canEquipBothHands(a_actor, a_item)) {
 			hasItemMinCount = itemCount > 1;
 		}
 

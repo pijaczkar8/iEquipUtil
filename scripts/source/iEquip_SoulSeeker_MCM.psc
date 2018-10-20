@@ -43,7 +43,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("ActorExt_GetEquipped_T", "Get equipped ammo form", "")
 		AddTextOptionST("WeaponExt_IsWeaponBound_T", "Check if right hand is bound", "")
 		AddTextOptionST("WeaponExt_IsAmmoBound_T", "Check if equipped ammo is bound", "")
-		AddTextOptionST("FormExt_RegisterBoundWeaponEquipped_T", "Register for OnBoundWeaponEquipped event", "")
+		AddTextOptionST("FormExt_RegisterBoundWeaponEquipped_T", "Register for OnBoundWeaponEquipped events", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -225,6 +225,8 @@ State FormExt_RegisterBoundWeaponEquipped_T
 	Event OnSelectST()
 		iEquip_FormExt.RegisterForBoundWeaponEquippedEvent(Self)
 		Debug.Trace("SoulSeekerDBG: Registered for OnBoundWeaponEquipped")
+		iEquip_FormExt.RegisterForBoundWeaponUnequippedEvent(Self)
+		Debug.Trace("SoulSeekerDBG: Registered for OnBoundWeaponUnequipped")
 	EndEvent
 
 	Event OnDefaultST()
@@ -310,6 +312,11 @@ Function InvokeBringMeASoul(Int a_reqCharge)
 EndFunction
 
 
-Event OnBoundWeaponEquipped(Int a_weaponType)
-	Debug.Trace("SoulSeekerDBG: OnBoundWeaponEquipped event recieved! (weaponType == " + a_weaponType + ")")
+Event OnBoundWeaponEquipped(Int a_weaponType, Int a_equipSlot)
+	Debug.Trace("SoulSeekerDBG: OnBoundWeaponEquipped event recieved! (type == " + a_weaponType + ") (slot == " + a_equipSlot + ")")
+EndEvent
+
+
+Event OnBoundWeaponUnequipped(Weapon a_weap, Int a_unequipSlot)
+	Debug.Trace("SoulSeekerDBG: OnBoundWeaponUnequipped event recieved! (name == " + a_weap.GetName() + ") (slot == " + a_unequipSlot + ")")
 EndEvent

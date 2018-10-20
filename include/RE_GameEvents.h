@@ -15,13 +15,11 @@ namespace RE
 		Actor*	akSource;	// 00
 		UInt32	formID;		// 08
 		UInt32	pad0C;		// 0C
-		UInt64	unk10;		// 10 - 0xFF000000 when unequipping weapons/armor
+		UInt64	unk10;		// 10 - 0xFF000000 when unequipping weapons/armor, seems to be a function ptr
 
 
-		TESObjectWEAP* checkIfBoundWeapEquipped();
-
-	private:
-		bool isUnequipEvent();
+		TESObjectWEAP* checkIfBoundWeapEquipEvent();
+		bool isUnequipWeaponArmorEvent();
 	};
 	STATIC_ASSERT(offsetof(TESEquipEvent, akSource) == 0x00);
 	STATIC_ASSERT(offsetof(TESEquipEvent, formID) == 0x08);
@@ -54,13 +52,11 @@ namespace RE
 		Actor*	akSource;	// 00
 		UInt32	formID;		// 04
 		UInt32	pad08;		// 08
-		UInt32	unk0C;		// 0C - 0x12000000 when unequipping weapons/armor
+		UInt32	unk0C;		// 0C - 0x12000000 when unequipping weapons/armor, seems to be a function ptr
 
 
-		TESObjectWEAP* checkIfBoundWeapEquipped();
-
-	private:
-		bool isUnequipEvent();
+		TESObjectWEAP* checkIfBoundWeapEquipEvent();
+		bool isUnequipWeaponArmorEvent();
 	};
 	STATIC_ASSERT(offsetof(TESEquipEvent, akSource) == 0x00);
 	STATIC_ASSERT(offsetof(TESEquipEvent, formID) == 0x04);
