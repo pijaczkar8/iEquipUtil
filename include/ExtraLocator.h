@@ -7,7 +7,7 @@
 #include <vector>  // vector
 
 
-namespace iEquip_ExtraLocator
+namespace iEquip
 {
 	class ExtraListLocator
 	{

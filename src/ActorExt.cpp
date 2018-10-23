@@ -1,4 +1,4 @@
-#include "iEquip_ActorExt.h"
+#include "ActorExt.h"
 
 #include "GameBSExtraData.h"  // BaseExtraList
 #include "GameData.h"  // EquipManager
@@ -12,14 +12,11 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 #include "Utilities.h"  // CALL_MEMBER_FN
 
-#include "iEquip_ActorExtLib.h"  // IActorEquipItem
-#include "iEquip_ExtraLocator.h"  // ExtraLocator
+#include "ActorExtLib.h"  // IActorEquipItem
+#include "ExtraLocator.h"  // ExtraLocator
 
 
-using iEquip_ExtraLocator::ExtraListLocator;
-
-
-namespace iEquip_ActorExt
+namespace iEquip
 {
 	TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
 	{
@@ -182,20 +179,23 @@ namespace iEquip_ActorExt
 	}
 
 
-	bool RegisterFuncs(VMClassRegistry* a_registry)
+	namespace ActorExt
 	{
-		a_registry->RegisterFunction(
-			new NativeFunction1<StaticFunctionTag, TESAmmo*, Actor*>("GetEquippedAmmo", "iEquip_ActorExt", iEquip_ActorExt::GetEquippedAmmo, a_registry));
+		bool RegisterFuncs(VMClassRegistry* a_registry)
+		{
+			a_registry->RegisterFunction(
+				new NativeFunction1<StaticFunctionTag, TESAmmo*, Actor*>("GetEquippedAmmo", "iEquip_ActorExt", GetEquippedAmmo, a_registry));
 
-		a_registry->RegisterFunction(
-			new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, bool, bool>("EquipEnchantedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipEnchantedItemEx, a_registry));
+			a_registry->RegisterFunction(
+				new NativeFunction6<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, bool, bool>("EquipEnchantedItemEx", "iEquip_ActorExt", EquipEnchantedItemEx, a_registry));
 
-		a_registry->RegisterFunction(
-			new NativeFunction7<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, UInt32, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipPoisonedItemEx, a_registry));
+			a_registry->RegisterFunction(
+				new NativeFunction7<StaticFunctionTag, void, Actor*, TESForm*, SInt32, AlchemyItem*, UInt32, bool, bool>("EquipPoisonedItemEx", "iEquip_ActorExt", EquipPoisonedItemEx, a_registry));
 
-		a_registry->RegisterFunction(
-			new NativeFunction8<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, AlchemyItem*, UInt32, bool, bool>("EquipEnchantedAndPoisonedItemEx", "iEquip_ActorExt", iEquip_ActorExt::EquipEnchantedAndPoisonedItemEx, a_registry));
+			a_registry->RegisterFunction(
+				new NativeFunction8<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, AlchemyItem*, UInt32, bool, bool>("EquipEnchantedAndPoisonedItemEx", "iEquip_ActorExt", EquipEnchantedAndPoisonedItemEx, a_registry));
 
-		return true;
+			return true;
+		}
 	}
 }

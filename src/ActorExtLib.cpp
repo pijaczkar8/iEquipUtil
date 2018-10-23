@@ -1,4 +1,4 @@
-#include "iEquip_ActorExtLib.h"
+#include "ActorExtLib.h"
 
 #include "GameBSExtraData.h"  // BaseExtraList
 #include "GameData.h"  // GetLeftHandSlot, GetRightHandSlot, GetEitherHandSlot
@@ -8,14 +8,11 @@
 #include "GameRTTI.h"  // DYNAMIC_CAST
 #include "IDebugLog.h"  // gLog
 
-#include "iEquip_ExtraLocator.h"  // ExtraListLocator
+#include "ExtraLocator.h"  // ExtraListLocator
 #include "RE_ExtraPoison.h"  // RE::ExtraPoison
 
 
-using iEquip_ExtraLocator::ExtraListLocator;
-
-
-namespace iEquip_ActorExt
+namespace iEquip
 {
 	InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item)
 	{

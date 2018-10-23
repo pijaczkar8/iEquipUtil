@@ -5,8 +5,14 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 
 
-namespace iEquip_WeaponExt
+namespace iEquip
 {
 	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
-	bool RegisterFuncs(VMClassRegistry* a_registry);
+	bool IsWeaponGrenade(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
+
+
+	namespace WeaponExt
+	{
+		bool RegisterFuncs(VMClassRegistry* a_registry);
+	}
 }

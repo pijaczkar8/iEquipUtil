@@ -5,7 +5,7 @@
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
 
 
-namespace iEquip_Events
+namespace iEquip
 {
 	class EquipEventHandler : public BSTEventSink<RE::TESEquipEvent>
 	{

@@ -9,8 +9,13 @@
 #include <vector>  // vector
 
 
-namespace iEquip_FormExt
+namespace iEquip
 {
 	void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm);
-	bool RegisterFuncs(VMClassRegistry* a_registry);
+
+
+	namespace FormExt
+	{
+		bool RegisterFuncs(VMClassRegistry* a_registry);
+	}
 }

@@ -1,4 +1,4 @@
-#include "iEquip_Events.h"
+#include "Events.h"
 
 #include "GameAPI.h"  // g_thePlayer
 #include "GameEvents.h"  // EventResult, EventDispatcher
@@ -9,7 +9,7 @@
 #include "PapyrusEvents.h"  // EventRegistration, SKSEModCallbackEvent, NullParameters, RegistrationSetHolder, NullParameters
 #include "PapyrusVM.h"  // Output, VMClassRegistry, IFunctionArguments
 
-#include "iEquip_ActorExtLib.h"  // GetEquippedHand
+#include "ActorExtLib.h"  // GetEquippedHand
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
 
 
@@ -19,7 +19,7 @@
 #endif
 
 
-namespace iEquip_Events
+namespace iEquip
 {
 	template <typename T> void SetVMValue(VMValue* a_val, T a_arg)
 	{
@@ -110,12 +110,12 @@ namespace iEquip_Events
 		} else if (weap = a_event->checkIfBoundWeapEquipEvent()) {
 			if (!a_event->isUnequipWeaponArmorEvent()) {
 				static BSFixedString callbackName = "OnBoundWeaponEquipped";
-				UInt32 equipSlots = iEquip_ActorExt::getEquippedSlots((*g_thePlayer), weap);
+				UInt32 equipSlots = getEquippedSlots((*g_thePlayer), weap);
 				g_boundWeaponEquippedCallbackRegs.ForEach(EventQueueFunctor2<UInt32, UInt32>(callbackName, weap->gameData.type, equipSlots));
 				_DMESSAGE("[DEBUG] OnBoundWeaponEquipped event dispatched\n");
 			} else {
 				static BSFixedString callbackName = "OnBoundWeaponUnequipped";
-				UInt32 unequipSlots = iEquip_ActorExt::getUnequippedSlots((*g_thePlayer));
+				UInt32 unequipSlots = getUnequippedSlots((*g_thePlayer));
 				g_boundWeaponUnequippedCallbackRegs.ForEach(EventQueueFunctor2<TESObjectWEAP*, UInt32>(callbackName, weap, unequipSlots));
 				_DMESSAGE("[DEBUG] OnBoundWeaponUnequipped event dispatched\n");
 			}

@@ -42,7 +42,9 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("ActorExt_EquipEnchAndPoisoned_T", "Equip enchanted and poisoned item", "")
 		AddTextOptionST("ActorExt_GetEquipped_T", "Get equipped ammo form", "")
 		AddTextOptionST("WeaponExt_IsWeaponBound_T", "Check if right hand is bound", "")
+		AddTextOptionST("WeaponExt_IsWeaponGrenade_T", "Check if right hand is a grenade", "")
 		AddTextOptionST("WeaponExt_IsAmmoBound_T", "Check if equipped ammo is bound", "")
+		AddTextOptionST("WeaponExt_IsAmmoJavelin_T", "Check if equipped ammo is a javelin", "")
 		AddTextOptionST("FormExt_RegisterBoundWeaponEquipped_T", "Register for OnBoundWeaponEquipped events", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
@@ -203,6 +205,24 @@ State WeaponExt_IsWeaponBound_T
 EndState
 
 
+State WeaponExt_IsWeaponGrenade_T
+	Event OnSelectST()
+		Weapon weap = PlayerRef.GetEquippedWeapon()
+		If (iEquip_WeaponExt.IsWeaponGrenade(weap))
+			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is a grenade!")
+		Else
+			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is not a grenade!")
+		EndIf
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
 State WeaponExt_IsAmmoBound_T
 	Event OnSelectST()
 		Ammo myAmmo = iEquip_ActorExt.GetEquippedAmmo(PlayerRef)
@@ -210,6 +230,24 @@ State WeaponExt_IsAmmoBound_T
 			Debug.Trace("SoulSeekerDBG: Player's equipped ammo is bound!")
 		Else
 			Debug.Trace("SoulSeekerDBG: Player's equipped ammo is not bound!")
+		EndIf
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State WeaponExt_IsAmmoJavelin_T
+	Event OnSelectST()
+		Ammo myAmmo = iEquip_ActorExt.GetEquippedAmmo(PlayerRef)
+		If (iEquip_AmmoExt.IsAmmoJavelin(myAmmo))
+			Debug.Trace("SoulSeekerDBG: Player's equipped ammo is a javelin!")
+		Else
+			Debug.Trace("SoulSeekerDBG: Player's equipped ammo is not a javelin!")
 		EndIf
 	EndEvent
 

@@ -1,4 +1,4 @@
-#include "iEquip_SoulSeeker.h"
+#include "SoulSeeker.h"
 
 #include "IDebugLog.h"  // gLog
 #include "ITypes.h"  // UInt32, SInt32
@@ -13,8 +13,8 @@
 
 #include <string>  // string
 
-#include "iEquip_ExtraLocator.h"  // ExtraListLocator
-#include "iEquip_SoulSeekerLib.h"  // SoulGem, SoulSize
+#include "ExtraLocator.h"  // ExtraListLocator
+#include "SoulSeekerLib.h"  // SoulGem, SoulSize
 #include "RE_TESObjectREFR.h"  // RE::TESObjectREFR
 
 
@@ -28,10 +28,7 @@ CALL_MEMBER_FN(reinterpret_cast<RE::InventoryEntryData*>(entryData), fn)
 #endif
 
 
-using iEquip_ExtraLocator::ExtraListLocator;
-
-
-namespace iEquip_SoulSeeker
+namespace iEquip
 {
 	/**
 	 * @brief Fetches the most optimal soulgem to fill an enchanted weapon.
@@ -205,11 +202,14 @@ namespace iEquip_SoulSeeker
 	}
 
 
-	bool RegisterFuncs(VMClassRegistry* a_registry)
+	namespace SoulSeeker
 	{
-		a_registry->RegisterFunction(
-			new NativeFunction4<StaticFunctionTag, SInt32, UInt32, UInt32, bool, bool>("BringMeASoul", "iEquip_SoulSeeker", iEquip_SoulSeeker::BringMeASoul, a_registry));
+		bool RegisterFuncs(VMClassRegistry* a_registry)
+		{
+			a_registry->RegisterFunction(
+				new NativeFunction4<StaticFunctionTag, SInt32, UInt32, UInt32, bool, bool>("BringMeASoul", "iEquip_SoulSeeker", BringMeASoul, a_registry));
 
-		return true;
+			return true;
+		}
 	}
 }

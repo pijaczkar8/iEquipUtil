@@ -5,8 +5,14 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 
 
-namespace iEquip_AmmoExt
+namespace iEquip
 {
 	bool IsAmmoBound(StaticFunctionTag* a_base, TESAmmo* a_ammo);
-	bool RegisterFuncs(VMClassRegistry* a_registry);
+	bool IsAmmoJavelin(StaticFunctionTag* a_base, TESAmmo* a_ammo);
+
+
+	namespace AmmoExt
+	{
+		bool RegisterFuncs(VMClassRegistry* a_registry);
+	}
 }

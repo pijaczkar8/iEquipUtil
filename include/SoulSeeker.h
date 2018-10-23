@@ -5,10 +5,10 @@
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag
 #include "PapyrusVM.h"  // VMClassRegistry
 
-#include "iEquip_SoulSeekerLib.h"  // SoulGem
+#include "SoulSeekerLib.h"  // SoulGem
 
 
-namespace iEquip_SoulSeeker
+namespace iEquip
 {
 	enum FillMethod : UInt32
 	{
@@ -24,5 +24,10 @@ namespace iEquip_SoulSeeker
 	InventoryEntryData* soulSearchUp(SoulGem& a_candidates, UInt32 a_soulBegin, UInt32 a_soulEnd, bool a_partialFill);
 	InventoryEntryData* soulSearchDown(SoulGem& a_candidates, UInt32 a_soulBegin, UInt32 a_soulEnd, bool a_partialFill);
 	void removeExtraSoul(ExtraContainerChanges::Data* a_containerData, InventoryEntryData* a_entry);
-	bool RegisterFuncs(VMClassRegistry* a_registry);
+
+
+	namespace SoulSeeker
+	{
+		bool RegisterFuncs(VMClassRegistry* a_registry);
+	}
 }

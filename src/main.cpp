@@ -7,12 +7,12 @@
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
 #include <string>  // string
 
-#include "iEquip_ActorExt.h"  // RegisterFuncs
-#include "iEquip_AmmoExt.h"  // RegisterFuncs
-#include "iEquip_Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
-#include "iEquip_FormExt.h"  // RegisterFuncs
-#include "iEquip_SoulSeeker.h"  // RegisterFuncs
-#include "iEquip_WeaponExt.h"  // RegisterFuncs
+#include "ActorExt.h"  // RegisterFuncs
+#include "AmmoExt.h"  // RegisterFuncs
+#include "Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
+#include "FormExt.h"  // RegisterFuncs
+#include "SoulSeeker.h"  // RegisterFuncs
+#include "WeaponExt.h"  // RegisterFuncs
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
 
 
@@ -23,7 +23,7 @@ constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
 
 #define SINK_EVENT_HANDLER \
 RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList()); \
-eventDispatcherList->equipDispatcher.AddEventSink(&iEquip_Events::g_equipEventHandler)
+eventDispatcherList->equipDispatcher.AddEventSink(&iEquip::g_equipEventHandler)
 
 #else
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
@@ -31,7 +31,7 @@ constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker_LE
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
 
 #define SINK_EVENT_HANDLER \
-RE::g_equipEventDispatcher->AddEventSink(&iEquip_Events::g_equipEventHandler)
+RE::g_equipEventDispatcher->AddEventSink(&iEquip::g_equipEventHandler)
 
 #endif
 
@@ -45,8 +45,8 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 {
 	switch (a_msg->type) {
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
-		iEquip_Events::g_boundWeaponEquippedCallbackRegs.Clear();
-		iEquip_Events::g_boundWeaponUnequippedCallbackRegs.Clear();
+		iEquip::g_boundWeaponEquippedCallbackRegs.Clear();
+		iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
 		_DMESSAGE("[DEBUG] Registry cleared\n");
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
@@ -97,19 +97,19 @@ extern "C" {
 
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 
-		bool testActorExt = g_papyrus->Register(iEquip_ActorExt::RegisterFuncs);
+		bool testActorExt = g_papyrus->Register(iEquip::ActorExt::RegisterFuncs);
 		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful!") : _ERROR("[ERROR] iEquip_ActorExt registration failed!");
 
-		bool testAmmoExt = g_papyrus->Register(iEquip_AmmoExt::RegisterFuncs);
+		bool testAmmoExt = g_papyrus->Register(iEquip::AmmoExt::RegisterFuncs);
 		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful!") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!");
 
-		bool testFormExt = g_papyrus->Register(iEquip_FormExt::RegisterFuncs);
+		bool testFormExt = g_papyrus->Register(iEquip::FormExt::RegisterFuncs);
 		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful!") : _ERROR("[ERROR] iEquip_FormExt registration failed!");
 
-		bool testSoulSeeker = g_papyrus->Register(iEquip_SoulSeeker::RegisterFuncs);
+		bool testSoulSeeker = g_papyrus->Register(iEquip::SoulSeeker::RegisterFuncs);
 		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful!") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!");
 
-		bool testWeaponExt = g_papyrus->Register(iEquip_WeaponExt::RegisterFuncs);
+		bool testWeaponExt = g_papyrus->Register(iEquip::WeaponExt::RegisterFuncs);
 		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful!") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!");
 
 		if (!testActorExt || !testAmmoExt || !testFormExt || !testSoulSeeker || !testWeaponExt) {

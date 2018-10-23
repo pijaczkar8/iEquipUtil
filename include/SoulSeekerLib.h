@@ -6,7 +6,7 @@
 #include <vector> // vector
 
 
-namespace iEquip_SoulSeeker
+namespace iEquip
 {
 	enum SoulSize : UInt8
 	{

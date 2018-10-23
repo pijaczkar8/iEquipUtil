@@ -4,7 +4,7 @@
 #include "GameObjects.h"  // TESObjectWEAP
 #include "GameRTTI.h"  // DYNAMIC_CAST
 
-#include "iEquip_WeaponExt.h"  // IsWeaponBound()
+#include "WeaponExt.h"  // IsWeaponBound()
 
 
 namespace RE
@@ -14,7 +14,7 @@ namespace RE
 		TESForm* form = LookupFormByID(formID);
 		if (form && form->formType == kFormType_Weapon) {
 			TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(form);
-			return iEquip_WeaponExt::IsWeaponBound(0, weap) ? weap : 0;
+			return iEquip::IsWeaponBound(0, weap) ? weap : 0;
 		}
 		return 0;
 	}

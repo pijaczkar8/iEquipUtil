@@ -1,4 +1,4 @@
-#include "iEquip_SoulSeekerLib.h"
+#include "SoulSeekerLib.h"
 
 #include "IDebugLog.h"  // gLog
 #include "ITypes.h"  // UInt8, UInt32
@@ -11,7 +11,7 @@
 #include <string>  // string
 
 
-namespace iEquip_SoulSeeker
+namespace iEquip
 {
 	Gem::Gem()
 	{}

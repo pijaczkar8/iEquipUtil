@@ -7,7 +7,7 @@
 #include "ITypes.h"  // UInt32
 
 
-namespace iEquip_ActorExt
+namespace iEquip
 {
 	enum
 	{

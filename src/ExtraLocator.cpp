@@ -1,4 +1,4 @@
-#include "iEquip_ExtraLocator.h"
+#include "ExtraLocator.h"
 
 #include "GameBSExtraData.h"  // BaseExtraList
 #include "GameExtraData.h"  // InventoryEntryData
@@ -7,7 +7,7 @@
 #include <vector>  // vector
 
 
-namespace iEquip_ExtraLocator
+namespace iEquip
 {
 	ExtraListLocator::ExtraListLocator(InventoryEntryData* a_entryData, std::vector<UInt32> a_whitelist, std::vector<UInt32> a_blacklist) :
 		_entryData(a_entryData),
