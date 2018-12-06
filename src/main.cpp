@@ -5,7 +5,6 @@
 #include "skse_version.h"  // RUNTIME_VERSION
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
-#include <string>  // string
 
 #include "ActorExt.h"  // RegisterFuncs
 #include "AmmoExt.h"  // RegisterFuncs
@@ -17,7 +16,7 @@
 
 
 #if _WIN64
-constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_50;
+constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_53;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
 
@@ -90,10 +89,7 @@ extern "C" {
 
 	bool SKSEPlugin_Load(const SKSEInterface* a_skse)
 	{
-		std::string msg = "[MESSAGE] ";
-		msg += IEQUIP_NAME;
-		msg += " loaded";
-		_MESSAGE(msg.c_str());
+		_MESSAGE("[MESSAGE] %s loaded", IEQUIP_NAME);
 
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 

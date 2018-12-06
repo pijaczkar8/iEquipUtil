@@ -63,8 +63,7 @@ namespace iEquip
 		try {
 			return _compatGems.at(kSoulSize_Grand - gem->gemSize).addGem(a_entryData);
 		} catch (std::exception& e) {
-			std::string msg = "[ERROR] In Soul::addSoul : Invalid soulgem size! (" + std::to_string(gem->gemSize) + ")";
-			_ERROR(msg.c_str());
+			_ERROR("[ERROR] In Soul::addSoul : Invalid soulgem size! (%i)\n", gem->gemSize);
 			_ERROR(e.what());
 			_ERROR("\n");
 		}
@@ -113,8 +112,7 @@ namespace iEquip
 		try {
 			return _souls.at(a_soulSize - 1).addSoul(a_entryData);
 		} catch (std::exception& e ) {
-			std::string msg = "[ERROR] In SoulGem::addSoulGem : Invalid soul size! (" + std::to_string(a_soulSize - 1) + ")";
-			_ERROR(msg.c_str());
+			_ERROR("[ERROR] In SoulGem::addSoulGem : Invalid soul size! (%i)", a_soulSize - 1);
 			_ERROR(e.what());
 			_ERROR("\n");
 			return false;

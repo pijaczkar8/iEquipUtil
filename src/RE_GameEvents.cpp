@@ -23,13 +23,13 @@ namespace RE
 #if _WIN64
 	bool TESEquipEvent::isUnequipWeaponArmorEvent()
 	{
-		return unk10 == 0xFF000000;
+		return !(unk10 << 8);
 	}
 
 #else
 	bool TESEquipEvent::isUnequipWeaponArmorEvent()
 	{
-		return unk0C == 0x12000000;
+		return !(unk0C << 8);
 	}
 
 

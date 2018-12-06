@@ -11,12 +11,9 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 #include "Utilities.h"  // CALL_MEMBER_FN
 
-#include <string>  // string
-
 #include "ExtraLocator.h"  // ExtraListLocator
 #include "SoulSeekerLib.h"  // SoulGem, SoulSize
 #include "RE_TESObjectREFR.h"  // RE::TESObjectREFR
-
 
 #if _WIN64
 #define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
@@ -87,12 +84,10 @@ namespace iEquip
 	bool validateParams(UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill)
 	{
 		if (a_reqCharge < kSoulSize_Petty || a_reqCharge > kSoulSize_Grand) {
-			std::string msg = "[ERROR] Invalid soul size! (" + std::to_string(a_reqCharge) + ")\n";
-			_ERROR(msg.c_str());
+			_ERROR("[ERROR] Invalid soul size! (%i)\n", a_reqCharge);
 			return false;
 		} else if (!(a_fillMethod == kFillMethod_SmallerSoulsFirt || a_fillMethod == kFillMethod_UseLargestSoul)) {
-			std::string msg = "[ERROR] Invalid fill method! (" + std::to_string(a_fillMethod) + ")\n";
-			_ERROR(msg.c_str());
+			_ERROR("[ERROR] Invalid fill method! (%i)\n", a_fillMethod);
 			return false;
 		} else {
 			return true;
@@ -152,8 +147,7 @@ namespace iEquip
 			_DMESSAGE("[DEBUG] Search failed, loosening requirements\n");
 			return soulSearchDown(a_candidates, kSoulSize_Grand, kSoulSize_Petty, true);
 		default:
-			std::string msg = "ERROR: Invalid fill method! (" + std::to_string(a_fillMethod) + ")\n";
-			_ERROR(msg.c_str());
+			_ERROR("[ERROR] Invalid fill method! (%i)\n", a_fillMethod);
 			return returnData;
 		}
 		_ERROR("[ERROR] A search failed to find a gem!\n");
@@ -198,7 +192,7 @@ namespace iEquip
 				}
 				xData = xData->next;
 			}
-		}		
+		}
 	}
 
 

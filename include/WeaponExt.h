@@ -1,14 +1,25 @@
 #pragma once
 
-#include "GameObjects.h"  // TESObjectWEAP
-#include "PapyrusNativeFunctions.h"  // StaticFunctionTag
-#include "PapyrusVM.h"  // VMClassRegistry
+class Actor;
+class TESObjectWEAP;
+class VMClassRegistry;
+struct StaticFunctionTag;
 
 
 namespace iEquip
 {
-	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
-	bool IsWeaponGrenade(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
+	enum
+	{
+		kHand_Unequipped,
+		kHand_Right,
+		kHand_Left,
+		kHand_DualWield
+	};
+
+
+	TESObjectWEAP*	GetEquippedWeapon(StaticFunctionTag* a_base, Actor* a_actor, SInt32 a_hand);
+	bool			IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
+	bool			IsWeaponGrenade(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
 
 
 	namespace WeaponExt

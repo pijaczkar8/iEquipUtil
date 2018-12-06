@@ -15,7 +15,8 @@ namespace RE
 		Actor*	akSource;	// 00
 		UInt32	formID;		// 08
 		UInt32	pad0C;		// 0C
-		UInt64	unk10;		// 10 - 0xFF000000 when unequipping weapons/armor, seems to be a function ptr
+		UInt32	unk10;		// 10 - idk what this is
+		UInt32	pad14;		// 14
 
 
 		TESObjectWEAP* checkIfBoundWeapEquipEvent();

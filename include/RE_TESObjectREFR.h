@@ -12,7 +12,8 @@ namespace RE
 	public:
 		enum { kTypeID = kFormType_Reference };
 
-		enum RemoveType
+
+		enum RemoveType : UInt32
 		{
 			kRemoveType_Remove,
 			kRemoveType_Steal,
@@ -21,6 +22,7 @@ namespace RE
 			kRemoveType_Take,
 			kRemoveType_Unk05
 		};
+
 
 		virtual void	Unk_39(void);
 		virtual void	Unk_3A(void);

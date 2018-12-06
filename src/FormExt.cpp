@@ -22,8 +22,7 @@ namespace iEquip
 			return;
 		} else {
 			g_boundWeaponEquippedCallbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);
-			std::string msg = "[DEBUG] Registered (0x" + numToHexString(a_thisForm->formID) + ") for OnBoundWeaponEquippedEvent\n";
-			_DMESSAGE(msg.c_str());
+			_DMESSAGE("[DEBUG] Registered (0x%X) for OnBoundWeaponEquippedEvent\n", a_thisForm->formID);
 		}
 	}
 
@@ -35,8 +34,7 @@ namespace iEquip
 			return;
 		} else {
 			g_boundWeaponUnequippedCallbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);
-			std::string msg = "[DEBUG] Registered (0x" + numToHexString(a_thisForm->formID) + ") for OnBoundWeaponUnequippedEvent\n";
-			_DMESSAGE(msg.c_str());
+			_DMESSAGE("[DEBUG] Registered (0x%X) for OnBoundWeaponUnequippedEvent\n", a_thisForm->formID);
 		}
 	}
 

@@ -15,7 +15,7 @@ namespace iEquip
 			_ERROR("[ERROR] In IsAmmoBound() : Invalid ammo!");
 			return false;
 		} else {
-			static BGSKeyword* weapTypeBoundArrow = static_cast<BGSKeyword*>(BGSDefaultObjectManager::GetSingleton()->objects[0x116]);
+			BGSKeyword* weapTypeBoundArrow = static_cast<BGSKeyword*>(BGSDefaultObjectManager::GetSingleton()->objects[0x116]);
 			return a_ammo->keyword.HasKeyword(weapTypeBoundArrow);
 		}
 	}
@@ -28,7 +28,7 @@ namespace iEquip
 			return false;
 		}
 
-		static BGSKeyword* Javelin = GetKeyword(kKeyword_Javelin, NAME_SpearsBySoolie);
+		BGSKeyword* Javelin = GetKeyword(kKeyword_Javelin, NAME_SpearsBySoolie);
 		if (!Javelin) {
 			_WARNING("[WARNING] In IsAmmoJavelin() : Failed to retrieve Javelin keyword!");
 			return false;

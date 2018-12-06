@@ -20,13 +20,13 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -123,22 +123,22 @@
     <None Include="exports.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\iEquip_ActorExt.cpp" />
-    <ClCompile Include="src\iEquip_ActorExtLib.cpp" />
-    <ClCompile Include="src\iEquip_AmmoExt.cpp" />
-    <ClCompile Include="src\iEquip_Events.cpp" />
-    <ClCompile Include="src\iEquip_ExtraLocator.cpp" />
-    <ClCompile Include="src\iEquip_FormExt.cpp" />
-    <ClCompile Include="src\iEquip_SoulSeekerLib.cpp" />
-    <ClCompile Include="src\iEquip_Utility.cpp" />
-    <ClCompile Include="src\iEquip_WeaponExt.cpp" />
+    <ClCompile Include="src\ActorExt.cpp" />
+    <ClCompile Include="src\ActorExtLib.cpp" />
+    <ClCompile Include="src\AmmoExt.cpp" />
+    <ClCompile Include="src\Events.cpp" />
+    <ClCompile Include="src\ExtraLocator.cpp" />
+    <ClCompile Include="src\FormExt.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\iEquip_SoulSeeker.cpp" />
     <ClCompile Include="src\RE_GameEvents.cpp" />
+    <ClCompile Include="src\SoulSeeker.cpp" />
+    <ClCompile Include="src\SoulSeekerLib.cpp" />
+    <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\WeaponExt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\common\common_vc14.vcxproj">
-      <Project>{d4c128a1-73dc-4941-a453-ce55af239ba8}</Project>
+      <Project>{472e19ab-def0-42df-819b-18722e8dc822}</Project>
     </ProjectReference>
     <ProjectReference Include="..\skse64\skse64.vcxproj">
       <Project>{7028b79c-06e3-4d9a-b38c-1dc3680b1bdb}</Project>
@@ -148,19 +148,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\iEquip_ActorExt.h" />
-    <ClInclude Include="include\iEquip_ActorExtLib.h" />
-    <ClInclude Include="include\iEquip_AmmoExt.h" />
-    <ClInclude Include="include\iEquip_Events.h" />
-    <ClInclude Include="include\iEquip_ExtraLocator.h" />
-    <ClInclude Include="include\iEquip_FormExt.h" />
-    <ClInclude Include="include\iEquip_SoulSeeker.h" />
-    <ClInclude Include="include\iEquip_SoulSeekerLib.h" />
-    <ClInclude Include="include\iEquip_Utility.h" />
-    <ClInclude Include="include\iEquip_WeaponExt.h" />
+    <ClInclude Include="include\ActorExt.h" />
+    <ClInclude Include="include\ActorExtLib.h" />
+    <ClInclude Include="include\AmmoExt.h" />
+    <ClInclude Include="include\Events.h" />
+    <ClInclude Include="include\ExtraLocator.h" />
+    <ClInclude Include="include\FormExt.h" />
     <ClInclude Include="include\RE_ExtraPoison.h" />
     <ClInclude Include="include\RE_GameEvents.h" />
     <ClInclude Include="include\RE_TESObjectREFR.h" />
+    <ClInclude Include="include\SoulSeeker.h" />
+    <ClInclude Include="include\SoulSeekerLib.h" />
+    <ClInclude Include="include\Utility.h" />
+    <ClInclude Include="include\version.h" />
+    <ClInclude Include="include\WeaponExt.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

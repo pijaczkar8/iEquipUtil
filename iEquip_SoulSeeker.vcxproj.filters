@@ -4,38 +4,38 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\iEquip_ActorExt.cpp">
-      <Filter>src\papyrus</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_ActorExtLib.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_SoulSeeker.cpp">
-      <Filter>src\papyrus</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_SoulSeekerLib.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_Utility.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_AmmoExt.cpp">
-      <Filter>src\papyrus</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_ExtraLocator.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_Events.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_FormExt.cpp">
-      <Filter>src\papyrus</Filter>
-    </ClCompile>
-    <ClCompile Include="src\iEquip_WeaponExt.cpp">
-      <Filter>src\papyrus</Filter>
-    </ClCompile>
     <ClCompile Include="src\RE_GameEvents.cpp">
       <Filter>src\RE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActorExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AmmoExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FormExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoulSeeker.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeaponExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActorExtLib.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Events.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ExtraLocator.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoulSeekerLib.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility.cpp">
+      <Filter>src\lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,44 +68,50 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\iEquip_ActorExtLib.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_ActorExt.h">
-      <Filter>include\papyrus</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_SoulSeeker.h">
-      <Filter>include\papyrus</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_SoulSeekerLib.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_Utility.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_AmmoExt.h">
-      <Filter>include\papyrus</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_Events.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_ExtraLocator.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_FormExt.h">
-      <Filter>include\papyrus</Filter>
-    </ClInclude>
-    <ClInclude Include="include\iEquip_WeaponExt.h">
-      <Filter>include\papyrus</Filter>
-    </ClInclude>
     <ClInclude Include="include\RE_ExtraPoison.h">
       <Filter>include\RE</Filter>
     </ClInclude>
     <ClInclude Include="include\RE_GameEvents.h">
       <Filter>include\RE</Filter>
     </ClInclude>
+    <ClInclude Include="include\ActorExt.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AmmoExt.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FormExt.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoulSeeker.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WeaponExt.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActorExtLib.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Events.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExtraLocator.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoulSeekerLib.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utility.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE_TESObjectREFR.h">
       <Filter>include\RE</Filter>
     </ClInclude>
+    <ClInclude Include="include\version.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="version.rc" />
   </ItemGroup>
 </Project>
