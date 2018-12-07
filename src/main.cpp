@@ -11,12 +11,13 @@
 #include "Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "FormExt.h"  // RegisterFuncs
 #include "SoulSeeker.h"  // RegisterFuncs
+#include "version.h"
 #include "WeaponExt.h"  // RegisterFuncs
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
 
 
 #if _WIN64
-constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_53;
+constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_62;
 constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
 constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
 
@@ -64,7 +65,7 @@ extern "C" {
 		gLog.SetPrintLevel(IDebugLog::kLevel_DebugMessage);
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
-		_MESSAGE(IEQUIP_NAME);
+		_MESSAGE("%s v%s", IEQUIP_NAME, IEQUIP_VERSION_VERSTRING);
 
 		// populate info structure
 		a_info->infoVersion = PluginInfo::kInfoVersion;
