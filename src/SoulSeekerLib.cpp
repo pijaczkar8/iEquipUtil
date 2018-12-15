@@ -63,7 +63,7 @@ namespace iEquip
 		try {
 			return _compatGems.at(kSoulSize_Grand - gem->gemSize).addGem(a_entryData);
 		} catch (std::exception& e) {
-			_ERROR("[ERROR] In Soul::addSoul : Invalid soulgem size! (%i)\n", gem->gemSize);
+			_ERROR("[ERROR] Invalid soulgem size! (%i)\n", gem->gemSize);
 			_ERROR(e.what());
 			_ERROR("\n");
 		}
@@ -80,7 +80,7 @@ namespace iEquip
 					return _compatGems[i].getEntryData();
 				}
 			}
-			_ERROR("[ERROR] In Soul::findGem : Unexpectedly exited for loop!\n");
+			_ERROR("[ERROR] Unexpectedly exited for loop!\n");
 		}
 		return 0;
 	}
@@ -112,7 +112,7 @@ namespace iEquip
 		try {
 			return _souls.at(a_soulSize - 1).addSoul(a_entryData);
 		} catch (std::exception& e ) {
-			_ERROR("[ERROR] In SoulGem::addSoulGem : Invalid soul size! (%i)", a_soulSize - 1);
+			_ERROR("[ERROR] Invalid soul size! (%i)", a_soulSize - 1);
 			_ERROR(e.what());
 			_ERROR("\n");
 			return false;

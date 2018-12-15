@@ -61,7 +61,9 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ForcedIncludeFiles>common/IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>common/IPrefix.h;Logging.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <UseFullPaths>false</UseFullPaths>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
@@ -97,7 +99,9 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ForcedIncludeFiles>common/IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>common/IPrefix.h;Logging.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <UseFullPaths>false</UseFullPaths>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
@@ -129,6 +133,7 @@
     <ClCompile Include="src\Events.cpp" />
     <ClCompile Include="src\ExtraLocator.cpp" />
     <ClCompile Include="src\FormExt.cpp" />
+    <ClCompile Include="src\Logging.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RE_GameEvents.cpp" />
     <ClCompile Include="src\SoulSeeker.cpp" />
@@ -154,6 +159,7 @@
     <ClInclude Include="include\Events.h" />
     <ClInclude Include="include\ExtraLocator.h" />
     <ClInclude Include="include\FormExt.h" />
+    <ClInclude Include="include\Logging.h" />
     <ClInclude Include="include\RE_ExtraPoison.h" />
     <ClInclude Include="include\RE_GameEvents.h" />
     <ClInclude Include="include\RE_TESObjectREFR.h" />

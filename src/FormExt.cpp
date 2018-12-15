@@ -18,7 +18,7 @@ namespace iEquip
 	void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
 	{
 		if (!a_thisForm) {
-			_ERROR("[ERROR] In RegisterForBoundWeaponEquippedEvent() : Invalid form!\n");
+			_ERROR("[ERROR] Invalid form!\n");
 			return;
 		} else {
 			g_boundWeaponEquippedCallbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);
@@ -30,7 +30,7 @@ namespace iEquip
 	void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
 	{
 		if (!a_thisForm) {
-			_ERROR("[ERROR] In RegisterForBoundWeaponUnequippedEvent() : Invalid form!\n");
+			_ERROR("[ERROR] Invalid form!\n");
 			return;
 		} else {
 			g_boundWeaponUnequippedCallbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);

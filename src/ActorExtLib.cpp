@@ -113,10 +113,10 @@ namespace iEquip
 	bool ActorEquipEnchantedItem::validate()
 	{
 		if (!_enchantment) {
-			_ERROR("[ERROR] In ActorEquipEnchantedItem::validate() : _enchantment is a NONE form!");
+			_ERROR("[ERROR] _enchantment is a NONE form!");
 			return false;
 		} if (_enchantment->formType != kFormType_Enchantment) {
-			_ERROR("[ERROR] In ActorEquipEnchantedItem::validate() : _enchantment is not an enchantment!");
+			_ERROR("[ERROR] _enchantment is not an enchantment!");
 			return false;
 		}
 		return true;
@@ -161,10 +161,10 @@ namespace iEquip
 	bool ActorEquipPoisonedItem::validate()
 	{
 		if (!_poison) {
-			_ERROR("[ERROR] In ActorEquipPoisonedItem::validate() : _poison is a NONE form!");
+			_ERROR("[ERROR] _poison is a NONE form!");
 			return false;
 		} else if (_poison->formType != kFormType_Potion) {
-			_ERROR("[ERROR] In ActorEquipPoisonedItem::validate() : _poison is not a potion!");
+			_ERROR("[ERROR] _poison is not a potion!");
 			return false;
 		}
 		return true;

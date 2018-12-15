@@ -8,25 +8,17 @@
 
 namespace RE
 {
-#if _WIN64
-	class TESEquipEvent
+	struct TESEquipEvent
 	{
 	public:
-		Actor*	akSource;	// 00
-		UInt32	formID;		// 08
-		UInt32	pad0C;		// 0C
-		UInt32	unk10;		// 10 - idk what this is
-		UInt32	pad14;		// 14
-
-
-		TESObjectWEAP* checkIfBoundWeapEquipEvent();
-		bool isUnequipWeaponArmorEvent();
+		TESObjectREFR*	akSource;		// 00
+		UInt32			formID;			// 08
+		UInt32			unk0C;			// 0C - formID of a ref handle
+		UInt16			unk10;			// 10 - Related to ExtraUniqueID::uniqueID (0x14)
+		bool			isEquipping;	// 12
 	};
-	STATIC_ASSERT(offsetof(TESEquipEvent, akSource) == 0x00);
-	STATIC_ASSERT(offsetof(TESEquipEvent, formID) == 0x08);
-	STATIC_ASSERT(offsetof(TESEquipEvent, unk10) == 0x10);
 
-
+#if _WIN64
 	class EventDispatcherList
 	{
 	public:
@@ -47,22 +39,6 @@ namespace RE
 	};
 
 #else
-	class TESEquipEvent
-	{
-	public:
-		Actor*	akSource;	// 00
-		UInt32	formID;		// 04
-		UInt32	pad08;		// 08
-		UInt32	unk0C;		// 0C - 0x12000000 when unequipping weapons/armor, seems to be a function ptr
-
-
-		TESObjectWEAP* checkIfBoundWeapEquipEvent();
-		bool isUnequipWeaponArmorEvent();
-	};
-	STATIC_ASSERT(offsetof(TESEquipEvent, akSource) == 0x00);
-	STATIC_ASSERT(offsetof(TESEquipEvent, formID) == 0x04);
-	STATIC_ASSERT(offsetof(TESEquipEvent, unk0C) == 0x0C);
-
 
 	template <>
 	class BSTEventSink <TESEquipEvent>

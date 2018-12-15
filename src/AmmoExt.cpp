@@ -12,7 +12,7 @@ namespace iEquip
 	bool IsAmmoBound(StaticFunctionTag* a_base, TESAmmo* a_ammo)
 	{
 		if (!a_ammo) {
-			_ERROR("[ERROR] In IsAmmoBound() : Invalid ammo!");
+			_ERROR("[ERROR] Invalid ammo!");
 			return false;
 		} else {
 			BGSKeyword* weapTypeBoundArrow = static_cast<BGSKeyword*>(BGSDefaultObjectManager::GetSingleton()->objects[0x116]);
@@ -24,13 +24,13 @@ namespace iEquip
 	bool IsAmmoJavelin(StaticFunctionTag* a_base, TESAmmo* a_ammo)
 	{
 		if (!a_ammo) {
-			_ERROR("[ERROR] In IsAmmoJavelin() : Invalid ammo!");
+			_ERROR("[ERROR] Invalid ammo!");
 			return false;
 		}
 
 		BGSKeyword* Javelin = GetKeyword(kKeyword_Javelin, NAME_SpearsBySoolie);
 		if (!Javelin) {
-			_WARNING("[WARNING] In IsAmmoJavelin() : Failed to retrieve Javelin keyword!");
+			_WARNING("[WARNING] Failed to retrieve Javelin keyword!");
 			return false;
 		}
 

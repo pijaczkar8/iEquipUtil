@@ -1,5 +1,8 @@
 #include "Events.h"
 
+#undef min
+#undef max
+
 #include "GameAPI.h"  // g_thePlayer
 #include "GameEvents.h"  // EventResult, EventDispatcher
 #include "GameObjects.h"  // TESObjectWEAP
@@ -8,6 +11,8 @@
 #include "PapyrusArgs.h"  // PackValue()
 #include "PapyrusEvents.h"  // EventRegistration, SKSEModCallbackEvent, NullParameters, RegistrationSetHolder, NullParameters
 #include "PapyrusVM.h"  // Output, VMClassRegistry, IFunctionArguments
+
+#include <limits>  // numeric_limits
 
 #include "ActorExtLib.h"  // GetEquippedHand
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
@@ -104,22 +109,30 @@ namespace iEquip
 
 	EventResult EquipEventHandler::ReceiveEvent(RE::TESEquipEvent* a_event, EventDispatcher<RE::TESEquipEvent>* a_dispatcher)
 	{
-		TESObjectWEAP* weap = 0;
-		if (a_event->akSource != *g_thePlayer) {
+		UInt32 sourceFormID = a_event->akSource ? a_event->akSource->formID : 0;
+		UInt32 playerFormID = g_thePlayer ? (*g_thePlayer)->formID : std::numeric_limits<UInt32>::min();
+		if (sourceFormID != playerFormID) {
 			return kEvent_Continue;
-		} else if (weap = a_event->checkIfBoundWeapEquipEvent()) {
-			if (!a_event->isUnequipWeaponArmorEvent()) {
-				static BSFixedString callbackName = "OnBoundWeaponEquipped";
-				UInt32 equipSlots = getEquippedSlots((*g_thePlayer), weap);
-				g_boundWeaponEquippedCallbackRegs.ForEach(EventQueueFunctor2<UInt32, UInt32>(callbackName, weap->gameData.type, equipSlots));
-				_DMESSAGE("[DEBUG] OnBoundWeaponEquipped event dispatched\n");
-			} else {
-				static BSFixedString callbackName = "OnBoundWeaponUnequipped";
-				UInt32 unequipSlots = getUnequippedSlots((*g_thePlayer));
-				g_boundWeaponUnequippedCallbackRegs.ForEach(EventQueueFunctor2<TESObjectWEAP*, UInt32>(callbackName, weap, unequipSlots));
-				_DMESSAGE("[DEBUG] OnBoundWeaponUnequipped event dispatched\n");
-			}
 		}
+
+		TESForm* form = LookupFormByID(a_event->formID);
+		if (!form || form->formType != kFormType_Weapon) {
+			return kEvent_Continue;
+		}
+
+		TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(form);
+		if (a_event->isEquipping) {
+			static BSFixedString callbackName = "OnBoundWeaponEquipped";
+			UInt32 equipSlots = getEquippedSlots((*g_thePlayer), weap);
+			g_boundWeaponEquippedCallbackRegs.ForEach(EventQueueFunctor2<UInt32, UInt32>(callbackName, weap->gameData.type, equipSlots));
+			_DMESSAGE("[DEBUG] %s event dispatched\n", callbackName.c_str());
+		} else {
+			static BSFixedString callbackName = "OnBoundWeaponUnequipped";
+			UInt32 unequipSlots = getUnequippedSlots((*g_thePlayer));
+			g_boundWeaponUnequippedCallbackRegs.ForEach(EventQueueFunctor2<TESObjectWEAP*, UInt32>(callbackName, weap, unequipSlots));
+			_DMESSAGE("[DEBUG] %s event dispatched\n", callbackName.c_str());
+		}
+
 		return kEvent_Continue;
 	}
 

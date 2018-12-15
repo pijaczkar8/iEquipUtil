@@ -16,7 +16,7 @@ namespace iEquip
 	TESObjectWEAP* GetEquippedWeapon(StaticFunctionTag* a_base, Actor* a_actor, SInt32 a_hand)
 	{
 		if (!a_actor) {
-			_ERROR("[ERROR] In GetEquippedWeapon() : a_actor is a NONE form!\n");
+			_ERROR("[ERROR] a_actor is a NONE form!\n");
 			return 0;
 		}
 
@@ -32,7 +32,7 @@ namespace iEquip
 			return DYNAMIC_CAST(weap, TESForm, TESObjectWEAP);
 		}
 		default:
-			_ERROR("[ERROR] In GetEquippedWeapon() : Invalid slot (%i)!\n", a_hand);
+			_ERROR("[ERROR] Invalid slot (%i)!\n", a_hand);
 			return 0;
 		}
 	}
@@ -41,7 +41,7 @@ namespace iEquip
 	bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
 	{
 		if (!a_weap) {
-			_ERROR("[ERROR] In IsWeaponBound() : Invalid weapon!");
+			_ERROR("[ERROR] Invalid weapon!");
 			return false;
 		}
 
@@ -52,13 +52,13 @@ namespace iEquip
 	bool IsWeaponGrenade(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
 	{
 		if (!a_weap) {
-			_ERROR("[ERROR] In IsWeaponGrenade() : Invalid weapon!");
+			_ERROR("[ERROR] Invalid weapon!");
 			return false;
 		}
 
 		BGSKeyword* WAF_WeapTypeGrenade = GetKeyword(kKeyword_WAF_WeapTypeGrenade, NAME_Update);
 		if (!WAF_WeapTypeGrenade) {
-			_WARNING("[WARNING] In IsWeaponGrenade() : Failed to retrieve WAF_WeapTypeGrenade keyword!");
+			_WARNING("[WARNING] Failed to retrieve WAF_WeapTypeGrenade keyword!");
 			return false;
 		}
 
