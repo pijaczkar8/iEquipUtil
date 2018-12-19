@@ -125,12 +125,12 @@ namespace iEquip
 			static BSFixedString callbackName = "OnBoundWeaponEquipped";
 			UInt32 equipSlots = getEquippedSlots((*g_thePlayer), weap);
 			g_boundWeaponEquippedCallbackRegs.ForEach(EventQueueFunctor2<UInt32, UInt32>(callbackName, weap->gameData.type, equipSlots));
-			_DMESSAGE("[DEBUG] %s event dispatched\n", callbackName.c_str());
+			_DMESSAGE("[DEBUG] %s event dispatched\n", callbackName.data);
 		} else {
 			static BSFixedString callbackName = "OnBoundWeaponUnequipped";
 			UInt32 unequipSlots = getUnequippedSlots((*g_thePlayer));
 			g_boundWeaponUnequippedCallbackRegs.ForEach(EventQueueFunctor2<TESObjectWEAP*, UInt32>(callbackName, weap, unequipSlots));
-			_DMESSAGE("[DEBUG] %s event dispatched\n", callbackName.c_str());
+			_DMESSAGE("[DEBUG] %s event dispatched\n", callbackName.data);
 		}
 
 		return kEvent_Continue;

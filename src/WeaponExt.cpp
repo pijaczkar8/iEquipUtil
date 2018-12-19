@@ -56,7 +56,7 @@ namespace iEquip
 			return false;
 		}
 
-		BGSKeyword* WAF_WeapTypeGrenade = GetKeyword(kKeyword_WAF_WeapTypeGrenade, NAME_Update);
+		BGSKeyword* WAF_WeapTypeGrenade = GetForm<BGSKeyword>(kUpdate_WAF_WeapTypeGrenade, NAME_Update, false);
 		if (!WAF_WeapTypeGrenade) {
 			_WARNING("[WARNING] Failed to retrieve WAF_WeapTypeGrenade keyword!");
 			return false;
