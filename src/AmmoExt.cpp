@@ -53,22 +53,19 @@ namespace iEquip
 			return to_underlying(Element::kNone);
 		}
 
-		UInt32 lightFormID = formID << ((2 * 8) + 4);
-		_DMESSAGE("[DEBUG] lightForm == 0x%X", lightFormID);
-		switch (lightFormID) {
-		case kExoticArrows_ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp:
+		if (formID == ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp.GetLoadedFormID()) {
 			return to_underlying(Element::kTelekenesis);
-		case kExoticArrows_ccBGSSSE002_ArrowSoulstealerProjectile:
+		} else if (formID == ccBGSSSE002_ArrowSoulstealerProjectile.GetLoadedFormID()) {
 			return to_underlying(Element::kSoulStealer);
-		case kExoticArrows_ccBGSSSE002_ArrowFireProjectile:
+		} else if (formID == ccBGSSSE002_ArrowFireProjectile.GetLoadedFormID()) {
 			return to_underlying(Element::kFire);
-		case kExoticArrows_ccBGSSSE002_ArrowIceProjectile:
+		} else if (formID == ccBGSSSE002_ArrowIceProjectile.GetLoadedFormID()) {
 			return to_underlying(Element::kIce);
-		case kExoticArrows_ccBGSSSE002_ArrowLightningProjectile:
+		} else if (formID == ccBGSSSE002_ArrowLightningProjectile.GetLoadedFormID()) {
 			return to_underlying(Element::kLightning);
-		case kExoticArrows_ccBGSSSE002_ArrowBoneProjectile:
+		} else if (formID == ccBGSSSE002_ArrowBoneProjectile.GetLoadedFormID()) {
 			return to_underlying(Element::kBone);
-		default:
+		} else {
 			return to_underlying(Element::kNone);
 		}
 	}

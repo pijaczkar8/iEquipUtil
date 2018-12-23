@@ -11,6 +11,7 @@
 #include "Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "FormExt.h"  // RegisterFuncs
 #include "SoulSeeker.h"  // RegisterFuncs
+#include "Utility.h"  // ClearLoadedFormIDs
 #include "version.h"
 #include "WeaponExt.h"  // RegisterFuncs
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
@@ -47,6 +48,7 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
 		iEquip::g_boundWeaponEquippedCallbackRegs.Clear();
 		iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
+		iEquip::ClearLoadedFormIDs();
 		_DMESSAGE("[DEBUG] Registry cleared\n");
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:

@@ -4,6 +4,8 @@
 
 #include <type_traits>  // underlying_type_t, is_enum
 
+#include <vector>  // vector
+
 #include "GameForms.h"  // LookupFormByID
 #include "GameObjects.h"  // BGSProjectile
 #include "GameData.h"  // DataHandler
@@ -37,12 +39,26 @@ namespace iEquip
 		const ModInfo* info = 0;
 		UInt32 formID = a_rawFormID;
 		if (a_isLightMod) {
+#if _WIN64
 			info = dataHandler->LookupLoadedLightModByName(a_pluginName);
+			if (!info) {
+				return 0;
+			}
 			UInt16 idx = info->lightIndex;
 			formID += idx << ((1 * 8) + 4);
 			formID += 0xFE << (3 * 8);
+#else
+			return 0;
+#endif
 		} else {
+#if _WIN64
 			info = dataHandler->LookupLoadedModByName(a_pluginName);
+#else
+			info = dataHandler->LookupModByName(a_pluginName);
+#endif
+			if (!info) {
+				return 0;
+			}
 			UInt8 idx = info->modIndex;
 			formID += idx << (3 * 8);
 		}
@@ -51,15 +67,36 @@ namespace iEquip
 	}
 
 
-	template <typename T>
-	class Form
+	class IForm
 	{
 	public:
-		constexpr Form(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod) :
-			_rawFormID(a_rawFormID),
-			_loadedFormID(kInvalid),
-			_pluginName(a_pluginName),
-			_isLightMod(a_isLightMod)
+		IForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod);
+
+		constexpr void ClearLoadedFormID()
+		{
+			_loadedFormID = kInvalid;
+		}
+
+	protected:
+		UInt32		_rawFormID;
+		UInt32		_loadedFormID;
+		const char*	_pluginName;
+		bool		_isLightMod;
+	};
+
+
+	static std::vector<IForm*>* g_forms;
+
+
+	void ClearLoadedFormIDs();
+
+
+	template <typename T>
+	class Form : public IForm
+	{
+	public:
+		Form(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod) :
+			IForm(a_rawFormID, a_pluginName, a_isLightMod)
 		{}
 
 
@@ -67,7 +104,7 @@ namespace iEquip
 		{
 			T* form = 0;
 			if (_loadedFormID == kInvalid) {
-				form = GetForm<T>(_rawFormID);
+				form = GetForm<T>(_rawFormID, _pluginName, _isLightMod);
 				_loadedFormID = form ? form->formID : kInvalid;
 			}
 
@@ -78,17 +115,11 @@ namespace iEquip
 		UInt32 GetLoadedFormID()
 		{
 			if (_loadedFormID == kInvalid) {
-				T* form = GetForm<T>(_rawFormID);
+				T* form = GetForm<T>(_rawFormID, _pluginName, _isLightMod);
 				_loadedFormID = form ? form->formID : kInvalid;
 			}
 			return _loadedFormID;
 		}
-
-	private:
-		UInt32		_rawFormID;
-		UInt32		_loadedFormID;
-		const char*	_pluginName;
-		bool		_isLightMod;
 	};
 
 
@@ -146,4 +177,11 @@ namespace iEquip
 	static constexpr const char* NAME_SpearsBySoolie = "SpearsBySoolie.esp";
 	static constexpr const char* NAME_Update = "Update.esm";
 	static constexpr const char* NAME_ExoticArrows = "ccbgssse002-exoticarrows.esl";
+
+	extern Form<BGSProjectile> ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp;
+	extern Form<BGSProjectile> ccBGSSSE002_ArrowSoulstealerProjectile;
+	extern Form<BGSProjectile> ccBGSSSE002_ArrowFireProjectile;
+	extern Form<BGSProjectile> ccBGSSSE002_ArrowIceProjectile;
+	extern Form<BGSProjectile> ccBGSSSE002_ArrowLightningProjectile;
+	extern Form<BGSProjectile> ccBGSSSE002_ArrowBoneProjectile;
 }
