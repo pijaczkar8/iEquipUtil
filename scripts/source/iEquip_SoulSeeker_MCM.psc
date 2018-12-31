@@ -208,7 +208,7 @@ EndState
 State WeaponExt_IsWeaponGrenade_T
 	Event OnSelectST()
 		Weapon weap = PlayerRef.GetEquippedWeapon()
-		If (iEquip_WeaponExt.IsWeaponGrenade(weap))
+		If (iEquip_FormExt.IsGrenade(weap))
 			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is a grenade!")
 		Else
 			Debug.Trace("SoulSeekerDBG: Player's right hand weapon is not a grenade!")
@@ -244,7 +244,7 @@ EndState
 State WeaponExt_IsAmmoJavelin_T
 	Event OnSelectST()
 		Ammo myAmmo = iEquip_ActorExt.GetEquippedAmmo(PlayerRef)
-		If (iEquip_AmmoExt.IsAmmoJavelin(myAmmo))
+		If (iEquip_FormExt.IsJavelin(myAmmo))
 			Debug.Trace("SoulSeekerDBG: Player's equipped ammo is a javelin!")
 		Else
 			Debug.Trace("SoulSeekerDBG: Player's equipped ammo is not a javelin!")

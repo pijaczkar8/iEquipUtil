@@ -1,7 +1,5 @@
 #include "SoulSeeker.h"
 
-#include "IDebugLog.h"  // gLog
-#include "ITypes.h"  // UInt32, SInt32
 #include "GameAPI.h"  // g_thePlayer
 #include "GameBSExtraData.h"  // BaseExtraList
 #include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
@@ -9,7 +7,6 @@
 #include "GameReferences.h"  // TESObjectREFR
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag
 #include "PapyrusVM.h"  // VMClassRegistry
-#include "Utilities.h"  // CALL_MEMBER_FN
 
 #include "ExtraLocator.h"  // ExtraListLocator
 #include "SoulSeekerLib.h"  // SoulGem, SoulSize

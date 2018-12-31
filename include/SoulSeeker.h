@@ -1,15 +1,19 @@
 #pragma once
 
-#include "ITypes.h"  // UInt32, SInt32
-#include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
-#include "PapyrusNativeFunctions.h"  // StaticFunctionTag
-#include "PapyrusVM.h"  // VMClassRegistry
+#include "GameExtraData.h"  // ExtraContainerChanges::Data
 
 #include "SoulSeekerLib.h"  // SoulGem
+
+class InventoryEntryData;
+class VMClassRegistry;
+struct StaticFunctionTag;
 
 
 namespace iEquip
 {
+	class SoulGem;
+
+
 	enum FillMethod : UInt32
 	{
 		kFillMethod_SmallerSoulsFirt,

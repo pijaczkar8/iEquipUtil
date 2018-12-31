@@ -26,10 +26,15 @@ namespace iEquip
 	}
 
 
-	Form<BGSProjectile> ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp(kExoticArrows_ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp, NAME_ExoticArrows, true);
-	Form<BGSProjectile> ccBGSSSE002_ArrowSoulstealerProjectile(kExoticArrows_ccBGSSSE002_ArrowSoulstealerProjectile, NAME_ExoticArrows, true);
-	Form<BGSProjectile> ccBGSSSE002_ArrowFireProjectile(kExoticArrows_ccBGSSSE002_ArrowFireProjectile, NAME_ExoticArrows, true);
-	Form<BGSProjectile> ccBGSSSE002_ArrowIceProjectile(kExoticArrows_ccBGSSSE002_ArrowIceProjectile, NAME_ExoticArrows, true);
-	Form<BGSProjectile> ccBGSSSE002_ArrowLightningProjectile(kExoticArrows_ccBGSSSE002_ArrowLightningProjectile, NAME_ExoticArrows, true);
-	Form<BGSProjectile> ccBGSSSE002_ArrowBoneProjectile(kExoticArrows_ccBGSSSE002_ArrowBoneProjectile, NAME_ExoticArrows, true);
+	void LoadForms()
+	{
+		if (g_forms) {
+			for (auto& form : *g_forms) {
+				form->GetLoadedFormID();
+			}
+		}
+	}
+
+
+	Form<BGSKeyword> WeapTypeBoundArrow(kSkyrim_WeapTypeBoundArrow, NAME_Skyrim, false);
 }

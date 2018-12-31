@@ -40,6 +40,9 @@
     <ClCompile Include="src\Logging.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\Settings.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -114,6 +117,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\Logging.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Settings.h">
       <Filter>include\lib</Filter>
     </ClInclude>
   </ItemGroup>

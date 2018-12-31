@@ -10,9 +10,10 @@
 #include "AmmoExt.h"  // RegisterFuncs
 #include "Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "FormExt.h"  // RegisterFuncs
+#include "Settings.h"  // Settings
 #include "SoulSeeker.h"  // RegisterFuncs
 #include "Utility.h"  // ClearLoadedFormIDs
-#include "version.h"
+#include "version.h"  // IEQUIP_VERSION_VERSTRING, IEQUIP_VERSION_MAJOR
 #include "WeaponExt.h"  // RegisterFuncs
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
 
@@ -48,8 +49,11 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
 		iEquip::g_boundWeaponEquippedCallbackRegs.Clear();
 		iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
+		_DMESSAGE("[DEBUG] Registries cleared");
 		iEquip::ClearLoadedFormIDs();
-		_DMESSAGE("[DEBUG] Registry cleared\n");
+		_DMESSAGE("[DEBUG] Forms cleared");
+		iEquip::LoadForms();
+		_DMESSAGE("[DEBUG] Forms loaded");
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
 	{
@@ -69,23 +73,22 @@ extern "C" {
 
 		_MESSAGE("%s v%s", IEQUIP_NAME, IEQUIP_VERSION_VERSTRING);
 
-		// populate info structure
 		a_info->infoVersion = PluginInfo::kInfoVersion;
 		a_info->name = IEQUIP_NAME;
-		a_info->version = 1;
+		a_info->version = IEQUIP_VERSION_MAJOR;
 
-		// store plugin handle so we can identify ourselves later
 		g_pluginHandle = a_skse->GetPluginHandle();
 
 		if (a_skse->isEditor) {
-			_FATALERROR("[FATAL ERROR] Loaded in editor, marking as incompatible!");
-			return false;
-		} else if (a_skse->runtimeVersion != IEQUIP_RUNTIME_VER_COMPAT) {
-			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!", a_skse->runtimeVersion);
+			_FATALERROR("[FATAL ERROR] Loaded in editor, marking as incompatible!\n");
 			return false;
 		}
 
-		// supported runtime version
+		if (a_skse->runtimeVersion != IEQUIP_RUNTIME_VER_COMPAT) {
+			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!\n", a_skse->runtimeVersion);
+			return false;
+		}
+
 		return true;
 	}
 
@@ -96,23 +99,31 @@ extern "C" {
 
 		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
 
+		if (iEquip::Settings::loadSettings()) {
+			_MESSAGE("[MESSAGE] Settings loaded successfully");
+			iEquip::Settings::dump();
+		} else {
+			_FATALERROR("[FATAL ERROR] Settings failed to load!\n");
+			return false;
+		}
+
 		bool testActorExt = g_papyrus->Register(iEquip::ActorExt::RegisterFuncs);
-		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful!") : _ERROR("[ERROR] iEquip_ActorExt registration failed!");
+		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful") : _ERROR("[ERROR] iEquip_ActorExt registration failed!");
 
 		bool testAmmoExt = g_papyrus->Register(iEquip::AmmoExt::RegisterFuncs);
-		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful!") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!");
+		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!");
 
 		bool testFormExt = g_papyrus->Register(iEquip::FormExt::RegisterFuncs);
-		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful!") : _ERROR("[ERROR] iEquip_FormExt registration failed!");
+		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful") : _ERROR("[ERROR] iEquip_FormExt registration failed!");
 
 		bool testSoulSeeker = g_papyrus->Register(iEquip::SoulSeeker::RegisterFuncs);
-		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful!") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!");
+		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!");
 
 		bool testWeaponExt = g_papyrus->Register(iEquip::WeaponExt::RegisterFuncs);
-		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful!") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!");
+		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!");
 
 		if (!testActorExt || !testAmmoExt || !testFormExt || !testSoulSeeker || !testWeaponExt) {
-			_FATALERROR("[FATAL ERROR] Papyrus registration failed!");
+			_FATALERROR("[FATAL ERROR] Papyrus registration failed!\n");
 			return false;
 		}
 

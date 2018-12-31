@@ -19,7 +19,6 @@ namespace iEquip
 
 	TESObjectWEAP*	GetEquippedWeapon(StaticFunctionTag* a_base, Actor* a_actor, SInt32 a_hand);
 	bool			IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
-	bool			IsWeaponGrenade(StaticFunctionTag* a_base, TESObjectWEAP* a_weap);
 
 
 	namespace WeaponExt

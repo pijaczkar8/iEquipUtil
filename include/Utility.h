@@ -16,19 +16,7 @@ namespace iEquip
 	enum
 	{
 		kInvalid = 0xFFFFFFFF,
-
-		kSkyrim_WeapTypeBoundArrow = 0x0010D501,
-
-		kUpdate_WAF_WeapTypeGrenade = 0x00AF0237,
-
-		kSpearsBySoolie_Javelin = 0x000073FB,
-
-		kExoticArrows_ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp = 0x00000823,
-		kExoticArrows_ccBGSSSE002_ArrowSoulstealerProjectile = 0x00000D64,
-		kExoticArrows_ccBGSSSE002_ArrowFireProjectile = 0x00000D68,
-		kExoticArrows_ccBGSSSE002_ArrowIceProjectile = 0x00000D69,
-		kExoticArrows_ccBGSSSE002_ArrowLightningProjectile = 0x00000D6A,
-		kExoticArrows_ccBGSSSE002_ArrowBoneProjectile = 0x00000D67
+		kSkyrim_WeapTypeBoundArrow = 0x0010D501
 	};
 
 
@@ -63,7 +51,7 @@ namespace iEquip
 			formID += idx << (3 * 8);
 		}
 		TESForm* form = LookupFormByID(formID);
-		return (form && form->formType == T::kTypeID) ? static_cast<T*>(form) : 0;
+		return static_cast<T*>(form);
 	}
 
 
@@ -72,15 +60,39 @@ namespace iEquip
 	public:
 		IForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod);
 
+		UInt32 GetLoadedFormID()
+		{
+			if (_loadedFormID == kInvalid) {
+				TESForm* form = GetForm<TESForm>(_rawFormID, _pluginName.c_str(), _isLightMod);
+				_loadedFormID = form ? form->formID : kInvalid;
+			}
+			return _loadedFormID;
+		}
+
 		constexpr void ClearLoadedFormID()
 		{
 			_loadedFormID = kInvalid;
 		}
 
+		constexpr UInt32 RawFormID() const
+		{
+			return _rawFormID;
+		}
+
+		const char* PluginName() const
+		{
+			return _pluginName.c_str();
+		}
+
+		constexpr bool IsLightMod() const
+		{
+			return _isLightMod;
+		}
+
 	protected:
 		UInt32		_rawFormID;
 		UInt32		_loadedFormID;
-		const char*	_pluginName;
+		std::string	_pluginName;
 		bool		_isLightMod;
 	};
 
@@ -89,6 +101,7 @@ namespace iEquip
 
 
 	void ClearLoadedFormIDs();
+	void LoadForms();
 
 
 	template <typename T>
@@ -102,23 +115,10 @@ namespace iEquip
 
 		operator T*()
 		{
-			T* form = 0;
 			if (_loadedFormID == kInvalid) {
-				form = GetForm<T>(_rawFormID, _pluginName, _isLightMod);
-				_loadedFormID = form ? form->formID : kInvalid;
+				GetLoadedFormID();
 			}
-
-			return form ? form : LookupFormByID(_loadedFormID);
-		}
-
-
-		UInt32 GetLoadedFormID()
-		{
-			if (_loadedFormID == kInvalid) {
-				T* form = GetForm<T>(_rawFormID, _pluginName, _isLightMod);
-				_loadedFormID = form ? form->formID : kInvalid;
-			}
-			return _loadedFormID;
+			return static_cast<T*>(LookupFormByID(_loadedFormID));
 		}
 	};
 
@@ -174,14 +174,7 @@ namespace iEquip
 
 
 	static constexpr const char* NAME_Skyrim = "Skyrim.esm";
-	static constexpr const char* NAME_SpearsBySoolie = "SpearsBySoolie.esp";
 	static constexpr const char* NAME_Update = "Update.esm";
-	static constexpr const char* NAME_ExoticArrows = "ccbgssse002-exoticarrows.esl";
 
-	extern Form<BGSProjectile> ccBGSSSE002_ArrowTelekinesisProj01_TriggerExp;
-	extern Form<BGSProjectile> ccBGSSSE002_ArrowSoulstealerProjectile;
-	extern Form<BGSProjectile> ccBGSSSE002_ArrowFireProjectile;
-	extern Form<BGSProjectile> ccBGSSSE002_ArrowIceProjectile;
-	extern Form<BGSProjectile> ccBGSSSE002_ArrowLightningProjectile;
-	extern Form<BGSProjectile> ccBGSSSE002_ArrowBoneProjectile;
+	extern Form<BGSKeyword> WeapTypeBoundArrow;
 }

@@ -49,23 +49,6 @@ namespace iEquip
 	}
 
 
-	bool IsWeaponGrenade(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
-	{
-		if (!a_weap) {
-			_ERROR("[ERROR] Invalid weapon!");
-			return false;
-		}
-
-		BGSKeyword* WAF_WeapTypeGrenade = GetForm<BGSKeyword>(kUpdate_WAF_WeapTypeGrenade, NAME_Update, false);
-		if (!WAF_WeapTypeGrenade) {
-			_WARNING("[WARNING] Failed to retrieve WAF_WeapTypeGrenade keyword!");
-			return false;
-		}
-
-		return a_weap->keyword.HasKeyword(WAF_WeapTypeGrenade);
-	}
-
-
 	namespace WeaponExt
 	{
 		bool RegisterFuncs(VMClassRegistry* a_registry)
@@ -75,9 +58,6 @@ namespace iEquip
 
 			a_registry->RegisterFunction(
 				new NativeFunction1<StaticFunctionTag, bool, TESObjectWEAP*>("IsWeaponBound", "iEquip_WeaponExt", IsWeaponBound, a_registry));
-
-			a_registry->RegisterFunction(
-				new NativeFunction1<StaticFunctionTag, bool, TESObjectWEAP*>("IsWeaponGrenade", "iEquip_WeaponExt", IsWeaponGrenade, a_registry));
 
 			return true;
 		}

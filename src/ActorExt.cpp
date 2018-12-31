@@ -2,18 +2,15 @@
 
 #include "GameBSExtraData.h"  // BaseExtraList
 #include "GameData.h"  // EquipManager
-#include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData, ExtraPoison
+#include "GameExtraData.h"  // ExtraContainerChanges, InventoryEntryData
 #include "GameForms.h"  // TESForm, BGSEquipSlot
 #include "GameObjects.h"  // AlchemyItem, TESAmmo
 #include "GameReferences.h"  // Actor
-#include "IDebugLog.h"  // gLog
-#include "ITypes.h"  // SInt32
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
-#include "Utilities.h"  // CALL_MEMBER_FN
 
 #include "ActorExtLib.h"  // IActorEquipItem
-#include "ExtraLocator.h"  // ExtraLocator
+#include "ExtraLocator.h"  // ExtraListLocator
 
 
 namespace iEquip

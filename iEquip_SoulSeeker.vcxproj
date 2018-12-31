@@ -53,7 +53,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(ProjectDir)include;$(SolutionDir)..\common;$(SolutionDir)skse64;$(SolutionDir)skse64_common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(ProjectDir)include;$(SolutionDir)..\common;$(SolutionDir)skse64;$(SolutionDir)skse64_common;$(SolutionDir)Json2Settings\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;PLUGIN_EXAMPLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -80,7 +80,7 @@
       </Message>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "D:\Mods\ModOrganizer2_SkyrimSE\mods\iEquip_SoulSeeker\SKSE\Plugins\$(TargetFileName)" /Y</Command>
+      <Command>copy "$(TargetPath)" "D:\Games\SteamLibrary\steamapps\common\Skyrim Special Edition\Data\SKSE\Plugins\$(TargetFileName)" /Y</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>
@@ -91,7 +91,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(ProjectDir)include;$(SolutionDir)..\common;$(SolutionDir)skse64;$(SolutionDir)skse64_common</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(ProjectDir)include;$(SolutionDir)..\common;$(SolutionDir)skse64;$(SolutionDir)skse64_common;$(SolutionDir)Json2Settings\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;PLUGIN_EXAMPLE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -120,7 +120,7 @@
     <PostBuildEvent>
       <Message>
       </Message>
-      <Command>copy "$(TargetPath)" "D:\Mods\ModOrganizer2_SkyrimSE\mods\iEquip_SoulSeeker\SKSE\Plugins\$(TargetFileName)" /Y</Command>
+      <Command>copy "$(TargetPath)" "D:\Games\SteamLibrary\steamapps\common\Skyrim Special Edition\Data\SKSE\Plugins\$(TargetFileName)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -136,6 +136,7 @@
     <ClCompile Include="src\Logging.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RE_GameEvents.cpp" />
+    <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\SoulSeeker.cpp" />
     <ClCompile Include="src\SoulSeekerLib.cpp" />
     <ClCompile Include="src\Utility.cpp" />
@@ -144,6 +145,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\common_vc14.vcxproj">
       <Project>{472e19ab-def0-42df-819b-18722e8dc822}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Json2Settings\Json2Settings.vcxproj">
+      <Project>{61c39244-9610-428f-9066-18fad0bc3990}</Project>
     </ProjectReference>
     <ProjectReference Include="..\skse64\skse64.vcxproj">
       <Project>{7028b79c-06e3-4d9a-b38c-1dc3680b1bdb}</Project>
@@ -163,6 +167,7 @@
     <ClInclude Include="include\RE_ExtraPoison.h" />
     <ClInclude Include="include\RE_GameEvents.h" />
     <ClInclude Include="include\RE_TESObjectREFR.h" />
+    <ClInclude Include="include\Settings.h" />
     <ClInclude Include="include\SoulSeeker.h" />
     <ClInclude Include="include\SoulSeekerLib.h" />
     <ClInclude Include="include\Utility.h" />
