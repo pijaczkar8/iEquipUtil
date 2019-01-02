@@ -51,8 +51,11 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 		iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
 		_DMESSAGE("[DEBUG] Registries cleared");
 		iEquip::ClearLoadedFormIDs();
+		iEquip::Settings::clearLoadedFormIDs();
 		_DMESSAGE("[DEBUG] Forms cleared");
 		iEquip::LoadForms();
+		iEquip::Settings::loadForms();
+		iEquip::Settings::sort();
 		_DMESSAGE("[DEBUG] Forms loaded");
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:

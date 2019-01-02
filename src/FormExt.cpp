@@ -4,6 +4,8 @@
 #include "PapyrusNativeFunctions.h"  // NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
 
+#include <algorithm>  // binary_search
+
 #include "Events.h"  // g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "Settings.h"  // Settings
 
@@ -42,12 +44,8 @@ namespace iEquip
 			return false;
 		}
 
-		for (auto& elem : arr) {
-			if (a_form->formID == elem.GetLoadedFormID()) {
-				return true;
-			}
-		}
-		return false;
+		Form<TESForm> form(a_form->formID);
+		return std::binary_search(arr.begin(), arr.end(), form);
 	}
 
 

@@ -58,36 +58,15 @@ namespace iEquip
 	class IForm
 	{
 	public:
-		IForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod);
+		explicit IForm(UInt32 a_loadedFormID);
+		explicit IForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod);
 
-		UInt32 GetLoadedFormID()
-		{
-			if (_loadedFormID == kInvalid) {
-				TESForm* form = GetForm<TESForm>(_rawFormID, _pluginName.c_str(), _isLightMod);
-				_loadedFormID = form ? form->formID : kInvalid;
-			}
-			return _loadedFormID;
-		}
-
-		constexpr void ClearLoadedFormID()
-		{
-			_loadedFormID = kInvalid;
-		}
-
-		constexpr UInt32 RawFormID() const
-		{
-			return _rawFormID;
-		}
-
-		const char* PluginName() const
-		{
-			return _pluginName.c_str();
-		}
-
-		constexpr bool IsLightMod() const
-		{
-			return _isLightMod;
-		}
+		UInt32				GetLoadedFormID();
+		constexpr void		ClearLoadedFormID() { _loadedFormID = kInvalid; }
+		constexpr UInt32	RawFormID() const { return _rawFormID; }
+		const char*			PluginName() const;
+		constexpr bool		IsLightMod() const { return _isLightMod; }
+		friend bool			operator <(const IForm& a_lhs, const IForm& a_rhs) { return a_lhs._loadedFormID < a_rhs._loadedFormID; }
 
 	protected:
 		UInt32		_rawFormID;
@@ -95,9 +74,6 @@ namespace iEquip
 		std::string	_pluginName;
 		bool		_isLightMod;
 	};
-
-
-	static std::vector<IForm*>* g_forms;
 
 
 	void ClearLoadedFormIDs();
@@ -108,7 +84,12 @@ namespace iEquip
 	class Form : public IForm
 	{
 	public:
-		Form(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod) :
+		explicit Form(UInt32 a_loadedFormID) :
+			IForm(a_loadedFormID)
+		{}
+
+
+		explicit Form(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod) :
 			IForm(a_rawFormID, a_pluginName, a_isLightMod)
 		{}
 
@@ -119,6 +100,12 @@ namespace iEquip
 				GetLoadedFormID();
 			}
 			return static_cast<T*>(LookupFormByID(_loadedFormID));
+		}
+
+
+		friend bool operator <(const Form<T>& a_lhs, const Form<T>& a_rhs)
+		{
+			return a_lhs._loadedFormID < a_rhs._loadedFormID;
 		}
 	};
 

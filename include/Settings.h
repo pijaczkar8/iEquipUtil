@@ -86,6 +86,10 @@ namespace iEquip
 		Settings() = delete;
 		static bool loadSettings(bool a_dumpParse = false);
 
+		static void clearLoadedFormIDs();
+		static void loadForms();
+		static void sort();
+
 
 		static aSetting<Form<TESForm>> spears;
 		static aSetting<Form<TESForm>> javelins;

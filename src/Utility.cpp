@@ -3,36 +3,47 @@
 
 namespace iEquip
 {
+	IForm::IForm(UInt32 a_loadedFormID) :
+		_rawFormID(kInvalid),
+		_loadedFormID(a_loadedFormID),
+		_pluginName(""),
+		_isLightMod(false)
+	{}
+
+
 	IForm::IForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod) :
 		_rawFormID(a_rawFormID),
 		_loadedFormID(kInvalid),
 		_pluginName(a_pluginName),
 		_isLightMod(a_isLightMod)
+	{}
+
+
+	UInt32 IForm::GetLoadedFormID()
 	{
-		if (!g_forms) {
-			g_forms = new std::vector<IForm*>;
+		if (_loadedFormID == kInvalid) {
+			TESForm* form = GetForm<TESForm>(_rawFormID, _pluginName.c_str(), _isLightMod);
+			_loadedFormID = form ? form->formID : kInvalid;
 		}
-		g_forms->push_back(this);
+		return _loadedFormID;
+	}
+
+
+	const char* IForm::PluginName() const
+	{
+		return _pluginName.c_str();
 	}
 
 
 	void ClearLoadedFormIDs()
 	{
-		if (g_forms) {
-			for (auto& form : *g_forms) {
-				form->ClearLoadedFormID();
-			}
-		}
+		WeapTypeBoundArrow.ClearLoadedFormID();
 	}
 
 
 	void LoadForms()
 	{
-		if (g_forms) {
-			for (auto& form : *g_forms) {
-				form->GetLoadedFormID();
-			}
-		}
+		WeapTypeBoundArrow.GetLoadedFormID();
 	}
 
 
