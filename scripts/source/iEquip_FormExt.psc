@@ -98,6 +98,12 @@ Bool Function IsPoisonWax(Form a_form) Global Native
 Bool Function IsPoisonOil(Form a_form) Global Native
 
 
+; @brief Returns whether the given form is a spell ward.
+; @param a_actor The form to check.
+; @return Returns true if the given form is a spell ward, else returns false.
+Bool Function IsSpellWard(Form a_form) Global Native
+
+
 ; @brief Returns whether the given form has fire.
 ; @param a_actor The form to check.
 ; @return Returns true if the given form has fire, else returns false.

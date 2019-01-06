@@ -1,115 +1,10 @@
 #pragma once
 
-#undef GetForm
-
 #include <type_traits>  // underlying_type_t, is_enum
-
-#include <vector>  // vector
-
-#include "GameForms.h"  // LookupFormByID
-#include "GameObjects.h"  // BGSProjectile
-#include "GameData.h"  // DataHandler
 
 
 namespace iEquip
 {
-	enum
-	{
-		kInvalid = 0xFFFFFFFF,
-		kSkyrim_WeapTypeBoundArrow = 0x0010D501
-	};
-
-
-	template <typename T>
-	T* GetForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod)
-	{
-		DataHandler* dataHandler = DataHandler::GetSingleton();
-		const ModInfo* info = 0;
-		UInt32 formID = a_rawFormID;
-		if (a_isLightMod) {
-#if _WIN64
-			info = dataHandler->LookupLoadedLightModByName(a_pluginName);
-			if (!info) {
-				return 0;
-			}
-			UInt16 idx = info->lightIndex;
-			formID += idx << ((1 * 8) + 4);
-			formID += 0xFE << (3 * 8);
-#else
-			return 0;
-#endif
-		} else {
-#if _WIN64
-			info = dataHandler->LookupLoadedModByName(a_pluginName);
-#else
-			info = dataHandler->LookupModByName(a_pluginName);
-#endif
-			if (!info) {
-				return 0;
-			}
-			UInt8 idx = info->modIndex;
-			formID += idx << (3 * 8);
-		}
-		TESForm* form = LookupFormByID(formID);
-		return static_cast<T*>(form);
-	}
-
-
-	class IForm
-	{
-	public:
-		explicit IForm(UInt32 a_loadedFormID);
-		explicit IForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod);
-
-		UInt32				GetLoadedFormID();
-		constexpr void		ClearLoadedFormID() { _loadedFormID = kInvalid; }
-		constexpr UInt32	RawFormID() const { return _rawFormID; }
-		const char*			PluginName() const;
-		constexpr bool		IsLightMod() const { return _isLightMod; }
-		friend bool			operator <(const IForm& a_lhs, const IForm& a_rhs) { return a_lhs._loadedFormID < a_rhs._loadedFormID; }
-
-	protected:
-		UInt32		_rawFormID;
-		UInt32		_loadedFormID;
-		std::string	_pluginName;
-		bool		_isLightMod;
-	};
-
-
-	void ClearLoadedFormIDs();
-	void LoadForms();
-
-
-	template <typename T>
-	class Form : public IForm
-	{
-	public:
-		explicit Form(UInt32 a_loadedFormID) :
-			IForm(a_loadedFormID)
-		{}
-
-
-		explicit Form(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod) :
-			IForm(a_rawFormID, a_pluginName, a_isLightMod)
-		{}
-
-
-		operator T*()
-		{
-			if (_loadedFormID == kInvalid) {
-				GetLoadedFormID();
-			}
-			return static_cast<T*>(LookupFormByID(_loadedFormID));
-		}
-
-
-		friend bool operator <(const Form<T>& a_lhs, const Form<T>& a_rhs)
-		{
-			return a_lhs._loadedFormID < a_rhs._loadedFormID;
-		}
-	};
-
-
 	template <typename Enum>
 	constexpr auto to_underlying(Enum a_val) noexcept
 	{
@@ -158,10 +53,4 @@ namespace iEquip
 		a_lhs = static_cast<Enum>(static_cast<std::underlying_type_t<Enum>>(a_lhs) | static_cast<std::underlying_type_t<Enum>>(a_rhs));
 		return a_lhs;
 	}
-
-
-	static constexpr const char* NAME_Skyrim = "Skyrim.esm";
-	static constexpr const char* NAME_Update = "Update.esm";
-
-	extern Form<BGSKeyword> WeapTypeBoundArrow;
 }

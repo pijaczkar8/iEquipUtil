@@ -4,8 +4,6 @@
 #include "PapyrusNativeFunctions.h"  // NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
 
-#include <algorithm>  // binary_search
-
 #include "Events.h"  // g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "Settings.h"  // Settings
 
@@ -36,16 +34,15 @@ namespace iEquip
 	}
 
 
-	template <aSetting<Form<TESForm>>& arr>
+	template <aSetting<Form*>& arr>
 	bool IsT(TESForm* a_form)
 	{
 		if (!a_form) {
 			_ERROR("[ERROR] Invalid form!\n");
 			return false;
+		} else {
+			return arr.find(a_form->formID);
 		}
-
-		Form<TESForm> form(a_form->formID);
-		return std::binary_search(arr.begin(), arr.end(), form);
 	}
 
 
@@ -88,6 +85,12 @@ namespace iEquip
 	bool IsPoisonOil(StaticFunctionTag* a_base, TESForm* a_form)
 	{
 		return IsT<Settings::poisonOils>(a_form);
+	}
+
+
+	bool IsSpellWard(StaticFunctionTag* a_base, TESForm* a_form)
+	{
+		return IsT<Settings::spellWards>(a_form);
 	}
 
 
@@ -145,6 +148,9 @@ namespace iEquip
 
 			a_registry->RegisterFunction(
 				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsPoisonOil", "iEquip_FormExt", IsPoisonOil, a_registry));
+
+			a_registry->RegisterFunction(
+				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsSpellWard", "iEquip_FormExt", IsSpellWard, a_registry));
 
 			a_registry->RegisterFunction(
 				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("HasFire", "iEquip_FormExt", HasFire, a_registry));

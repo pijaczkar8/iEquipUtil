@@ -16,6 +16,7 @@ namespace iEquip
 	bool	IsThrowingKnife(StaticFunctionTag* a_base, TESForm* a_form);
 	bool	IsPoisonWax(StaticFunctionTag* a_base, TESForm* a_form);
 	bool	IsPoisonOil(StaticFunctionTag* a_base, TESForm* a_form);
+	bool	IsSpellWard(StaticFunctionTag* a_base, TESForm* a_form);
 	bool	HasFire(StaticFunctionTag* a_base, TESForm* a_form);
 	bool	HasIce(StaticFunctionTag* a_base, TESForm* a_form);
 	bool	HasShock(StaticFunctionTag* a_base, TESForm* a_form);

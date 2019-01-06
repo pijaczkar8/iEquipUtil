@@ -1,27 +1,26 @@
 #pragma once
 
-#include "GameForms.h"  // TESForm
-
 #include <string>  // string, stoi
 #include <vector>  // vector
+#include <set>  // set
 
 #include "Json2Settings.h"  // Json2Settings
-#include "Utility.h"  // Form
+#include "Forms.h"  // Form
 
 
 namespace iEquip
 {
 	template<>
-	class aSetting<Form<TESForm>> :
+	class aSetting<Form*> :
 		public ISetting,
-		public std::vector<Form<TESForm>>
+		public std::vector<Form*>
 	{
 	public:
 		aSetting() = delete;
 
-		aSetting(std::string a_key, bool a_consoleOK, std::initializer_list<Form<TESForm>> a_list = {}) :
+		aSetting(std::string a_key, bool a_consoleOK, std::initializer_list<Form*> a_list = {}) :
 			ISetting(a_key, a_consoleOK),
-			std::vector<Form<TESForm>>(a_list)
+			std::vector<Form*>(a_list)
 		{}
 
 		virtual ~aSetting()
@@ -34,23 +33,28 @@ namespace iEquip
 			std::string formIDStr;
 			UInt32 formIDNum;
 			bool isLightMod;
+			FormFactory* formFactory = FormFactory::GetSingleton();
+			Form* form = 0;
 			for (auto& val : a_val) {
 				val.at("pluginName").get_to(pluginName);
 				val.at("formID").get_to(formIDStr);
 				formIDNum = stoi(formIDStr, 0, 16);
 				val.at("isLightMod").get_to(isLightMod);
-				emplace_back(formIDNum, pluginName.c_str(), isLightMod);
+				form = formFactory->CreateForm(formIDNum, pluginName, isLightMod);
+				push_back(form);
 			}
 		}
 
 		virtual void dump() override
 		{
+			Form* form = 0;
 			_DMESSAGE("%s: [", _key.c_str());
 			for (auto& it = begin(); it != end(); ++it) {
+				form = *it;
 				_DMESSAGE("{");
-				_DMESSAGE("\t\t\"pluginName\": \"%s\",", it->PluginName());
-				_DMESSAGE("\t\t\"formID\": \"%u\",", it->RawFormID());
-				_DMESSAGE("\t\t\"isLightMod\": \"%s\"", (it->IsLightMod() ? "True" : "False"));
+				_DMESSAGE("\t\t\"pluginName\": \"%s\",", form->PluginName());
+				_DMESSAGE("\t\t\"formID\": \"%u\",", form->RawFormID());
+				_DMESSAGE("\t\t\"isLightMod\": \"%s\"", (form->IsLightMod() ? "True" : "False"));
 				_DMESSAGE("},");
 			}
 			_DMESSAGE("]");
@@ -58,18 +62,21 @@ namespace iEquip
 
 		virtual std::string	getValueAsString() const override
 		{
+			Form* form = 0;
 			std::string str;
 			str = _key + ": [";
 			for (auto& it = begin(); it != end(); ++it) {
+				form = *it;
+
 				str += "{";
 				str += "\t\t\"pluginName\": \"";
-				str += it->PluginName();
+				str += form->PluginName();
 				str += "\",";
 
-				str += "\t\t\"formID\": \"" + std::to_string(it->RawFormID()) + "\",";
+				str += "\t\t\"formID\": \"" + std::to_string(form->RawFormID()) + "\",";
 
 				str += "\t\t\"isLightMod\": \"";
-				str += it->IsLightMod() ? "True" : "False";
+				str += form->IsLightMod() ? "True" : "False";
 				str += "\"";
 
 				str += "},";
@@ -77,6 +84,24 @@ namespace iEquip
 			str += "]";
 			return str;
 		}
+
+		void sort()
+		{
+			Form* form = 0;
+			_loadedFormIDs.clear();
+			for (auto& it = begin(); it != end(); ++it) {
+				form = *it;
+				_loadedFormIDs.insert(form->GetLoadedFormID());
+			}
+		}
+
+		bool find(UInt32 a_key)
+		{
+			return _loadedFormIDs.find(a_key) != _loadedFormIDs.end();
+		}
+
+	protected:
+		std::set<UInt32> _loadedFormIDs;
 	};
 
 
@@ -86,22 +111,21 @@ namespace iEquip
 		Settings() = delete;
 		static bool loadSettings(bool a_dumpParse = false);
 
-		static void clearLoadedFormIDs();
-		static void loadForms();
-		static void sort();
+		static void OnLoad();
 
 
-		static aSetting<Form<TESForm>> spears;
-		static aSetting<Form<TESForm>> javelins;
-		static aSetting<Form<TESForm>> grenades;
-		static aSetting<Form<TESForm>> throwingAxes;
-		static aSetting<Form<TESForm>> throwingKnives;
-		static aSetting<Form<TESForm>> poisonWaxes;
-		static aSetting<Form<TESForm>> poisonOils;
-		static aSetting<Form<TESForm>> fire;
-		static aSetting<Form<TESForm>> ice;
-		static aSetting<Form<TESForm>> shock;
-		static aSetting<Form<TESForm>> poison;
+		static aSetting<Form*> spears;
+		static aSetting<Form*> javelins;
+		static aSetting<Form*> grenades;
+		static aSetting<Form*> throwingAxes;
+		static aSetting<Form*> throwingKnives;
+		static aSetting<Form*> poisonWaxes;
+		static aSetting<Form*> poisonOils;
+		static aSetting<Form*> spellWards;
+		static aSetting<Form*> fire;
+		static aSetting<Form*> ice;
+		static aSetting<Form*> shock;
+		static aSetting<Form*> poison;
 
 	private:
 		static constexpr char* FILE_NAME = "Data\\SKSE\\Plugins\\iEquip.json";

@@ -34,13 +34,13 @@
     <ClCompile Include="src\SoulSeekerLib.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utility.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
     <ClCompile Include="src\Logging.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
     <ClCompile Include="src\Settings.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Forms.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
   </ItemGroup>
@@ -120,6 +120,9 @@
       <Filter>include\lib</Filter>
     </ClInclude>
     <ClInclude Include="include\Settings.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Forms.h">
       <Filter>include\lib</Filter>
     </ClInclude>
   </ItemGroup>

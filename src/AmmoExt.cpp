@@ -1,9 +1,8 @@
 #include "AmmoExt.h"
 
+#include "GameForms.h"  // BGSKeyword, LookupFormByID
 #include "GameObjects.h"  // TESAmmo
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
-
-#include "Utility.h"  // WeapTypeBoundArrow
 
 
 namespace iEquip
@@ -14,6 +13,7 @@ namespace iEquip
 			_ERROR("[ERROR] Invalid ammo!");
 			return false;
 		} else {
+			BGSKeyword* WeapTypeBoundArrow = static_cast<BGSKeyword*>(LookupFormByID(0x0010D501));
 			return a_ammo->keyword.HasKeyword(WeapTypeBoundArrow);
 		}
 	}

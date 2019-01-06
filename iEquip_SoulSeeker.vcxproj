@@ -132,6 +132,7 @@
     <ClCompile Include="src\AmmoExt.cpp" />
     <ClCompile Include="src\Events.cpp" />
     <ClCompile Include="src\ExtraLocator.cpp" />
+    <ClCompile Include="src\Forms.cpp" />
     <ClCompile Include="src\FormExt.cpp" />
     <ClCompile Include="src\Logging.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -139,7 +140,6 @@
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\SoulSeeker.cpp" />
     <ClCompile Include="src\SoulSeekerLib.cpp" />
-    <ClCompile Include="src\Utility.cpp" />
     <ClCompile Include="src\WeaponExt.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +162,7 @@
     <ClInclude Include="include\AmmoExt.h" />
     <ClInclude Include="include\Events.h" />
     <ClInclude Include="include\ExtraLocator.h" />
+    <ClInclude Include="include\Forms.h" />
     <ClInclude Include="include\FormExt.h" />
     <ClInclude Include="include\Logging.h" />
     <ClInclude Include="include\RE_ExtraPoison.h" />

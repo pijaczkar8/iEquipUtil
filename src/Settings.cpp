@@ -1,7 +1,5 @@
 #include "Settings.h"
 
-#include <algorithm>  // sort
-
 
 namespace iEquip
 {
@@ -12,58 +10,32 @@ namespace iEquip
 	}
 
 
-	void Settings::clearLoadedFormIDs()
+	void Settings::OnLoad()
 	{
 		if (settings) {
 			for (auto& setting : *settings) {
-				aSetting<Form<TESForm>>* arr = dynamic_cast<aSetting<Form<TESForm>>*>(setting);
+				aSetting<Form*>* arr = dynamic_cast<aSetting<Form*>*>(setting);
 				if (arr) {
 					for (auto& form : *arr) {
-						form.ClearLoadedFormID();
+						form->GetLoadedFormID();
 					}
+					arr->sort();
 				}
 			}
 		}
 	}
 
 
-	void Settings::loadForms()
-	{
-		if (settings) {
-			for (auto& setting : *settings) {
-				aSetting<Form<TESForm>>* arr = dynamic_cast<aSetting<Form<TESForm>>*>(setting);
-				if (arr) {
-					for (auto& form : *arr) {
-						form.GetLoadedFormID();
-					}
-				}
-			}
-		}
-	}
-
-
-	void Settings::sort()
-	{
-		if (settings) {
-			for (auto& setting : *settings) {
-				aSetting<Form<TESForm>>* arr = dynamic_cast<aSetting<Form<TESForm>>*>(setting);
-				if (arr) {
-					std::sort(arr->begin(), arr->end());
-				}
-			}
-		}
-	}
-
-
-	aSetting<Form<TESForm>>	Settings::spears("spears", false);
-	aSetting<Form<TESForm>>	Settings::javelins("javelins", false);
-	aSetting<Form<TESForm>>	Settings::grenades("grenades", false);
-	aSetting<Form<TESForm>>	Settings::throwingAxes("throwingAxes", false);
-	aSetting<Form<TESForm>>	Settings::throwingKnives("throwingKnives", false);
-	aSetting<Form<TESForm>>	Settings::poisonWaxes("poisonWaxes", false);
-	aSetting<Form<TESForm>>	Settings::poisonOils("poisonOils", false);
-	aSetting<Form<TESForm>>	Settings::fire("fire", false);
-	aSetting<Form<TESForm>>	Settings::ice("ice", false);
-	aSetting<Form<TESForm>>	Settings::shock("shock", false);
-	aSetting<Form<TESForm>>	Settings::poison("poison", false);
+	aSetting<Form*>	Settings::spears("spears", false);
+	aSetting<Form*>	Settings::javelins("javelins", false);
+	aSetting<Form*>	Settings::grenades("grenades", false);
+	aSetting<Form*>	Settings::throwingAxes("throwingAxes", false);
+	aSetting<Form*>	Settings::throwingKnives("throwingKnives", false);
+	aSetting<Form*>	Settings::poisonWaxes("poisonWaxes", false);
+	aSetting<Form*>	Settings::poisonOils("poisonOils", false);
+	aSetting<Form*>	Settings::spellWards("spellWards", false);
+	aSetting<Form*>	Settings::fire("fire", false);
+	aSetting<Form*>	Settings::ice("ice", false);
+	aSetting<Form*>	Settings::shock("shock", false);
+	aSetting<Form*>	Settings::poison("poison", false);
 }
