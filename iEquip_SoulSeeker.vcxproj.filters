@@ -43,6 +43,12 @@
     <ClCompile Include="src\Forms.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
+    <ClCompile Include="src\LocaleManager.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StringExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -124,6 +130,12 @@
     </ClInclude>
     <ClInclude Include="include\Forms.h">
       <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LocaleManager.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StringExt.h">
+      <Filter>include\papyrus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

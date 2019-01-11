@@ -3,7 +3,6 @@
 #include "GameEvents.h"  // EventDispatcher, EventResult
 #include "GameObjects.h"  // TESObjectWEAP
 #include "GameReferences.h"  // Actor
-#include "ITypes.h"  // UInt32
 
 
 namespace RE

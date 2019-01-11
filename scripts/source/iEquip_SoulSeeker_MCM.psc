@@ -46,6 +46,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("WeaponExt_IsAmmoBound_T", "Check if equipped ammo is bound", "")
 		AddTextOptionST("WeaponExt_IsAmmoJavelin_T", "Check if equipped ammo is a javelin", "")
 		AddTextOptionST("FormExt_RegisterBoundWeaponEquipped_T", "Register for OnBoundWeaponEquipped events", "")
+		AddTextOptionST("StringExt_LocalizeString_T", "Localize a string", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -265,6 +266,20 @@ State FormExt_RegisterBoundWeaponEquipped_T
 		Debug.Trace("SoulSeekerDBG: Registered for OnBoundWeaponEquipped")
 		iEquip_FormExt.RegisterForBoundWeaponUnequippedEvent(Self)
 		Debug.Trace("SoulSeekerDBG: Registered for OnBoundWeaponUnequipped")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State StringExt_LocalizeString_T
+	Event OnSelectST()
+		String out = iEquip_StringExt.LocalizeString("$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}")
+		Debug.Trace("SoulSeekerDBG: " + out)
 	EndEvent
 
 	Event OnDefaultST()

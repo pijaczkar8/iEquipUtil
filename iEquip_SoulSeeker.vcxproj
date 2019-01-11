@@ -134,12 +134,14 @@
     <ClCompile Include="src\ExtraLocator.cpp" />
     <ClCompile Include="src\Forms.cpp" />
     <ClCompile Include="src\FormExt.cpp" />
+    <ClCompile Include="src\LocaleManager.cpp" />
     <ClCompile Include="src\Logging.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RE_GameEvents.cpp" />
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\SoulSeeker.cpp" />
     <ClCompile Include="src\SoulSeekerLib.cpp" />
+    <ClCompile Include="src\StringExt.cpp" />
     <ClCompile Include="src\WeaponExt.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +166,7 @@
     <ClInclude Include="include\ExtraLocator.h" />
     <ClInclude Include="include\Forms.h" />
     <ClInclude Include="include\FormExt.h" />
+    <ClInclude Include="include\LocaleManager.h" />
     <ClInclude Include="include\Logging.h" />
     <ClInclude Include="include\RE_ExtraPoison.h" />
     <ClInclude Include="include\RE_GameEvents.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="include\Settings.h" />
     <ClInclude Include="include\SoulSeeker.h" />
     <ClInclude Include="include\SoulSeekerLib.h" />
+    <ClInclude Include="include\StringExt.h" />
     <ClInclude Include="include\Utility.h" />
     <ClInclude Include="include\version.h" />
     <ClInclude Include="include\WeaponExt.h" />

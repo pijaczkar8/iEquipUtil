@@ -121,6 +121,10 @@ namespace iEquip
 		}
 
 		TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(form);
+		if ((weap->gameData.flags1 & TESObjectWEAP::GameData::kFlags_BoundWeapon) == 0) {
+			return kEvent_Continue;
+		}
+
 		if (a_event->isEquipping) {
 			static BSFixedString callbackName = "OnBoundWeaponEquipped";
 			UInt32 equipSlots = getEquippedSlots((*g_thePlayer), weap);
