@@ -9,8 +9,10 @@
 #include <queue>  // queue
 #include <stack>  // stack
 #include <utility>  // pair
+#include <codecvt>  // codecvt_mode, codecvt_utf16
 
 #include <wchar.h>  // _wcsicmp
+#include <stringapiset.h>  // MultiByteToWideChar, WideCharToMultiByte
 
 
 namespace iEquip
@@ -41,8 +43,8 @@ namespace iEquip
 		std::string key;
 		std::string value;
 		for (auto& pair : GetLocalizationMap()) {
-			key = _converter.to_bytes(pair.first);
-			value = _converter.to_bytes(pair.second);
+			key = ConvertWStringToString(pair.first);
+			value = ConvertWStringToString(pair.second);
 			_DMESSAGE("%s: %s", key.c_str(), value.c_str());
 		}
 	}
@@ -79,8 +81,7 @@ namespace iEquip
 
 	std::string LocaleManager::GetLocalization(std::string a_key)
 	{
-		std::wstring str = GetLocalization(_converter.from_bytes(a_key));
-		return _converter.to_bytes(str);
+		return ConvertWStringToString(GetLocalization(ConvertStringToWstring(a_key)));
 	}
 
 
@@ -92,13 +93,14 @@ namespace iEquip
 	{}
 
 
+#pragma warning(push)
+#pragma warning(disable : 4996)  // codecvt deprecated in c++17
 	void LocaleManager::ReadFromFile(const char* a_filePath, bool a_english)
 	{
 		constexpr std::codecvt_mode cvtMode = std::codecvt_mode(std::little_endian | std::consume_header);
 		constexpr size_type NPOS = std::wstring::npos;
 
 		LocalizationMap& localizations = a_english ? _localizations_ENG : _localizations_LOC;
-
 		std::wifstream inFile(a_filePath);
 		inFile.imbue(std::locale(inFile.getloc(), new std::codecvt_utf16<wchar_t, 0x10ffff, cvtMode>));  // UCS-2 LE w/ BOM
 		std::wstring line;
@@ -136,6 +138,7 @@ namespace iEquip
 			}
 		}
 	}
+#pragma warning(pop)
 
 
 	LocaleManager::LocalizationMap& LocaleManager::GetLocalizationMap()
@@ -251,6 +254,44 @@ namespace iEquip
 		}
 
 		return true;
+	}
+
+
+	std::wstring ConvertStringToWstring(const std::string& a_str)
+	{
+		if (a_str.empty()) {
+			return std::wstring();
+		}
+
+		int numChars = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, a_str.c_str(), a_str.length(), NULL, 0);
+		std::wstring wstrTo;
+		if (numChars) {
+			wstrTo.resize(numChars);
+			if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, a_str.c_str(), a_str.length(), wstrTo.data(), numChars)) {
+				return wstrTo;
+			}
+		}
+
+		return std::wstring();
+	}
+
+
+	std::string ConvertWStringToString(const std::wstring& a_str)
+	{
+		if (a_str.empty()) {
+			return std::string();
+		}
+
+		int numChars = WideCharToMultiByte(CP_UTF8, 0, a_str.c_str(), a_str.length(), NULL, 0, NULL, NULL);
+		std::string strTo;
+		if (numChars) {
+			strTo.resize(numChars);
+			if (WideCharToMultiByte(CP_UTF8, 0, a_str.c_str(), a_str.length(), strTo.data(), numChars, NULL, NULL)) {
+				return strTo;
+			}
+		}
+
+		return std::string();
 	}
 
 

@@ -68,6 +68,9 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 		iEquip::LocaleManager* locManager = iEquip::LocaleManager::GetSingleton();
 		locManager->LoadLocalizationStrings();
 		_DMESSAGE("[MESSAGE] Localization strings loaded");
+		locManager->Dump();
+		std::string str = "$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}";
+		_DMESSAGE("%s", locManager->GetLocalization(str).c_str());
 		break;
 	}
 	}

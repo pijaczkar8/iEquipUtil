@@ -3,28 +3,12 @@
 #include <map>  // map
 #include <queue>  // queue
 #include <string>  // wstring, string
-#include <locale>  // wstring_convert
-#include <codecvt>  // codecvt
-#include <cuchar>  // mbstate_t
 #include <stack>  // stack
 #include <utility>  // pair
 
 
 namespace iEquip
 {
-	// https://en.cppreference.com/w/cpp/locale/codecvt
-	template<class Facet>
-	struct deletable_facet : Facet
-	{
-		template<class ... Args>
-		deletable_facet(Args&& ... a_args) :
-			Facet(std::forward<Args>(a_args)...)
-		{}
-
-		~deletable_facet() {}
-	};
-
-
 	class ci_wstring_compare
 	{
 	public:
@@ -58,9 +42,12 @@ namespace iEquip
 		bool							InsertLocalizations(std::wstring& a_localization, std::stack<size_type>& a_stack, std::queue<std::wstring>& a_queue);
 
 
-		static LocaleManager*																_singleton;
-		LocalizationMap																		_localizations_ENG;
-		LocalizationMap																		_localizations_LOC;
-		std::wstring_convert<deletable_facet<std::codecvt<wchar_t, char, std::mbstate_t>>>	_converter;
+		static LocaleManager*	_singleton;
+		LocalizationMap			_localizations_ENG;
+		LocalizationMap			_localizations_LOC;
 	};
+
+
+	std::wstring ConvertStringToWstring(const std::string& a_str);
+	std::string ConvertWStringToString(const std::wstring& a_str);
 }

@@ -64,6 +64,7 @@
       <ForcedIncludeFiles>common/IPrefix.h;Logging.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <UseFullPaths>false</UseFullPaths>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
@@ -102,6 +103,7 @@
       <ForcedIncludeFiles>common/IPrefix.h;Logging.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <UseFullPaths>false</UseFullPaths>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
