@@ -119,13 +119,15 @@ namespace iEquip
 		static aSetting<Form*> grenades;
 		static aSetting<Form*> throwingAxes;
 		static aSetting<Form*> throwingKnives;
-		static aSetting<Form*> poisonWaxes;
-		static aSetting<Form*> poisonOils;
+		static aSetting<Form*> waxes;
+		static aSetting<Form*> oils;
 		static aSetting<Form*> spellWards;
 		static aSetting<Form*> fire;
 		static aSetting<Form*> ice;
 		static aSetting<Form*> shock;
 		static aSetting<Form*> poison;
+		static aSetting<Form*> salves;
+		static aSetting<Form*> bandages;
 
 	private:
 		static constexpr char* FILE_NAME = "Data\\SKSE\\Plugins\\iEquip.json";

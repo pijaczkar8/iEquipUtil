@@ -76,15 +76,15 @@ namespace iEquip
 	}
 
 
-	bool IsPoisonWax(StaticFunctionTag* a_base, TESForm* a_form)
+	bool IsWax(StaticFunctionTag* a_base, TESForm* a_form)
 	{
-		return IsT<Settings::poisonWaxes>(a_form);
+		return IsT<Settings::waxes>(a_form);
 	}
 
 
-	bool IsPoisonOil(StaticFunctionTag* a_base, TESForm* a_form)
+	bool IsOil(StaticFunctionTag* a_base, TESForm* a_form)
 	{
-		return IsT<Settings::poisonOils>(a_form);
+		return IsT<Settings::oils>(a_form);
 	}
 
 
@@ -118,6 +118,18 @@ namespace iEquip
 	}
 
 
+	bool IsSalve(StaticFunctionTag* a_base, TESForm* a_form)
+	{
+		return IsT<Settings::salves>(a_form);
+	}
+
+
+	bool IsBandage(StaticFunctionTag* a_base, TESForm* a_form)
+	{
+		return IsT<Settings::bandages>(a_form);
+	}
+
+
 	namespace FormExt
 	{
 		bool RegisterFuncs(VMClassRegistry* a_registry)
@@ -144,10 +156,10 @@ namespace iEquip
 				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsThrowingKnife", "iEquip_FormExt", IsThrowingKnife, a_registry));
 
 			a_registry->RegisterFunction(
-				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsPoisonWax", "iEquip_FormExt", IsPoisonWax, a_registry));
+				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsWax", "iEquip_FormExt", IsWax, a_registry));
 
 			a_registry->RegisterFunction(
-				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsPoisonOil", "iEquip_FormExt", IsPoisonOil, a_registry));
+				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsOil", "iEquip_FormExt", IsOil, a_registry));
 
 			a_registry->RegisterFunction(
 				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsSpellWard", "iEquip_FormExt", IsSpellWard, a_registry));
@@ -163,6 +175,12 @@ namespace iEquip
 
 			a_registry->RegisterFunction(
 				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("HasPoison", "iEquip_FormExt", HasPoison, a_registry));
+
+			a_registry->RegisterFunction(
+				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsSalve", "iEquip_FormExt", IsSalve, a_registry));
+
+			a_registry->RegisterFunction(
+				new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsBandage", "iEquip_FormExt", IsBandage, a_registry));
 
 			return true;
 		}

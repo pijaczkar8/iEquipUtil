@@ -31,11 +31,13 @@ namespace iEquip
 	aSetting<Form*>	Settings::grenades("grenades", false);
 	aSetting<Form*>	Settings::throwingAxes("throwingAxes", false);
 	aSetting<Form*>	Settings::throwingKnives("throwingKnives", false);
-	aSetting<Form*>	Settings::poisonWaxes("poisonWaxes", false);
-	aSetting<Form*>	Settings::poisonOils("poisonOils", false);
+	aSetting<Form*>	Settings::waxes("waxes", false);
+	aSetting<Form*>	Settings::oils("oils", false);
 	aSetting<Form*>	Settings::spellWards("spellWards", false);
 	aSetting<Form*>	Settings::fire("fire", false);
 	aSetting<Form*>	Settings::ice("ice", false);
 	aSetting<Form*>	Settings::shock("shock", false);
 	aSetting<Form*>	Settings::poison("poison", false);
+	aSetting<Form*>	Settings::salves("salves", false);
+	aSetting<Form*>	Settings::bandages("bandages", false);
 }

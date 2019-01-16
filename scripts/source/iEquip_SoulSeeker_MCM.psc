@@ -280,6 +280,7 @@ State StringExt_LocalizeString_T
 	Event OnSelectST()
 		String out = iEquip_StringExt.LocalizeString("$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}")
 		Debug.Trace("SoulSeekerDBG: " + out)
+		Debug.Notification("$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}")
 	EndEvent
 
 	Event OnDefaultST()
