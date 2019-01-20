@@ -1,0 +1,69 @@
+#include "SpellExt.h"
+
+#include "GameObjects.h"  // SpellItem, MagicItem::EffectItem, EffectSetting
+#include "PapyrusNativeFunctions.h"  // NativeFunction
+#include "PapyrusVM.h"  // VMClassRegistry
+
+
+namespace iEquip
+{
+	bool IsHealingSpell(StaticFunctionTag* a_base, SpellItem* a_spell)
+	{
+		if (!a_spell) {
+			_ERROR("[ERROR] a_spell is a NONE form!\n");
+			return false;
+		}
+
+		MagicItem::EffectItem* effectItem = 0;
+		EffectSetting* effectSetting = 0;
+		for (UInt32 i = 0; i < a_spell->effectItemList.count; ++i) {
+			effectItem = a_spell->effectItemList[i];
+			if (effectItem && effectItem->mgef) {
+				effectSetting = effectItem->mgef;
+				if (effectSetting->properties.school == kActorValue_Restoration && effectSetting->properties.primaryValue == kActorValue_Health) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+	bool IsBoundSpell(StaticFunctionTag* a_base, SpellItem* a_spell)
+	{
+		if (!a_spell) {
+			_ERROR("[ERROR] a_spell is a NONE form!\n");
+			return false;
+		}
+
+		MagicItem::EffectItem* effectItem = 0;
+		EffectSetting* effectSetting = 0;
+		for (UInt32 i = 0; i < a_spell->effectItemList.count; ++i) {
+			effectItem = a_spell->effectItemList[i];
+			if (effectItem && effectItem->mgef) {
+				effectSetting = effectItem->mgef;
+				if (effectSetting->properties.school == kActorValue_Conjuration && effectSetting->properties.archetype == EffectSetting::Properties::kArchetype_BoundWeapon) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+	namespace SpellExt
+	{
+		bool RegisterFuncs(VMClassRegistry* a_registry)
+		{
+			a_registry->RegisterFunction(
+				new NativeFunction1<StaticFunctionTag, bool, SpellItem*>("IsHealingSpell", "iEquip_SpellExt", IsHealingSpell, a_registry));
+
+			a_registry->RegisterFunction(
+				new NativeFunction1<StaticFunctionTag, bool, SpellItem*>("IsBoundSpell", "iEquip_SpellExt", IsBoundSpell, a_registry));
+
+			return true;
+		}
+	}
+}

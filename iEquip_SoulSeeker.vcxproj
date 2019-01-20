@@ -143,6 +143,7 @@
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\SoulSeeker.cpp" />
     <ClCompile Include="src\SoulSeekerLib.cpp" />
+    <ClCompile Include="src\SpellExt.cpp" />
     <ClCompile Include="src\StringExt.cpp" />
     <ClCompile Include="src\WeaponExt.cpp" />
   </ItemGroup>
@@ -176,6 +177,7 @@
     <ClInclude Include="include\Settings.h" />
     <ClInclude Include="include\SoulSeeker.h" />
     <ClInclude Include="include\SoulSeekerLib.h" />
+    <ClInclude Include="include\SpellExt.h" />
     <ClInclude Include="include\StringExt.h" />
     <ClInclude Include="include\Utility.h" />
     <ClInclude Include="include\version.h" />

@@ -49,6 +49,9 @@
     <ClCompile Include="src\StringExt.cpp">
       <Filter>src\papyrus</Filter>
     </ClCompile>
+    <ClCompile Include="src\SpellExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -135,6 +138,9 @@
       <Filter>include\lib</Filter>
     </ClInclude>
     <ClInclude Include="include\StringExt.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpellExt.h">
       <Filter>include\papyrus</Filter>
     </ClInclude>
   </ItemGroup>

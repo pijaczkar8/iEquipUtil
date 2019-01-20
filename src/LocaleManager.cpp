@@ -183,25 +183,25 @@ namespace iEquip
 				a_stack.push(pos);
 				break;
 			case L'}':
-			{
-				switch (a_stack.size()) {
-				case 0:
-					return false;
-				case 1:
 				{
-					size_type beg = a_stack.top();
-					a_stack.pop();
-					size_type start = beg + 1;
-					size_type end = pos - beg - 1;
-					std::wstring subStr = (start == end) ? L"" : std::wstring(a_key, start, end);
-					a_queue.push(GetLocalizationInternal(subStr));
+					switch (a_stack.size()) {
+					case 0:
+						return false;
+					case 1:
+						{
+							size_type last = a_stack.top();
+							a_stack.pop();
+							size_type off = last + 1;
+							size_type count = pos - last - 1;
+							std::wstring subStr = (count > 0) ? std::wstring(a_key, off, count) : L"";
+							a_queue.push(GetLocalizationInternal(subStr));
+						}
+						break;
+					default:
+						a_stack.pop();
+					}
 					break;
 				}
-				default:
-					a_stack.pop();
-				}
-				break;
-			}
 			}
 		}
 
@@ -235,21 +235,20 @@ namespace iEquip
 				a_stack.push(pos);
 				break;
 			case L'}':
-			{
-				if (a_stack.empty() || a_queue.empty()) {
-					return false;
+				{
+					if (a_stack.empty() || a_queue.empty()) {
+						return false;
+					}
+
+					size_type beg = a_stack.top();
+					a_stack.pop();
+					std::wstring subStr = a_queue.front();
+					a_queue.pop();
+
+					a_localization.replace(beg, pos - beg + 1, subStr);
+					pos = beg;
 				}
-
-				size_type beg = a_stack.top();
-				a_stack.pop();
-				std::wstring subStr = a_queue.front();
-				a_queue.pop();
-
-				a_localization.replace(beg, pos - beg + 1, subStr);
-				pos = beg;
-
 				break;
-			}
 			}
 		}
 

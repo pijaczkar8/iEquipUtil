@@ -47,6 +47,8 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("WeaponExt_IsAmmoJavelin_T", "Check if equipped ammo is a javelin", "")
 		AddTextOptionST("FormExt_RegisterBoundWeaponEquipped_T", "Register for OnBoundWeaponEquipped events", "")
 		AddTextOptionST("StringExt_LocalizeString_T", "Localize a string", "")
+		AddTextOptionST("SpellExt_IsHealingSpell_T", "Check if right hand is a healing spell", "")
+		AddTextOptionST("SpellExt_IsBoundSpell_T", "Check if left hand is a bound spell", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -278,9 +280,45 @@ EndState
 
 State StringExt_LocalizeString_T
 	Event OnSelectST()
-		String out = iEquip_StringExt.LocalizeString("$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}")
+		String out = iEquip_StringExt.LocalizeString("$QuickBrownFox{$french}{$DeathAndTaxes{Death}{$Taxes}}")
 		Debug.Trace("SoulSeekerDBG: " + out)
-		Debug.Notification("$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}")
+		Debug.Notification("$QuickBrownFox{$french}{$DeathAndTaxes{Death}{$Taxes}}")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State SpellExt_IsHealingSpell_T
+	Event OnSelectST()
+		Spell theSpell = PlayerRef.GetEquippedSpell(1)
+		String result = ""
+		If (!iEquip_SpellExt.IsHealingSpell(theSpell))
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a healing spell")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State SpellExt_IsBoundSpell_T
+	Event OnSelectST()
+		Spell theSpell = PlayerRef.GetEquippedSpell(0)
+		String result = ""
+		If (!iEquip_SpellExt.IsBoundSpell(theSpell))
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's left hand is " + result + "a bound spell")
 	EndEvent
 
 	Event OnDefaultST()
