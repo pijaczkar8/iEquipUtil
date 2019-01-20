@@ -1,6 +1,8 @@
 #pragma once
 
+#include <ios>  // hex
 #include <string>  // string, stoi
+#include <sstream>  // stringstream
 #include <vector>  // vector
 #include <set>  // set
 
@@ -53,7 +55,7 @@ namespace iEquip
 				form = *it;
 				_DMESSAGE("{");
 				_DMESSAGE("\t\t\"pluginName\": \"%s\",", form->PluginName());
-				_DMESSAGE("\t\t\"formID\": \"%u\",", form->RawFormID());
+				_DMESSAGE("\t\t\"formID\": \"0x%X\",", form->RawFormID());
 				_DMESSAGE("\t\t\"isLightMod\": \"%s\"", (form->IsLightMod() ? "True" : "False"));
 				_DMESSAGE("},");
 			}
@@ -63,6 +65,7 @@ namespace iEquip
 		virtual std::string	getValueAsString() const override
 		{
 			Form* form = 0;
+			std::stringstream ss;
 			std::string str;
 			str = _key + ": [";
 			for (auto& it = begin(); it != end(); ++it) {
@@ -73,7 +76,9 @@ namespace iEquip
 				str += form->PluginName();
 				str += "\",";
 
-				str += "\t\t\"formID\": \"" + std::to_string(form->RawFormID()) + "\",";
+				ss.str("");
+				ss << std::hex << form->RawFormID();
+				str += "\t\t\"formID\": \"0x" + ss.str() + "\",";
 
 				str += "\t\t\"isLightMod\": \"";
 				str += form->IsLightMod() ? "True" : "False";

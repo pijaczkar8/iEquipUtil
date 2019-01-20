@@ -17,7 +17,7 @@ namespace iEquip
 			return;
 		} else {
 			g_boundWeaponEquippedCallbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);
-			_DMESSAGE("[DEBUG] Registered (0x%X) for OnBoundWeaponEquippedEvent\n", a_thisForm->formID);
+			_DMESSAGE("[DEBUG] Registered (0x%X) for OnBoundWeaponEquippedEvent", a_thisForm->formID);
 		}
 	}
 
@@ -29,7 +29,7 @@ namespace iEquip
 			return;
 		} else {
 			g_boundWeaponUnequippedCallbackRegs.Register<TESForm>(a_thisForm->GetFormType(), a_thisForm);
-			_DMESSAGE("[DEBUG] Registered (0x%X) for OnBoundWeaponUnequippedEvent\n", a_thisForm->formID);
+			_DMESSAGE("[DEBUG] Registered (0x%X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
 		}
 	}
 
@@ -38,7 +38,7 @@ namespace iEquip
 	bool IsT(TESForm* a_form)
 	{
 		if (!a_form) {
-			_ERROR("[ERROR] Invalid form!\n");
+			_ERROR("[ERROR] Form is a NONE form!\n");
 			return false;
 		} else {
 			return arr.find(a_form->formID);

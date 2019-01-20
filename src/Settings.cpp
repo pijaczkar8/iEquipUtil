@@ -16,9 +16,6 @@ namespace iEquip
 			for (auto& setting : *settings) {
 				aSetting<Form*>* arr = dynamic_cast<aSetting<Form*>*>(setting);
 				if (arr) {
-					for (auto& form : *arr) {
-						form->GetLoadedFormID();
-					}
 					arr->sort();
 				}
 			}

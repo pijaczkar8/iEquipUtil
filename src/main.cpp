@@ -52,6 +52,7 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 {
 	switch (a_msg->type) {
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
+	case SKSEMessagingInterface::kMessage_DataLoaded:
 		{
 			iEquip::g_boundWeaponEquippedCallbackRegs.Clear();
 			iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
@@ -69,9 +70,9 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 			iEquip::LocaleManager* locManager = iEquip::LocaleManager::GetSingleton();
 			locManager->LoadLocalizationStrings();
 			_DMESSAGE("[MESSAGE] Localization strings loaded");
+			_DMESSAGE("");
 			locManager->Dump();
-			std::string str = "$QUICKBROWNFOX{$french}{$DeathAndTaxes{Death}{$Taxes}}";
-			_DMESSAGE("%s", locManager->GetLocalization(str).c_str());
+			_DMESSAGE("");
 		}
 		break;
 	}
@@ -117,32 +118,34 @@ extern "C" {
 
 		if (iEquip::Settings::loadSettings()) {
 			_MESSAGE("[MESSAGE] Settings loaded successfully");
+			_DMESSAGE("");
 			iEquip::Settings::dump();
+			_DMESSAGE("");
 		} else {
 			_FATALERROR("[FATAL ERROR] Settings failed to load!\n");
 			return false;
 		}
 
 		bool testActorExt = g_papyrus->Register(iEquip::ActorExt::RegisterFuncs);
-		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful") : _ERROR("[ERROR] iEquip_ActorExt registration failed!");
+		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful") : _ERROR("[ERROR] iEquip_ActorExt registration failed!\n");
 
 		bool testAmmoExt = g_papyrus->Register(iEquip::AmmoExt::RegisterFuncs);
-		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!");
+		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!\n");
 
 		bool testFormExt = g_papyrus->Register(iEquip::FormExt::RegisterFuncs);
-		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful") : _ERROR("[ERROR] iEquip_FormExt registration failed!");
+		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful") : _ERROR("[ERROR] iEquip_FormExt registration failed!\n");
 
 		bool testSoulSeeker = g_papyrus->Register(iEquip::SoulSeeker::RegisterFuncs);
-		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!");
+		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!\n");
 
 		bool testSpellExt = g_papyrus->Register(iEquip::SpellExt::RegisterFuncs);
-		testSpellExt ? _MESSAGE("[MESSAGE] iEquip_SpellExt registration successful") : _ERROR("[ERROR] iEquip_SpellExt registration failed!");
+		testSpellExt ? _MESSAGE("[MESSAGE] iEquip_SpellExt registration successful") : _ERROR("[ERROR] iEquip_SpellExt registration failed!\n");
 
 		bool testStringExt = g_papyrus->Register(iEquip::StringExt::RegisterFuncs);
-		testStringExt ? _MESSAGE("[MESSAGE] iEquip_StringExt registration successful") : _ERROR("[ERROR] iEquip_StringExt registration failed!");
+		testStringExt ? _MESSAGE("[MESSAGE] iEquip_StringExt registration successful") : _ERROR("[ERROR] iEquip_StringExt registration failed!\n");
 
 		bool testWeaponExt = g_papyrus->Register(iEquip::WeaponExt::RegisterFuncs);
-		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!");
+		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!\n");
 
 		if (!testActorExt || !testAmmoExt || !testFormExt || !testSoulSeeker || !testSpellExt || !testStringExt || !testWeaponExt) {
 			_FATALERROR("[FATAL ERROR] Papyrus registration failed!\n");
@@ -151,9 +154,9 @@ extern "C" {
 
 		g_messaging = (SKSEMessagingInterface*)a_skse->QueryInterface(kInterface_Messaging);
 		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {
-			_MESSAGE("[MESSAGE] Messaging interface registration successful!\n");
+			_MESSAGE("[MESSAGE] Messaging interface registration successful!");
 		} else {
-			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!");
+			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!\n");
 			return false;
 		}
 

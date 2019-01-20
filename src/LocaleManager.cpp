@@ -42,11 +42,13 @@ namespace iEquip
 	{
 		std::string key;
 		std::string value;
+		_DMESSAGE("=== LOCALIZATIONS DUMP BEGIN ===");
 		for (auto& pair : GetLocalizationMap()) {
 			key = ConvertWStringToString(pair.first);
 			value = ConvertWStringToString(pair.second);
 			_DMESSAGE("%s: %s", key.c_str(), value.c_str());
 		}
+		_DMESSAGE("=== LOCALIZATIONS DUMP END ===");
 	}
 
 

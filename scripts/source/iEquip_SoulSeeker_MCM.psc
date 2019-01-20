@@ -49,6 +49,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("StringExt_LocalizeString_T", "Localize a string", "")
 		AddTextOptionST("SpellExt_IsHealingSpell_T", "Check if right hand is a healing spell", "")
 		AddTextOptionST("SpellExt_IsBoundSpell_T", "Check if left hand is a bound spell", "")
+		AddTextOptionST("FormExt_IsThrowingKnife_T", "Check if right hand is a throwing knife", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -319,6 +320,24 @@ State SpellExt_IsBoundSpell_T
 			result = "not "
 		EndIf
 		Debug.Trace("SoulSeekerDBG: Player's left hand is " + result + "a bound spell")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State FormExt_IsThrowingKnife_T
+	Event OnSelectST()
+		Weapon theWeapon = PlayerRef.GetEquippedWeapon(0)
+		String result = ""
+		If (!iEquip_FormExt.IsThrowingKnife(theWeapon))
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's left hand is " + result + "a throwing knife")
 	EndEvent
 
 	Event OnDefaultST()
