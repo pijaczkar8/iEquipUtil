@@ -175,8 +175,8 @@ namespace iEquip
 		}
 		if (InsertLocalizations(localization.first, stack, queue)) {
 			for (size_type i = 0, j = 1; j < localization.first.length(); ++i, ++j) {
-				if (localization.first[i] == L'\\' && localization.first[j] == L'\n') {
-					localization.first.replace(i, 1, L"\n");
+				if (localization.first[i] == L'\\' && localization.first[j] == L'n') {
+					localization.first.replace(i, 2, L"\n");
 				}
 			}
 			return localization.first;

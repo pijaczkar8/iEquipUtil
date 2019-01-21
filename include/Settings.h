@@ -113,8 +113,18 @@ namespace iEquip
 			_DMESSAGE("=== FIND DUMP END ===");
 			_DMESSAGE("");
 
+			_DMESSAGE("");
+			_DMESSAGE("=== SET DUMP BEGIN ===");
+			_DMESSAGE("[0x%08X]", a_key);
+			for (auto& id : _loadedFormIDs) {
+				_DMESSAGE("0x%08X", id);
+			}
+			_DMESSAGE("=== SET DUMP END ===");
+			_DMESSAGE("");
 
-			return _loadedFormIDs.find(a_key) != _loadedFormIDs.end();
+			bool found = _loadedFormIDs.find(a_key) != _loadedFormIDs.end();
+			found ? _DMESSAGE("Form found") : _DMESSAGE("Form not found");
+			return found;
 		}
 
 	protected:
