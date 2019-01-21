@@ -50,6 +50,8 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("SpellExt_IsHealingSpell_T", "Check if right hand is a healing spell", "")
 		AddTextOptionST("SpellExt_IsBoundSpell_T", "Check if left hand is a bound spell", "")
 		AddTextOptionST("FormExt_IsThrowingKnife_T", "Check if right hand is a throwing knife", "")
+		AddTextOptionST("FormExt_IsSpear_T", "Check if right hand is a spear", "")
+		AddTextOptionST("FormExt_IsGrenade_T", "Check if right hand is a grenade", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -332,12 +334,76 @@ EndState
 
 State FormExt_IsThrowingKnife_T
 	Event OnSelectST()
-		Weapon theWeapon = PlayerRef.GetEquippedWeapon(0)
+		Spell theSpell = NONE
 		String result = ""
-		If (!iEquip_FormExt.IsThrowingKnife(theWeapon))
+
+		theSpell = PlayerRef.GetEquippedSpell(0)
+		If (iEquip_FormExt.IsThrowingKnife(theSpell))
+			result = ""
+		Else
 			result = "not "
 		EndIf
-		Debug.Trace("SoulSeekerDBG: Player's left hand is " + result + "a throwing knife")
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a throwing knife")
+
+		theSpell = PlayerRef.GetEquippedSpell(1)
+		If (iEquip_FormExt.IsThrowingKnife(theSpell))
+			result = ""
+		Else
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a throwing knife")
+
+		theSpell = PlayerRef.GetEquippedSpell(2)
+		If (iEquip_FormExt.IsThrowingKnife(theSpell))
+			result = ""
+		Else
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a throwing knife")
+
+		theSpell = PlayerRef.GetEquippedSpell(3)
+		If (iEquip_FormExt.IsThrowingKnife(theSpell))
+			result = ""
+		Else
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a throwing knife")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State FormExt_IsSpear_T
+	Event OnSelectST()
+		Weapon theWeapon = PlayerRef.GetEquippedWeapon(False)
+		String result = ""
+		If (!iEquip_FormExt.IsSpear(theWeapon))
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a spear")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State FormExt_IsGrenade_T
+	Event OnSelectST()
+		Spell theSpell = PlayerRef.GetEquippedSpell(1)
+		String result = ""
+		If (!iEquip_FormExt.IsGrenade(theSpell))
+			result = "not "
+		EndIf
+		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a grenade")
 	EndEvent
 
 	Event OnDefaultST()

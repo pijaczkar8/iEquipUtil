@@ -102,6 +102,18 @@ namespace iEquip
 
 		bool find(UInt32 a_key)
 		{
+			Form* form = 0;
+			_DMESSAGE("");
+			_DMESSAGE("=== FIND DUMP BEGIN ===");
+			_DMESSAGE("[%s]", key().c_str());
+			for (auto& it = begin(); it != end(); ++it) {
+				form = *it;
+				_DMESSAGE("%s: 0x%08X", form->PluginName(), form->GetLoadedFormID());
+			}
+			_DMESSAGE("=== FIND DUMP END ===");
+			_DMESSAGE("");
+
+
 			return _loadedFormIDs.find(a_key) != _loadedFormIDs.end();
 		}
 

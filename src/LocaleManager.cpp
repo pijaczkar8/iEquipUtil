@@ -173,7 +173,16 @@ namespace iEquip
 		while (!stack.empty()) {
 			stack.pop();
 		}
-		return InsertLocalizations(localization.first, stack, queue) ? localization.first : a_key;
+		if (InsertLocalizations(localization.first, stack, queue)) {
+			for (size_type i = 0, j = 1; j < localization.first.length(); ++i, ++j) {
+				if (localization.first[i] == L'\\' && localization.first[j] == L'\n') {
+					localization.first.replace(i, 1, L"\n");
+				}
+			}
+			return localization.first;
+		} else {
+			return a_key;
+		}
 	}
 
 
