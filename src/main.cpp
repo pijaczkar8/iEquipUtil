@@ -25,8 +25,8 @@
 
 #if _WIN64
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_62;
-constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquip_SoulSeeker.log";
-constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker";
+constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquipUtil.log";
+constexpr auto IEQUIP_NAME = "iEquipUtil";
 
 #define SINK_EVENT_HANDLER \
 RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList()); \
@@ -34,8 +34,8 @@ eventDispatcherList->equipDispatcher.AddEventSink(&iEquip::g_equipEventHandler)
 
 #else
 constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
-constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquip_SoulSeeker_LE.log";
-constexpr auto IEQUIP_NAME = "iEquip_SoulSeeker_LE";
+constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquipUtil.log";
+constexpr auto IEQUIP_NAME = "iEquipUtil_LE";
 
 #define SINK_EVENT_HANDLER \
 RE::g_equipEventDispatcher->AddEventSink(&iEquip::g_equipEventHandler)

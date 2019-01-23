@@ -20,9 +20,9 @@ BEGIN
         BEGIN
             VALUE "FileDescription", "iEquip script extender"
 			VALUE "FileVersion", IEQUIP_VERSION_VERSTRING
-            VALUE "InternalName", "iEquip_SoulSeeker"
+            VALUE "InternalName", "iEquipUtil"
             VALUE "LegalCopyright", "MIT License"
-            VALUE "ProductName", "iEquip_SoulSeeker"
+            VALUE "ProductName", "iEquipUtil"
 			VALUE "ProductVersion", IEQUIP_VERSION_VERSTRING
         END
     END

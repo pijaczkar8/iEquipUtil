@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>iEquip_SoulSeeker</ProjectName>
+    <ProjectName>iEquipUtil</ProjectName>
     <ProjectGuid>{811DE627-8F4E-4C7E-B5EA-9CF4D0D0D03E}</ProjectGuid>
-    <RootNamespace>iEquip_SoulSeeker</RootNamespace>
+    <RootNamespace>iEquipUtil</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>

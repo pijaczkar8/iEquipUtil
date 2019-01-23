@@ -15,8 +15,9 @@ namespace iEquip
 	};
 
 
-	bool IsHealingSpell(StaticFunctionTag* a_base, SpellItem* a_spell);
-	bool IsBoundSpell(StaticFunctionTag* a_base, SpellItem* a_spell);
+	bool	IsHealingSpell(StaticFunctionTag* a_base, SpellItem* a_spell);
+	bool	IsBoundSpell(StaticFunctionTag* a_base, SpellItem* a_spell);
+	SInt32	GetBoundSpellWeapType(StaticFunctionTag* a_base, SpellItem* a_spell);
 
 
 	namespace SpellExt

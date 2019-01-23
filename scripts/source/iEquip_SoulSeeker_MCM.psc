@@ -52,6 +52,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("FormExt_IsThrowingKnife_T", "Check if right hand is a throwing knife", "")
 		AddTextOptionST("FormExt_IsSpear_T", "Check if right hand is a spear", "")
 		AddTextOptionST("FormExt_IsGrenade_T", "Check if right hand is a grenade", "")
+		AddTextOptionST("SpellExt_GetBoundSpellWeapType_T", "Check the weapon type of the bound spell in the right hand", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -404,6 +405,21 @@ State FormExt_IsGrenade_T
 			result = "not "
 		EndIf
 		Debug.Trace("SoulSeekerDBG: Player's right hand is " + result + "a grenade")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State SpellExt_GetBoundSpellWeapType_T
+	Event OnSelectST()
+		Spell theSpell = PlayerRef.GetEquippedSpell(1)
+		Int result = iEquip_SpellExt.GetBoundSpellWeapType(theSpell)
+		Debug.Trace("SoulSeekerDBG: GetBoundSpellWeapType() == " + result)
 	EndEvent
 
 	Event OnDefaultST()
