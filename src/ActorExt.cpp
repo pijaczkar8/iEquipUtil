@@ -67,36 +67,50 @@ namespace iEquip
 	}
 
 
+	float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue)
+	{
+		if (!a_actor) {
+			_ERROR("[ERROR] a_actor is a NONE form!\n");
+			return 0.0;
+		} else if (a_actorValue > 163) {
+			_ERROR("[ERROR] a_actorValue is out of range!\n");
+			return 0.0;
+		}
+
+		return a_actor->actorValueOwner.GetMaximum(a_actorValue) - a_actor->actorValueOwner.GetCurrent(a_actorValue);
+	}
+
+
 	void EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipItem* a_iActorEquipItem, bool a_preventUnequip, bool a_equipSound)
 	{
 		if (!a_actor) {
-			_ERROR("[ERROR] Invalid actor!");
+			_ERROR("[ERROR] a_actor is a NONE form!\n");
 			return;
 		} else if (!a_item || !a_item->Has3D()) {
-			_ERROR("[ERROR] Invalid item!");
+			_ERROR("[ERROR] a_item is a NONE form!\n");
 			return;
 		} else if (!a_iActorEquipItem->validate()) {
-			_ERROR("[ERROR] Failed validation!");
+			_ERROR("[ERROR] Failed validation!\n");
 			return;
 		}
 
 		EquipManager* equipManager = EquipManager::GetSingleton();
 		if (!equipManager) {
-			_ERROR("[ERROR] EquipManager not found!");
+			_ERROR("[ERROR] EquipManager not found!\n");
 			return;
 		}
 
 		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
 		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
 		if (!containerData) {
-			_ERROR("[ERROR] No container data!");
+			_ERROR("[ERROR] No container data!\n");
 			return;
 		}
 
 		// Copy/merge of extraData can fail in edge cases. Obtain it ourselves.
 		InventoryEntryData* entryData = findEntryData(containerData, a_item);
 		if (!entryData) {
-			_ERROR("[ERROR] No entry data!");
+			_ERROR("[ERROR] No entry data!\n");
 			return;
 		}
 
@@ -143,7 +157,7 @@ namespace iEquip
 
 			xList = a_iActorEquipItem->findExtraListByForm(entryData);
 			if (!xList) {
-				_ERROR("[ERROR] No extra list!");
+				_ERROR("[ERROR] No extra list!\n");
 				return;
 			}
 		}
@@ -158,7 +172,7 @@ namespace iEquip
 			}
 
 			// Slot in use, nothing left to do
-			_ERROR("[ERROR] Slot in use!");
+			_ERROR("[ERROR] Slot in use!\n");
 			return;
 		}
 
@@ -171,7 +185,7 @@ namespace iEquip
 		if (!isTargetSlotInUse && hasItemMinCount) {
 			CALL_MEMBER_FN(equipManager, EquipItem)(a_actor, a_item, xList, equipCount, targetEquipSlot, a_equipSound, a_preventUnequip, false, 0);
 		} else {
-			_ERROR("[ERROR] Item does not have min count!");
+			_ERROR("[ERROR] Item does not have min count!\n");
 		}
 	}
 
@@ -191,6 +205,9 @@ namespace iEquip
 
 			a_registry->RegisterFunction(
 				new NativeFunction8<StaticFunctionTag, void, Actor*, TESForm*, SInt32, EnchantmentItem*, AlchemyItem*, UInt32, bool, bool>("EquipEnchantedAndPoisonedItemEx", "iEquip_ActorExt", EquipEnchantedAndPoisonedItemEx, a_registry));
+
+			a_registry->RegisterFunction(
+				new NativeFunction2<StaticFunctionTag, float, Actor*, UInt32>("GetAVDamage", "iEquip_ActorExt", GetAVDamage, a_registry));
 
 			return true;
 		}

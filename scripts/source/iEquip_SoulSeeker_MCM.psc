@@ -53,6 +53,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("FormExt_IsSpear_T", "Check if right hand is a spear", "")
 		AddTextOptionST("FormExt_IsGrenade_T", "Check if right hand is a grenade", "")
 		AddTextOptionST("SpellExt_GetBoundSpellWeapType_T", "Check the weapon type of the bound spell in the right hand", "")
+		AddTextOptionST("ActorExt_GetAVDamage_T", "Gets the av damage dealt to magicka", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -420,6 +421,20 @@ State SpellExt_GetBoundSpellWeapType_T
 		Spell theSpell = PlayerRef.GetEquippedSpell(1)
 		Int result = iEquip_SpellExt.GetBoundSpellWeapType(theSpell)
 		Debug.Trace("SoulSeekerDBG: GetBoundSpellWeapType() == " + result)
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State ActorExt_GetAVDamage_T
+	Event OnSelectST()
+		Float result = iEquip_ActorExt.GetAVDamage(PlayerRef, 25)
+		Debug.Trace("SoulSeekerDBG: GetAVDamage(kMagicka) == " + result)
 	EndEvent
 
 	Event OnDefaultST()

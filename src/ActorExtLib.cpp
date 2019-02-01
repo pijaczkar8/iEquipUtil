@@ -67,10 +67,10 @@ namespace iEquip
 	UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap)
 	{
 		if (!a_actor) {
-			_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!");
+			_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!\n");
 			return kSlotID_Default;
 		} else if (!a_weap) {
-			_ERROR("[ERROR] In GetEquippedHand() : a_weap is a NONE form!");
+			_ERROR("[ERROR] In GetEquippedHand() : a_weap is a NONE form!\n");
 			return kSlotID_Default;
 		}
 
@@ -91,7 +91,7 @@ namespace iEquip
 	UInt32 getUnequippedSlots(Actor* a_actor)
 	{
 		if (!a_actor) {
-			_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!");
+			_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!\n");
 			return kSlotID_Default;
 		}
 
@@ -113,10 +113,10 @@ namespace iEquip
 	bool ActorEquipEnchantedItem::validate()
 	{
 		if (!_enchantment) {
-			_ERROR("[ERROR] _enchantment is a NONE form!");
+			_ERROR("[ERROR] _enchantment is a NONE form!\n");
 			return false;
 		} if (_enchantment->formType != kFormType_Enchantment) {
-			_ERROR("[ERROR] _enchantment is not an enchantment!");
+			_ERROR("[ERROR] _enchantment is not an enchantment!\n");
 			return false;
 		}
 		return true;
@@ -161,10 +161,10 @@ namespace iEquip
 	bool ActorEquipPoisonedItem::validate()
 	{
 		if (!_poison) {
-			_ERROR("[ERROR] _poison is a NONE form!");
+			_ERROR("[ERROR] _poison is a NONE form!\n");
 			return false;
 		} else if (_poison->formType != kFormType_Potion) {
-			_ERROR("[ERROR] _poison is not a potion!");
+			_ERROR("[ERROR] _poison is not a potion!\n");
 			return false;
 		}
 		return true;

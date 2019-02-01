@@ -57,7 +57,7 @@ namespace iEquip
 	{
 		if (!a_spell) {
 			_ERROR("[ERROR] a_spell is a NONE form!\n");
-			return false;
+			return -1;
 		}
 
 		MagicItem::EffectItem* effectItem = 0;
