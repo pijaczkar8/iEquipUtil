@@ -22,15 +22,15 @@ namespace iEquip
 
 		switch (a_hand) {
 		case kHand_Right:
-		{
-			TESForm* weap = a_actor->processManager ? a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Right] : 0;
-			return DYNAMIC_CAST(weap, TESForm, TESObjectWEAP);
-		}
+			{
+				TESForm* weap = a_actor->processManager ? a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Right] : 0;
+				return DYNAMIC_CAST(weap, TESForm, TESObjectWEAP);
+			}
 		case kHand_Left:
-		{
-			TESForm* weap = a_actor->processManager ? a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Left] : 0;
-			return DYNAMIC_CAST(weap, TESForm, TESObjectWEAP);
-		}
+			{
+				TESForm* weap = a_actor->processManager ? a_actor->processManager->equippedObject[ActorProcessManager::kEquippedHand_Left] : 0;
+				return DYNAMIC_CAST(weap, TESForm, TESObjectWEAP);
+			}
 		default:
 			_ERROR("[ERROR] Invalid slot (%i)!\n", a_hand);
 			return 0;

@@ -52,6 +52,54 @@
     <ClCompile Include="src\SpellExt.cpp">
       <Filter>src\papyrus</Filter>
     </ClCompile>
+    <ClCompile Include="src\ExtraData.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISerializableForm.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISerializableData.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IExtraDataType.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Enchantment.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ExtraEnchantment.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE_Inventory.cpp">
+      <Filter>src\RE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Armor.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InventoryHandler.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hooks.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SerializableFormFactory.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE_ItemCrafted.cpp">
+      <Filter>src\RE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ExtraHealth.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ExtraTextDisplayData.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ExtraPoison.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AlchemyItem.cpp">
+      <Filter>src\forms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -80,6 +128,12 @@
     </Filter>
     <Filter Include="include\lib">
       <UniqueIdentifier>{9cf0b5dd-682e-480b-9a97-938f3317738e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\forms">
+      <UniqueIdentifier>{0a9c964e-7d0f-4cfc-94b2-ee806d533259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\forms">
+      <UniqueIdentifier>{b1aec5fd-8b23-4e76-9348-294eedb5f36d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +196,57 @@
     </ClInclude>
     <ClInclude Include="include\SpellExt.h">
       <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISerializableForm.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExtraData.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISerializableData.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IExtraDataType.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExtraEnchantment.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enchantment.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE_Inventory.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Armor.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InventoryHandler.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Hooks.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SerializableFormFactory.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Types.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE_ItemCrafted.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExtraHealth.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExtraTextDisplayData.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ExtraPoison.h">
+      <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AlchemyItem.h">
+      <Filter>include\forms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

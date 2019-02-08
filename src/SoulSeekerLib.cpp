@@ -111,7 +111,7 @@ namespace iEquip
 	{
 		try {
 			return _souls.at(a_soulSize - 1).addSoul(a_entryData);
-		} catch (std::exception& e ) {
+		} catch (std::exception& e) {
 			_ERROR("[ERROR] Invalid soul size! (%i)", a_soulSize - 1);
 			_ERROR(e.what());
 			_ERROR("\n");

@@ -10,9 +10,10 @@
 
 #include "ActorExt.h"  // RegisterFuncs
 #include "AmmoExt.h"  // RegisterFuncs
-#include "Events.h"  // g_equipEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
+#include "Events.h"  // EquipEventHandler, InventoryEventHandler, ItemCraftedEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
 #include "FormExt.h"  // RegisterFuncs
 #include "Forms.h"  // FormFactory
+#include "Hooks.h"  // InstallHooks
 #include "LocaleManager.h"  // LocaleManager
 #include "Settings.h"  // Settings
 #include "SoulSeeker.h"  // RegisterFuncs
@@ -21,25 +22,26 @@
 #include "version.h"  // IEQUIP_VERSION_VERSTRING, IEQUIP_VERSION_MAJOR
 #include "WeaponExt.h"  // RegisterFuncs
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
+#include "RE_Inventory.h"  // RE::Inventory
+#include "RE_ItemCrafted.h"  // RE::ItemCrafted
 
 
 #if _WIN64
-constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_62;
-constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquipUtil.log";
-constexpr auto IEQUIP_NAME = "iEquipUtil";
+constexpr std::size_t IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_62;
+constexpr const char* IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquipUtil.log";
+constexpr const char* IEQUIP_NAME = "iEquipUtil";
 
 #define SINK_EVENT_HANDLER \
 RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList()); \
-eventDispatcherList->equipDispatcher.AddEventSink(&iEquip::g_equipEventHandler)
+eventDispatcherList->equipDispatcher.AddEventSink(iEquip::EquipEventHandler::GetSingleton())
 
 #else
-constexpr auto IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
-constexpr auto IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquipUtil.log";
-constexpr auto IEQUIP_NAME = "iEquipUtil_LE";
+constexpr std::size_t IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
+constexpr const char* IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquipUtil.log";
+constexpr const char* IEQUIP_NAME = "iEquipUtil_LE";
 
 #define SINK_EVENT_HANDLER \
-RE::g_equipEventDispatcher->AddEventSink(&iEquip::g_equipEventHandler)
-
+RE::g_equipEventDispatcher->AddEventSink(iEquip::EquipEventHandler::GetSingleton())
 #endif
 
 
@@ -54,6 +56,12 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
 	case SKSEMessagingInterface::kMessage_DataLoaded:
 		{
+			RE::Inventory::GetEventSource()->AddEventSink(iEquip::InventoryEventHandler::GetSingleton());
+			_MESSAGE("[MESSAGE] Sinked inventory event handler");
+
+			RE::ItemCrafted::GetEventSource()->AddEventSink(iEquip::ItemCraftedEventHandler::GetSingleton());
+			_MESSAGE("[MESSAGE] Sinked item crafted event handler");
+
 			iEquip::g_boundWeaponEquippedCallbackRegs.Clear();
 			iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
 			_DMESSAGE("[DEBUG] Registries cleared");
@@ -154,11 +162,14 @@ extern "C" {
 
 		g_messaging = (SKSEMessagingInterface*)a_skse->QueryInterface(kInterface_Messaging);
 		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {
-			_MESSAGE("[MESSAGE] Messaging interface registration successful!");
+			_MESSAGE("[MESSAGE] Messaging interface registration successful");
 		} else {
 			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!\n");
 			return false;
 		}
+
+		iEquip::InstallHooks();
+		_MESSAGE("[MESSAGE] Installed hooks");
 
 		return true;
 	}

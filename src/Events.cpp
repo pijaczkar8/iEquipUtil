@@ -5,7 +5,7 @@
 
 #include "GameAPI.h"  // g_thePlayer
 #include "GameEvents.h"  // EventResult, EventDispatcher
-#include "GameObjects.h"  // TESObjectWEAP
+#include "GameObjects.h"  // TESObjectWEAP, TESObjectARMO
 #include "GameTypes.h"  // BSFixedString
 #include "ITypes.h"  // UInt32, SInt32
 #include "PapyrusArgs.h"  // PackValue()
@@ -13,8 +13,12 @@
 #include "PapyrusVM.h"  // Output, VMClassRegistry, IFunctionArguments
 
 #include <limits>  // numeric_limits
+#include <memory>  // shared_ptr
 
 #include "ActorExtLib.h"  // GetEquippedHand
+#include "Armor.h"  // Armor
+#include "InventoryHandler.h"  // InventoryHandler
+#include "SerializableFormFactory.h"  // SerializableFormFactory
 #include "RE_GameEvents.h"  // RE::TESEquipEvent
 
 
@@ -103,6 +107,40 @@ namespace iEquip
 	};
 
 
+	void PushInventoryEntry(InventoryEntryData* a_entryData)
+	{
+		Serializable::FormFactory* formFactory = Serializable::FormFactory::GetSingleton();
+		InventoryHandler* invHandler = InventoryHandler::GetSingleton();
+		invHandler->RemoveFormsByID(a_entryData->type->formID);
+		SInt32 extraCount = 0;
+		SerializableFormPtr form;
+		if (a_entryData->extendDataList) {
+			ExtendDataList* exDataList = a_entryData->extendDataList;
+			for (auto it = exDataList->Begin(); !it.End() && it.Get(); ++it) {
+				++extraCount;
+				form = formFactory->GetForm(a_entryData->type->formType);
+				if (form) {
+					form->Set(a_entryData->type, it.Get());
+					invHandler->AddForm(form, 1);
+				}
+			}
+		}
+		SInt32 baseCount = a_entryData->countDelta - extraCount;
+		if (baseCount > 0) {
+			form = formFactory->GetForm(a_entryData->type->formType);
+			if (form) {
+				form->Set(a_entryData->type, 0);
+				invHandler->AddForm(form, baseCount);
+			}
+		}
+		bool dummy = true;
+	}
+
+
+	EquipEventHandler::EquipEventHandler()
+	{}
+
+
 	EquipEventHandler::~EquipEventHandler()
 	{}
 
@@ -141,7 +179,117 @@ namespace iEquip
 	}
 
 
+	EquipEventHandler* EquipEventHandler::GetSingleton()
+	{
+		if (!_singleton) {
+			_singleton = new EquipEventHandler();
+		}
+		return _singleton;
+	}
+
+
+	void EquipEventHandler::Free()
+	{
+		delete _singleton;
+		_singleton = 0;
+	}
+
+
+	EquipEventHandler* EquipEventHandler::_singleton = 0;
+
+
+	InventoryEventHandler::InventoryEventHandler()
+	{}
+
+
+	InventoryEventHandler::~InventoryEventHandler()
+	{}
+
+
+	EventResult InventoryEventHandler::ReceiveEvent(RE::Inventory::Event* a_event, EventDispatcher<RE::Inventory::Event>* a_dispatcher)
+	{
+		if (!a_event || !a_event->entryData || !a_event->entryData->type || !a_event->objRefr || a_event->objRefr->formID != (*g_thePlayer)->formID) {
+			return kEvent_Continue;
+		}
+
+		PushInventoryEntry(a_event->entryData);
+
+		return kEvent_Continue;
+	}
+
+
+	InventoryEventHandler* InventoryEventHandler::GetSingleton()
+	{
+		if (!_singleton) {
+			_singleton = new InventoryEventHandler();
+		}
+		return _singleton;
+	}
+
+
+	void InventoryEventHandler::Free()
+	{
+		delete _singleton;
+		_singleton = 0;
+	}
+
+
+	InventoryEventHandler* InventoryEventHandler::_singleton = 0;
+
+
+	ItemCraftedEventHandler::ItemCraftedEventHandler()
+	{}
+
+
+	ItemCraftedEventHandler::~ItemCraftedEventHandler()
+	{}
+
+
+	EventResult ItemCraftedEventHandler::ReceiveEvent(RE::ItemCrafted::Event* a_event, EventDispatcher<RE::ItemCrafted::Event>* a_dispatcher)
+	{
+		if (!a_event | !a_event->item) {
+			return kEvent_Continue;
+		}
+
+		InventoryHandler* invHandler = InventoryHandler::GetSingleton();
+		invHandler->RemoveFormsByID(a_event->item->formID);
+
+		ExtraContainerChanges* changes = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
+		if (changes && changes->data && changes->data->objList) {
+			EntryDataList* dataList = changes->data->objList;
+			for (auto it = dataList->Begin(); !it.End() && it.Get(); ++it) {
+				if (it->type && it->type->formID == a_event->item->formID) {
+					PushInventoryEntry(it.Get());
+					break;
+				}
+			}
+		}
+
+		bool dummy = true;
+
+		return kEvent_Continue;
+	}
+
+
+	ItemCraftedEventHandler* ItemCraftedEventHandler::GetSingleton()
+	{
+		if (!_singleton) {
+			_singleton = new ItemCraftedEventHandler();
+		}
+		return _singleton;
+	}
+
+
+	void ItemCraftedEventHandler::Free()
+	{
+		delete _singleton;
+		_singleton = 0;
+	}
+
+
+	ItemCraftedEventHandler* ItemCraftedEventHandler::_singleton = 0;
+
+
 	RegistrationSetHolder<NullParameters> g_boundWeaponEquippedCallbackRegs;
 	RegistrationSetHolder<NullParameters> g_boundWeaponUnequippedCallbackRegs;
-	EquipEventHandler g_equipEventHandler;
 }

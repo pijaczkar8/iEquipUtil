@@ -35,6 +35,8 @@ namespace iEquip
 	 **/
 	SInt32 BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 	{
+		typedef RE::TESObjectREFR::RemoveType RemoveType;
+
 		if (!validateParams(a_reqCharge, a_fillMethod, a_partialFill)) {
 			_ERROR("[ERROR] Parameters failed to validate!\n");
 			return -1;
@@ -72,7 +74,7 @@ namespace iEquip
 			TESObjectREFR* tmpObjRef = static_cast<TESObjectREFR*>(*g_thePlayer);
 			RE::TESObjectREFR* objRef = reinterpret_cast<RE::TESObjectREFR*>(tmpObjRef);
 			UInt32 droppedHandle;
-			objRef->RemoveItem(&droppedHandle, gem, 1, RE::TESObjectREFR::kRemoveType_Remove, 0, 0, 0, 0);
+			objRef->RemoveItem(droppedHandle, gem, 1, RemoveType::kRemove, 0, 0);
 		}
 		return soulSize;
 	}

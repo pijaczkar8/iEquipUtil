@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameBSExtraData.h"  // BaseExtraList
 #include "GameForms.h"  // TESForm
-#include "ITypes.h"  // UInt32
+
+class BaseExtraList;
 
 
 namespace RE
@@ -13,14 +13,14 @@ namespace RE
 		enum { kTypeID = kFormType_Reference };
 
 
-		enum RemoveType : UInt32
+		enum class RemoveType : UInt32
 		{
-			kRemoveType_Remove,
-			kRemoveType_Steal,
-			kRemoveType_Trade,
-			kRemoveType_Drop,
-			kRemoveType_Take,
-			kRemoveType_Unk05
+			kRemove,
+			kSteal,
+			kTrade,
+			kDrop,
+			kTake,
+			kUnk05
 		};
 
 
@@ -53,6 +53,6 @@ namespace RE
 		virtual void	Unk_53(void);
 		virtual void	Unk_54(void);
 		virtual void	Unk_55(void);
-		virtual void	RemoveItem(UInt32* droppedItemHandle, TESForm* akItem, UInt32 aiCount, UInt32 mode, BaseExtraList* extraList, TESObjectREFR* moveToRef, UInt32 unk7, UInt32 unk8);
+		virtual UInt32&	RemoveItem(UInt32& a_droppedItemHandle, TESForm* a_item, UInt32 a_count, RemoveType a_mode, BaseExtraList* a_extraList, TESObjectREFR* a_moveToRef, UInt64 a_arg7 = 0, UInt64 a_arg8 = 0);
 	};
 };
