@@ -8,7 +8,7 @@
 namespace iEquip
 {
 	Enchantment::Enchantment() :
-		ISerializableForm()
+		ISerializableForm(false)
 	{}
 
 

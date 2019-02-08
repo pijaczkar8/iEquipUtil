@@ -8,6 +8,7 @@
 
 #include "ISerializableData.h"  // ISerializableData
 #include "json.hpp"  // json
+#include "RefHandle.h"  // RefHandle
 
 class BaseExtraList;
 class InventoryEntryData;
@@ -23,13 +24,16 @@ namespace iEquip
 	};
 
 
-	class ISerializableForm : public ISerializableData
+	class ISerializableForm :
+		public ISerializableData,
+		public RefHandle
 	{
 	protected:
 		using json = nlohmann::json;
 
 	public:
-		ISerializableForm();
+		ISerializableForm() = delete;
+		explicit ISerializableForm(bool a_useHandle);
 		ISerializableForm(const ISerializableForm&) = default;
 		ISerializableForm(ISerializableForm&&) = default;
 		virtual ~ISerializableForm();

@@ -9,8 +9,9 @@
 
 namespace iEquip
 {
-	ISerializableForm::ISerializableForm() :
+	ISerializableForm::ISerializableForm(bool a_useHandle) :
 		ISerializableData(),
+		RefHandle(a_useHandle ? this : 0),
 		_rawFormID(kInvalid),
 		_loadedFormID(kInvalid),
 		_pluginName(""),

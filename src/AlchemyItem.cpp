@@ -6,7 +6,7 @@
 namespace iEquip
 {
 	AlchemyItem::AlchemyItem() :
-		ISerializableForm()
+		ISerializableForm(false)
 	{}
 
 

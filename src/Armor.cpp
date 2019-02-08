@@ -11,7 +11,7 @@
 namespace iEquip
 {
 	Armor::Armor() :
-		ISerializableForm()
+		ISerializableForm(true)
 	{}
 
 
@@ -78,7 +78,7 @@ namespace iEquip
 	}
 
 
-	UInt32 Armor::GetType() const
+	FormType Armor::GetType() const
 	{
 		return FormType::kFormType_Armor;
 	}

@@ -18,7 +18,7 @@ namespace iEquip
 		virtual void		Clear() override;
 		virtual bool		Save(json& a_save) override;
 		virtual bool		Load(json& a_load) override;
-		virtual UInt32		GetType() const override;
+		virtual FormType	GetType() const override;
 		virtual void		Set(TESForm* a_form, BaseExtraList* a_extraList) override;
 
 	protected:
