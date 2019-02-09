@@ -1,22 +1,22 @@
 #include "ISerializableForm.h"
 
+#include "GameData.h"  // DataHandler, ModInfo
+
 #include <exception>  // exception
 
 #include "version.h"  // MAKE_STR
-
-#include "GameData.h"  // DataHandler, ModInfo
 
 
 namespace iEquip
 {
 	ISerializableForm::ISerializableForm(bool a_useHandle) :
 		ISerializableData(),
-		RefHandle(a_useHandle ? this : 0),
 		_rawFormID(kInvalid),
 		_loadedFormID(kInvalid),
 		_pluginName(""),
 		_isLightMod(false),
-		_isGeneratedID(false)
+		_isGeneratedID(false),
+		_refHandle(a_useHandle, this)
 	{}
 
 
@@ -37,11 +37,17 @@ namespace iEquip
 	bool ISerializableForm::Save(json& a_save)
 	{
 		try {
+			json refHandleSave;
+			if (!_refHandle.Save(refHandleSave)) {
+				return false;
+			}
+
 			a_save = {
 				{ MAKE_STR(_rawFormID), _rawFormID },
 				{ MAKE_STR(_pluginName), _pluginName },
 				{ MAKE_STR(_isLightMod), _isLightMod },
-				{ MAKE_STR(_isGeneratedID), _isGeneratedID }
+				{ MAKE_STR(_isGeneratedID), _isGeneratedID },
+				{ _refHandle.ClassName(), refHandleSave }
 			};
 		} catch (std::exception& e) {
 			_ERROR("[ERROR] %s", e.what());
@@ -55,6 +61,11 @@ namespace iEquip
 	bool ISerializableForm::Load(json& a_load)
 	{
 		try {
+			auto it = a_load.find(ClassName());
+			if (it == a_load.end() || !_refHandle.Load(*it)) {
+				return false;
+			}
+
 			if (!loadJsonObj(a_load, MAKE_STR(_rawFormID), _rawFormID)) {
 				return false;
 			}
@@ -81,6 +92,10 @@ namespace iEquip
 	}
 
 
+	void ISerializableForm::Set(TESForm* a_form, BaseExtraList* a_extraList)
+	{}
+
+
 	bool ISerializableForm::operator<(const ISerializableForm& a_rhs) const
 	{
 		return Compare(a_rhs) == -1;
@@ -99,6 +114,13 @@ namespace iEquip
 		} else {
 			return Comp(&a_rhs);
 		}
+	}
+
+
+	TESForm* ISerializableForm::GetForm() const
+	{
+		UInt32 formID = GetLoadedFormID();
+		return formID == kInvalid ? 0 : LookupFormByID(formID);
 	}
 
 
@@ -176,6 +198,12 @@ namespace iEquip
 		}
 
 		return _loadedFormID;
+	}
+
+
+	UInt32 ISerializableForm::GetHandle() const
+	{
+		return _refHandle.GetHandle();
 	}
 
 

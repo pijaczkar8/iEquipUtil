@@ -1,5 +1,6 @@
 #pragma once
 
+#undef GetForm
 #undef SetForm
 
 #include "GameForms.h"  // FormType
@@ -24,9 +25,7 @@ namespace iEquip
 	};
 
 
-	class ISerializableForm :
-		public ISerializableData,
-		public RefHandle
+	class ISerializableForm : public ISerializableData
 	{
 	protected:
 		using json = nlohmann::json;
@@ -46,9 +45,11 @@ namespace iEquip
 
 		bool				operator<(const ISerializableForm& a_rhs) const;
 		int					Compare(const ISerializableForm& a_rhs) const;
+		TESForm*			GetForm() const;
 		void				SetForm(UInt32 a_formID);
 		UInt32				GetRawFormID() const;
 		UInt32				GetLoadedFormID() const;
+		UInt32				GetHandle() const;
 
 	protected:
 		virtual int			Comp(const ISerializableForm* a_rhs) const = 0;
@@ -62,5 +63,6 @@ namespace iEquip
 		std::string	_pluginName;
 		bool		_isLightMod;
 		bool		_isGeneratedID;
+		RefHandle	_refHandle;
 	};
 }

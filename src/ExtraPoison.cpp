@@ -10,6 +10,7 @@ namespace iEquip
 {
 	ExtraPoison::ExtraPoison() :
 		IExtraDataType(),
+		_poison(false),
 		_count(0)
 	{}
 

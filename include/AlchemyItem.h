@@ -8,7 +8,8 @@ namespace iEquip
 	class AlchemyItem : public ISerializableForm
 	{
 	public:
-		AlchemyItem();
+		AlchemyItem() = delete;
+		explicit AlchemyItem(bool a_useHandle);
 		AlchemyItem(const AlchemyItem&) = default;
 		AlchemyItem(AlchemyItem&&) = default;
 		virtual ~AlchemyItem();

@@ -149,6 +149,8 @@
     <ClCompile Include="src\InventoryHandler.cpp" />
     <ClCompile Include="src\ISerializableData.cpp" />
     <ClCompile Include="src\ISerializableForm.cpp" />
+    <ClCompile Include="src\RefHandle.cpp" />
+    <ClCompile Include="src\RefHandleManager.cpp" />
     <ClCompile Include="src\RE_ItemCrafted.cpp" />
     <ClCompile Include="src\SerializableFormFactory.cpp" />
     <ClCompile Include="src\LocaleManager.cpp" />
@@ -198,6 +200,8 @@
     <ClInclude Include="include\Armor.h" />
     <ClInclude Include="include\ISerializableData.h" />
     <ClInclude Include="include\ISerializableForm.h" />
+    <ClInclude Include="include\RefHandle.h" />
+    <ClInclude Include="include\RefHandleManager.h" />
     <ClInclude Include="include\RE_ItemCrafted.h" />
     <ClInclude Include="include\Types.h" />
     <ClInclude Include="include\SerializableFormFactory.h" />

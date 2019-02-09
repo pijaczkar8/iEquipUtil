@@ -11,7 +11,8 @@
 namespace iEquip
 {
 	ExtraEnchantment::ExtraEnchantment() :
-		IExtraDataType()
+		IExtraDataType(),
+		_enchantment(false)
 	{}
 
 

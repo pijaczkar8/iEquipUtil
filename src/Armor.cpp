@@ -10,8 +10,8 @@
 
 namespace iEquip
 {
-	Armor::Armor() :
-		ISerializableForm(true)
+	Armor::Armor(bool a_useHandle) :
+		ISerializableForm(a_useHandle)
 	{}
 
 
@@ -34,8 +34,8 @@ namespace iEquip
 	bool Armor::Save(json& a_save)
 	{
 		try {
-			json ArmorSave;
-			if (!ISerializableForm::Save(ArmorSave)) {
+			json armorSave;
+			if (!ISerializableForm::Save(armorSave)) {
 				return false;
 			}
 
@@ -45,7 +45,7 @@ namespace iEquip
 			}
 
 			a_save = {
-				{ ClassName(), ArmorSave },
+				{ ClassName(), armorSave },
 				{ _extraData.ClassName(), xDataSave }
 			};
 		} catch (std::exception& e) {
@@ -86,6 +86,10 @@ namespace iEquip
 
 	void Armor::Set(TESForm* a_form, BaseExtraList* a_extraList)
 	{
+		if (_refHandle.IsActive()) {
+			_refHandle.AcquireHandle();
+		}
+
 		SetForm(a_form->formID);
 		if (a_extraList) {
 			_extraData.Parse(a_extraList);

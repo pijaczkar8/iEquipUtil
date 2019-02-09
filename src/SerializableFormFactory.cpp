@@ -32,7 +32,7 @@ namespace iEquip
 			SerializableFormPtr ptr;
 			switch (a_type) {
 			case FormType::kFormType_Armor:
-				ptr = std::make_shared<Armor>();
+				ptr = std::make_shared<Armor>(true);
 				break;
 			default:
 				_WARNING("[WARNING] Encountered type with no case (%u)", a_type);

@@ -9,7 +9,8 @@ namespace iEquip
 	class Armor : public ISerializableForm
 	{
 	public:
-		Armor();
+		Armor() = delete;
+		explicit Armor(bool a_useHandle);
 		Armor(const Armor&) = default;
 		Armor(Armor&&) = default;
 		virtual ~Armor();

@@ -10,7 +10,8 @@ namespace iEquip
 	class Enchantment : public ISerializableForm
 	{
 	public:
-		Enchantment();
+		Enchantment() = delete;
+		explicit Enchantment(bool a_useHandle);
 		Enchantment(const Enchantment&) = default;
 		Enchantment(Enchantment&&) = default;
 		virtual ~Enchantment();

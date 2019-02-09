@@ -5,8 +5,8 @@
 
 namespace iEquip
 {
-	AlchemyItem::AlchemyItem() :
-		ISerializableForm(false)
+	AlchemyItem::AlchemyItem(bool a_useHandle) :
+		ISerializableForm(a_useHandle)
 	{}
 
 
@@ -27,7 +27,11 @@ namespace iEquip
 
 
 	void AlchemyItem::Set(TESForm* a_form, BaseExtraList* a_extraList)
-	{}
+	{
+		if (_refHandle.IsActive()) {
+			_refHandle.AcquireHandle();
+		}
+	}
 
 
 	int AlchemyItem::Comp(const ISerializableForm* a_rhs) const

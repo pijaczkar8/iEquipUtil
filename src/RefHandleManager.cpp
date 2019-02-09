@@ -1,6 +1,7 @@
 #include "RefHandleManager.h"
 
 #include <exception>  // exception
+#include <stdexcept>  // runtime_error, domain_error
 
 #include "version.h"  // MAKE_STR
 
@@ -23,51 +24,11 @@ namespace iEquip
 	}
 
 
-	const char* RefHandleManager::ClassName() const
-	{
-		return MAKE_STR(RefHandleManager);
-	}
-
-
 	void RefHandleManager::Clear()
 	{
+		_formMap.clear();
 		_activeHandles.reset();
 		_nextHandle = 0;
-	}
-
-
-	bool RefHandleManager::Save(json& a_save)
-	{
-		try {
-			a_save = {
-				{ MAKE_STR(_activeHandles), _activeHandles.to_string() },
-				{ MAKE_STR(_nextHandle), _nextHandle }
-			};
-		} catch (std::exception& e) {
-			_ERROR("[ERROR] %s", e.what());
-			return false;
-		}
-
-		return true;
-	}
-
-
-	bool RefHandleManager::Load(json& a_load)
-	{
-		try {
-			if (!loadJsonObj<kMaxHandles>(a_load, MAKE_STR(_activeHandles), _activeHandles)) {
-				return false;
-			}
-
-			if (!loadJsonObj(a_load, MAKE_STR(_nextHandle), _nextHandle)) {
-				return false;
-			}
-		} catch (std::exception& e) {
-			_ERROR("[ERROR] %s", e.what());
-			return false;
-		}
-
-		return true;
 	}
 
 
@@ -84,6 +45,17 @@ namespace iEquip
 	}
 
 
+	void RefHandleManager::SetHandleAsActive(UInt32 a_handle, ISerializableForm* a_form)
+	{
+		auto result = _formMap.insert({ a_handle, a_form });
+		if (result.second) {
+			_activeHandles[a_handle] = true;
+		} else {
+			throw std::runtime_error("[ERROR] Tried to claim handle already in use!");
+		}
+	}
+
+
 	RefHandleManager::RefHandleManager() :
 		_nextHandle(0)
 	{}
@@ -96,12 +68,12 @@ namespace iEquip
 	UInt32 RefHandleManager::GetHandle(ISerializableForm* a_form)
 	{
 		UInt32 start = _nextHandle;
-		while (_activeHandles[_nextHandle] && _nextHandle != start) {
+		while (_activeHandles[_nextHandle] && _nextHandle != start && _nextHandle != kInvalidHandle) {
 			++_nextHandle;
 		}
 
 		if (_nextHandle == start) {
-			throw std::runtime_error("[FATAL ERROR] Ran out of reference handles!");
+			throw std::overflow_error("[FATAL ERROR] Ran out of reference handles!");
 		} else {
 			_formMap.insert({ _nextHandle, a_form });
 			return _nextHandle++;

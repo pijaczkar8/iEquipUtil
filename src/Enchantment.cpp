@@ -7,8 +7,8 @@
 
 namespace iEquip
 {
-	Enchantment::Enchantment() :
-		ISerializableForm(false)
+	Enchantment::Enchantment(bool a_useHandle) :
+		ISerializableForm(a_useHandle)
 	{}
 
 
@@ -29,7 +29,11 @@ namespace iEquip
 
 
 	void Enchantment::Set(TESForm* a_form, BaseExtraList* a_extraList)
-	{}
+	{
+		if (_refHandle.IsActive()) {
+			_refHandle.AcquireHandle();
+		}
+	}
 
 
 	int Enchantment::Comp(const ISerializableForm* a_rhs) const
