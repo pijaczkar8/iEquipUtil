@@ -9,7 +9,7 @@
 #include "IDebugLog.h"  // gLog
 
 #include "ExtraLocator.h"  // ExtraListLocator
-#include "RE_ExtraPoison.h"  // RE::ExtraPoison
+#include "RE/ExtraPoison.h"  // RE::ExtraPoison
 
 
 namespace iEquip

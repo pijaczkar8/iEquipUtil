@@ -10,7 +10,7 @@
 
 #include "ExtraLocator.h"  // ExtraListLocator
 #include "SoulSeekerLib.h"  // SoulGem, SoulSize
-#include "RE_TESObjectREFR.h"  // RE::TESObjectREFR
+#include "RE/TESObjectREFR.h"  // RE::TESObjectREFR
 
 #if _WIN64
 #define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \

@@ -19,7 +19,8 @@
 #include "Armor.h"  // Armor
 #include "InventoryHandler.h"  // InventoryHandler
 #include "SerializableFormFactory.h"  // SerializableFormFactory
-#include "RE_GameEvents.h"  // RE::TESEquipEvent
+#include "RE/BSTList.h"  // RE::BSSimpleList
+#include "RE/GameEvents.h"  // RE::TESEquipEvent
 
 
 #if _WIN64
@@ -115,19 +116,19 @@ namespace iEquip
 		SInt32 extraCount = 0;
 		SerializableFormPtr form;
 		if (a_entryData->extendDataList) {
-			ExtendDataList* exDataList = a_entryData->extendDataList;
-			for (auto it = exDataList->Begin(); !it.End() && it.Get(); ++it) {
+			RE::BSSimpleList<BaseExtraList*>* exDataList = (RE::BSSimpleList<BaseExtraList*>*)a_entryData->extendDataList;
+			for (auto it = exDataList->begin(); it != exDataList->end(); ++it) {
 				++extraCount;
-				form = formFactory->GetForm(a_entryData->type->formType);
+				form = formFactory->GetForm(a_entryData->type->formType, true);
 				if (form) {
-					form->Set(a_entryData->type, it.Get());
+					form->Set(a_entryData->type, *it);
 					invHandler->AddForm(form, 1);
 				}
 			}
 		}
 		SInt32 baseCount = a_entryData->countDelta - extraCount;
 		if (baseCount > 0) {
-			form = formFactory->GetForm(a_entryData->type->formType);
+			form = formFactory->GetForm(a_entryData->type->formType, true);
 			if (form) {
 				form->Set(a_entryData->type, 0);
 				invHandler->AddForm(form, baseCount);
@@ -256,10 +257,10 @@ namespace iEquip
 
 		ExtraContainerChanges* changes = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 		if (changes && changes->data && changes->data->objList) {
-			EntryDataList* dataList = changes->data->objList;
-			for (auto it = dataList->Begin(); !it.End() && it.Get(); ++it) {
-				if (it->type && it->type->formID == a_event->item->formID) {
-					PushInventoryEntry(it.Get());
+			RE::BSSimpleList<InventoryEntryData*>* dataList = (RE::BSSimpleList<InventoryEntryData*>*)changes->data->objList;
+			for (auto it = dataList->begin(); it != dataList->end(); ++it) {
+				if ((*it)->type && (*it)->type->formID == a_event->item->formID) {
+					PushInventoryEntry(*it);
 					break;
 				}
 			}

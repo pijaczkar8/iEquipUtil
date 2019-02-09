@@ -55,11 +55,11 @@ namespace iEquip
 	bool RefHandle::Load(json& a_load)
 	{
 		try {
-			if (!loadJsonObj(a_load, MAKE_STR(isActive), _isActive)) {
+			if (!loadJsonObj(a_load, MAKE_STR(_isActive), _isActive)) {
 				return false;
 			}
 
-			if (!loadJsonObj(a_load, MAKE_STR(handle), _handle)) {
+			if (!loadJsonObj(a_load, MAKE_STR(_handle), _handle)) {
 				return false;
 			}
 

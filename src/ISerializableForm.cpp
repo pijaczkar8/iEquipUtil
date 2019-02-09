@@ -61,7 +61,7 @@ namespace iEquip
 	bool ISerializableForm::Load(json& a_load)
 	{
 		try {
-			auto it = a_load.find(ClassName());
+			auto it = a_load.find(_refHandle.ClassName());
 			if (it == a_load.end() || !_refHandle.Load(*it)) {
 				return false;
 			}

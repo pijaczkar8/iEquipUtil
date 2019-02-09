@@ -18,8 +18,8 @@ namespace iEquip
 		public:
 			static FormFactory*	GetSingleton();
 			static void			Free();
-			SerializableFormPtr	GetForm(FormType a_type);
-			SerializableFormPtr	GetForm(UInt32 a_type);
+			SerializableFormPtr	GetForm(FormType a_type, bool a_useHandle);
+			SerializableFormPtr	GetForm(UInt32 a_type, bool a_useHandle);
 
 		private:
 			FormFactory();

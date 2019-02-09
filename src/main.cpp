@@ -5,25 +5,31 @@
 #include "skse_version.h"  // RUNTIME_VERSION
 
 #include <clocale>  // setlocale
+#include <exception>  // exception
+#include <stdexcept>  // runtime_error
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
 
 #include "ActorExt.h"  // RegisterFuncs
 #include "AmmoExt.h"  // RegisterFuncs
 #include "Events.h"  // EquipEventHandler, InventoryEventHandler, ItemCraftedEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
+#include "Exceptions.h"  // bad_record_version
 #include "FormExt.h"  // RegisterFuncs
 #include "Forms.h"  // FormFactory
 #include "Hooks.h"  // InstallHooks
+#include "InventoryHandler.h"  // InventoryHandler
+#include "json.hpp"  // json
 #include "LocaleManager.h"  // LocaleManager
+#include "RefHandleManager.h"  // RefHandleManager
 #include "Settings.h"  // Settings
 #include "SoulSeeker.h"  // RegisterFuncs
 #include "SpellExt.h"  // RegisterFuncs
 #include "StringExt.h"  // RegisterFuncs
 #include "version.h"  // IEQUIP_VERSION_VERSTRING, IEQUIP_VERSION_MAJOR
 #include "WeaponExt.h"  // RegisterFuncs
-#include "RE_GameEvents.h"  // RE::TESEquipEvent
-#include "RE_Inventory.h"  // RE::Inventory
-#include "RE_ItemCrafted.h"  // RE::ItemCrafted
+#include "RE/GameEvents.h"  // RE::TESEquipEvent
+#include "RE/Inventory.h"  // RE::Inventory
+#include "RE/ItemCrafted.h"  // RE::ItemCrafted
 
 
 #if _WIN64
@@ -45,9 +51,90 @@ RE::g_equipEventDispatcher->AddEventSink(iEquip::EquipEventHandler::GetSingleton
 #endif
 
 
-static PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
-static SKSEPapyrusInterface* g_papyrus = 0;
-static SKSEMessagingInterface* g_messaging = 0;
+static PluginHandle					g_pluginHandle = kPluginHandle_Invalid;
+static SKSEPapyrusInterface*		g_papyrus = 0;
+static SKSEMessagingInterface*		g_messaging = 0;
+static SKSESerializationInterface*	g_serialization = 0;
+
+constexpr UInt32 SERIALIZATION_VERSION = 1;
+
+
+void SaveCallback(SKSESerializationInterface* a_intfc)
+{
+	using nlohmann::json;
+	using iEquip::InventoryHandler;
+
+	InventoryHandler* invHandler = InventoryHandler::GetSingleton();
+
+	try {
+		json save;
+		if (!invHandler->Save(save)) {
+			invHandler->Clear();
+			throw std::runtime_error("Inventory handler failed to save data!");
+		}
+
+#if _DEBUG
+		_DMESSAGE("\nSERIALIZATION SAVE DUMP\n%s\n", save.dump(4).c_str());
+#endif
+		std::string buf = save.dump();
+		g_serialization->WriteRecord('IEQP', SERIALIZATION_VERSION, buf.c_str(), buf.length() + 1);
+	} catch (std::exception& e) {
+		_ERROR("[ERROR] %s", e.what());
+	}
+
+	_MESSAGE("[MESSAGE] Finished saving data");
+}
+
+
+void LoadCallback(SKSESerializationInterface* a_intfc)
+{
+	using nlohmann::json;
+	using iEquip::InventoryHandler;
+	using iEquip::RefHandleManager;
+
+	InventoryHandler* invHandler = InventoryHandler::GetSingleton();
+	invHandler->Clear();
+	RefHandleManager* handleManager = RefHandleManager::GetSingleton();
+	handleManager->Clear();
+
+	UInt32 type;
+	UInt32 version;
+	UInt32 length;
+	char* buf = 0;
+
+	try {
+		if (!a_intfc->GetNextRecordInfo(&type, &version, &length)) {
+			throw std::runtime_error("Serialization interface failed to retrieve next record info!");
+		}
+
+		if (version != SERIALIZATION_VERSION) {
+			throw bad_record_version(SERIALIZATION_VERSION, version);
+		}
+
+		buf = new char[length];
+		if (!a_intfc->ReadRecordData(buf, length)) {
+			throw std::runtime_error("Serialization interface failed to read record data!");
+		}
+
+		json load = json::parse(buf);
+
+#if _DEBUG
+		_DMESSAGE("\nSERIALIZATION LOAD DUMP\n%s\n", load.dump(4).c_str());
+#endif
+
+		if (!invHandler->Load(load)) {
+			invHandler->Clear();
+			throw std::runtime_error("Inventory handler failed to load data!");
+		}
+	} catch (std::exception& e) {
+		_ERROR("[ERROR] %s\n", e.what());
+	}
+
+	delete buf;
+	buf = 0;
+
+	_MESSAGE("[MESSAGE] Finished loading data");
+}
 
 
 void MessageHandler(SKSEMessagingInterface::Message* a_msg)
@@ -165,6 +252,17 @@ extern "C" {
 			_MESSAGE("[MESSAGE] Messaging interface registration successful");
 		} else {
 			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!\n");
+			return false;
+		}
+
+		g_serialization = (SKSESerializationInterface*)a_skse->QueryInterface(kInterface_Serialization);
+		if (g_serialization) {
+			g_serialization->SetUniqueID(g_pluginHandle, 'IEQP');
+			g_serialization->SetSaveCallback(g_pluginHandle, SaveCallback);
+			g_serialization->SetLoadCallback(g_pluginHandle, LoadCallback);
+			_MESSAGE("[MESSAGE] Serialization interface query successful");
+		} else {
+			_FATALERROR("[FATAL ERROR] Serialization interface query failed!\n");
 			return false;
 		}
 

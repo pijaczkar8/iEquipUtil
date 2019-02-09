@@ -3,7 +3,7 @@
 #include <exception>  // exception
 
 #include "version.h"  // MAKE_STR
-#include "RE_ExtraPoison.h"  // RE::ExtraPoison
+#include "RE/ExtraPoison.h"  // RE::ExtraPoison
 
 
 namespace iEquip

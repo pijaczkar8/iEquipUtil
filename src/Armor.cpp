@@ -27,6 +27,7 @@ namespace iEquip
 
 	void Armor::Clear()
 	{
+		ISerializableForm::Clear();
 		_extraData.Clear();
 	}
 

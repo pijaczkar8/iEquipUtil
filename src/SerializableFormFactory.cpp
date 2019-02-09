@@ -27,12 +27,12 @@ namespace iEquip
 		}
 
 
-		SerializableFormPtr FormFactory::GetForm(FormType a_type)
+		SerializableFormPtr FormFactory::GetForm(FormType a_type, bool a_useHandle)
 		{
 			SerializableFormPtr ptr;
 			switch (a_type) {
 			case FormType::kFormType_Armor:
-				ptr = std::make_shared<Armor>(true);
+				ptr = std::make_shared<Armor>(a_useHandle);
 				break;
 			default:
 				_WARNING("[WARNING] Encountered type with no case (%u)", a_type);
@@ -42,9 +42,9 @@ namespace iEquip
 		}
 
 
-		SerializableFormPtr FormFactory::GetForm(UInt32 a_type)
+		SerializableFormPtr FormFactory::GetForm(UInt32 a_type, bool a_useHandle)
 		{
-			return GetForm(static_cast<FormType>(a_type));
+			return GetForm(static_cast<FormType>(a_type), a_useHandle);
 		}
 
 

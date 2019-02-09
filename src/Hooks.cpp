@@ -23,11 +23,11 @@ namespace iEquip
 	{
 		if (a_item) {
 			Serializable::FormFactory* formFactory = Serializable::FormFactory::GetSingleton();
-			SerializableFormPtr ptr = formFactory->GetForm(a_item->formType);
+			SerializableFormPtr ptr = formFactory->GetForm(a_item->formType, true);
 			if (ptr) {
 				ptr->Set(a_item, a_extraList);
 				InventoryHandler* invHandler = InventoryHandler::GetSingleton();
-				invHandler->UpdateFormCount(ptr, a_count * -1);
+				invHandler->AddForm(ptr, a_count * -1);
 				bool dummy = true;
 			}
 		}

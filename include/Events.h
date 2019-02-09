@@ -2,9 +2,9 @@
 
 #include "GameEvents.h"  // BSTEventSink, EventResult, EventDispatcher
 #include "PapyrusEvents.h"  // SKSEModCallbackEvent, RegistrationSetHolder, NullParameters
-#include "RE_GameEvents.h"  // RE::TESEquipEvent
-#include "RE_Inventory.h"  // RE::Inventory
-#include "RE_ItemCrafted.h"  // RE::ItemCrafted
+#include "RE/GameEvents.h"  // RE::TESEquipEvent
+#include "RE/Inventory.h"  // RE::Inventory
+#include "RE/ItemCrafted.h"  // RE::ItemCrafted
 
 
 namespace iEquip

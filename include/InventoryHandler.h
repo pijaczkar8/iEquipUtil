@@ -6,6 +6,7 @@
 #include <set>  // set
 #include <memory>  // shared_ptr
 
+#include "json.hpp"  // json
 #include "Types.h"  // SerializableFormPtr
 
 
@@ -14,6 +15,9 @@ namespace iEquip
 	class InventoryHandler
 	{
 	public:
+		using json = nlohmann::json;
+
+
 		typedef SerializableFormPtr key_type;
 		typedef SInt32 mapped_type;
 
@@ -21,8 +25,10 @@ namespace iEquip
 		static InventoryHandler*	GetSingleton();
 		static void					Free();
 
-		void						AddForm(const key_type& a_armor, mapped_type a_count);
-		void						UpdateFormCount(const key_type& a_armor, mapped_type a_countDiff);
+		void						Clear();
+		bool						Save(json& a_save);
+		bool						Load(json& a_load);
+		void						AddForm(const key_type& a_form, mapped_type a_count);
 		void						RemoveFormsByID(UInt32 a_formID);
 
 	private:
@@ -45,6 +51,9 @@ namespace iEquip
 		InventoryHandler&	operator=(const InventoryHandler&) = delete;
 		InventoryHandler&	operator=(InventoryHandler&&) = delete;
 
+
+		static constexpr char*	KEY_STR = "count";
+		static constexpr char*	VALUE_STR = "form";
 
 		static InventoryHandler*	_singleton;
 		ItemMap						_items;	// key = item, value = total count of that item

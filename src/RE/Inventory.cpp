@@ -1,4 +1,4 @@
-#include "RE_Inventory.h"
+#include "RE/Inventory.h"
 
 #include "Relocation.h"  // RelocAddr
 

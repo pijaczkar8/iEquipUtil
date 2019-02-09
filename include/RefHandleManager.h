@@ -51,6 +51,6 @@ namespace iEquip
 		static RefHandleManager*				_singleton;
 		std::map<UInt32, ISerializableForm*>	_formMap;
 		std::bitset<kMaxHandles>				_activeHandles;
-		UInt32									_nextHandle;
+		UInt32									_lastHandle;
 	};
 }

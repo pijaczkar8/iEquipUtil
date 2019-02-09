@@ -1,4 +1,4 @@
-#include "RE_ItemCrafted.h"
+#include "RE/ItemCrafted.h"
 
 #include "Relocation.h"  // RelocAddr
 

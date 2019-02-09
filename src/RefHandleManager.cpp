@@ -28,7 +28,7 @@ namespace iEquip
 	{
 		_formMap.clear();
 		_activeHandles.reset();
-		_nextHandle = 0;
+		_lastHandle = kInvalidHandle;
 	}
 
 
@@ -36,6 +36,22 @@ namespace iEquip
 	{
 		auto it = _formMap.find(a_refHandle);
 		return it == _formMap.end() ? 0 : it->second;
+	}
+
+
+	UInt32 RefHandleManager::GetHandle(ISerializableForm* a_form)
+	{
+		UInt32 start = _lastHandle++;
+		while ((_lastHandle == kInvalidHandle || _activeHandles[_lastHandle]) && _lastHandle != start) {
+			++_lastHandle;
+		}
+
+		if (_lastHandle == start) {
+			throw std::overflow_error("[FATAL ERROR] Ran out of reference handles!");
+		} else {
+			_formMap.insert({ _lastHandle, a_form });
+			return _lastHandle;
+		}
 	}
 
 
@@ -51,34 +67,18 @@ namespace iEquip
 		if (result.second) {
 			_activeHandles[a_handle] = true;
 		} else {
-			throw std::runtime_error("[ERROR] Tried to claim handle already in use!");
+			throw std::runtime_error("Tried to claim handle already in use!");
 		}
 	}
 
 
 	RefHandleManager::RefHandleManager() :
-		_nextHandle(0)
+		_lastHandle(kInvalidHandle)
 	{}
 
 
 	RefHandleManager::~RefHandleManager()
 	{}
-
-
-	UInt32 RefHandleManager::GetHandle(ISerializableForm* a_form)
-	{
-		UInt32 start = _nextHandle;
-		while (_activeHandles[_nextHandle] && _nextHandle != start && _nextHandle != kInvalidHandle) {
-			++_nextHandle;
-		}
-
-		if (_nextHandle == start) {
-			throw std::overflow_error("[FATAL ERROR] Ran out of reference handles!");
-		} else {
-			_formMap.insert({ _nextHandle, a_form });
-			return _nextHandle++;
-		}
-	}
 
 
 	RefHandleManager* RefHandleManager::_singleton = 0;

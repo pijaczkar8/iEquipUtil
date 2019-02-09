@@ -4,9 +4,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\RE_GameEvents.cpp">
-      <Filter>src\RE</Filter>
-    </ClCompile>
     <ClCompile Include="src\ActorExt.cpp">
       <Filter>src\papyrus</Filter>
     </ClCompile>
@@ -70,9 +67,6 @@
     <ClCompile Include="src\ExtraEnchantment.cpp">
       <Filter>src\forms</Filter>
     </ClCompile>
-    <ClCompile Include="src\RE_Inventory.cpp">
-      <Filter>src\RE</Filter>
-    </ClCompile>
     <ClCompile Include="src\Armor.cpp">
       <Filter>src\forms</Filter>
     </ClCompile>
@@ -84,9 +78,6 @@
     </ClCompile>
     <ClCompile Include="src\SerializableFormFactory.cpp">
       <Filter>src\forms</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RE_ItemCrafted.cpp">
-      <Filter>src\RE</Filter>
     </ClCompile>
     <ClCompile Include="src\ExtraHealth.cpp">
       <Filter>src\forms</Filter>
@@ -105,6 +96,15 @@
     </ClCompile>
     <ClCompile Include="src\RefHandle.cpp">
       <Filter>src\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\GameEvents.cpp">
+      <Filter>src\RE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Inventory.cpp">
+      <Filter>src\RE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\ItemCrafted.cpp">
+      <Filter>src\RE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,12 +143,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\RE_ExtraPoison.h">
-      <Filter>include\RE</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RE_GameEvents.h">
-      <Filter>include\RE</Filter>
-    </ClInclude>
     <ClInclude Include="include\ActorExt.h">
       <Filter>include\papyrus</Filter>
     </ClInclude>
@@ -178,9 +172,6 @@
     </ClInclude>
     <ClInclude Include="include\Utility.h">
       <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RE_TESObjectREFR.h">
-      <Filter>include\RE</Filter>
     </ClInclude>
     <ClInclude Include="include\version.h">
       <Filter>include</Filter>
@@ -221,9 +212,6 @@
     <ClInclude Include="include\Enchantment.h">
       <Filter>include\forms</Filter>
     </ClInclude>
-    <ClInclude Include="include\RE_Inventory.h">
-      <Filter>include\RE</Filter>
-    </ClInclude>
     <ClInclude Include="include\Armor.h">
       <Filter>include\forms</Filter>
     </ClInclude>
@@ -238,9 +226,6 @@
     </ClInclude>
     <ClInclude Include="include\Types.h">
       <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RE_ItemCrafted.h">
-      <Filter>include\RE</Filter>
     </ClInclude>
     <ClInclude Include="include\ExtraHealth.h">
       <Filter>include\forms</Filter>
@@ -259,6 +244,30 @@
     </ClInclude>
     <ClInclude Include="include\RefHandle.h">
       <Filter>include\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\ExtraPoison.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\GameEvents.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Inventory.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\ItemCrafted.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESObjectREFR.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BSTList.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Memory.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Exceptions.h">
+      <Filter>include\lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
