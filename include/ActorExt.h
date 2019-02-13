@@ -5,6 +5,7 @@ class AlchemyItem;
 class EnchantmentItem;
 class TESAmmo;
 class TESForm;
+class TESRace;
 class VMClassRegistry;
 struct StaticFunctionTag;
 
@@ -19,8 +20,7 @@ namespace iEquip
 	void		EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, UInt32 a_count = 1, bool a_preventUnequip = false, bool a_equipSound = true);
 	void		EquipEnchantedAndPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count = 1, bool a_preventUnequip = false, bool a_equipSound = true);
 	float		GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue);
-
-	void		EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipItem* a_iActorEquipItem, bool a_preventUnequip, bool a_equipSound);
+	TESRace*	GetBaseRace(StaticFunctionTag* a_base, Actor* a_actor);
 
 
 	namespace ActorExt

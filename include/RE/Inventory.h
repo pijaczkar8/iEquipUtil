@@ -1,6 +1,6 @@
 #pragma once
 
-#include "skse64/GameEvents.h"  // EventDispatcher
+#include "GameEvents.h"  // EventDispatcher, BSTEventSink
 
 class TESObjectREFR;
 class InventoryEntryData;
@@ -23,4 +23,15 @@ namespace RE
 
 		static EventDispatcher<Inventory::Event>* GetEventSource();
 	};
+
+
+#ifndef _WIN64
+	template <>
+	class BSTEventSink<Inventory::Event>
+	{
+	public:
+		virtual ~BSTEventSink() {}
+		virtual	EventResult ReceiveEvent(Inventory::Event* a_event, EventDispatcher<Inventory::Event>* a_dispatcher) = 0;
+	};
+#endif
 }

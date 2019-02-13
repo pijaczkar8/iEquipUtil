@@ -1,6 +1,8 @@
 #include"Hooks.h"
 
+#if _WIN64
 #include "Relocation.h"  // RelocPtr
+#endif
 #include "SafeWrite.h"  // SafeWrite64
 #include "GameBSExtraData.h"  // BaseExtraList
 #include "GameForms.h"  // TESForm
@@ -37,10 +39,13 @@ namespace iEquip
 
 	void InstallRemoveItemHook()
 	{
+#if _WIN64
 		constexpr std::uintptr_t PLAYER_CHARACTER_VTBL = 0x0167D640;	// 1_5_62
 		RelocPtr<_RemoveItem_t*> vFunc(PLAYER_CHARACTER_VTBL + (0x8 * 0x56));
 		_RemoveItem = *vFunc;
 		SafeWrite64(vFunc.GetUIntPtr(), GetFnAddr(&Hook_RemoveItem));
+#endif
+
 		_MESSAGE("[MESSAGE] Installed remove item hook");
 	}
 

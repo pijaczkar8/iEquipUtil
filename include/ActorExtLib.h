@@ -94,4 +94,7 @@ namespace iEquip
 		virtual bool validate() override;
 		virtual BaseExtraList* findExtraListByForm(InventoryEntryData* a_entryData) override;
 	};
+
+
+	void EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipItem* a_iActorEquipItem, bool a_preventUnequip, bool a_equipSound);
 }

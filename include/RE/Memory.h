@@ -7,14 +7,22 @@ namespace RE
 {
 	inline void* Heap_Allocate(std::size_t a_size)
 	{
+#if _WIN64
 		return ::Heap_Allocate(a_size);
+#else
+		return ::FormHeap_Allocate(a_size);
+#endif
 	}
 
 
 	inline void Heap_Free(void* a_ptr)
 	{
 		if (a_ptr) {
+#if _WIN64
 			::Heap_Free(a_ptr);
+#else
+			::FormHeap_Free(a_ptr);
+#endif
 		}
 	}
 

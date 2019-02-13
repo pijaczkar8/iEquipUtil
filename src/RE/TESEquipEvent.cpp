@@ -1,4 +1,4 @@
-#include "RE/GameEvents.h"
+#include "RE/TESEquipEvent.h"
 
 #include "GameForms.h"  // LookupFormByID
 #include "GameObjects.h"  // TESObjectWEAP

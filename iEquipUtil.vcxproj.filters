@@ -97,13 +97,13 @@
     <ClCompile Include="src\RefHandle.cpp">
       <Filter>src\forms</Filter>
     </ClCompile>
-    <ClCompile Include="src\RE\GameEvents.cpp">
-      <Filter>src\RE</Filter>
-    </ClCompile>
     <ClCompile Include="src\RE\Inventory.cpp">
       <Filter>src\RE</Filter>
     </ClCompile>
     <ClCompile Include="src\RE\ItemCrafted.cpp">
+      <Filter>src\RE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\TESEquipEvent.cpp">
       <Filter>src\RE</Filter>
     </ClCompile>
   </ItemGroup>
@@ -248,9 +248,6 @@
     <ClInclude Include="include\RE\ExtraPoison.h">
       <Filter>include\RE</Filter>
     </ClInclude>
-    <ClInclude Include="include\RE\GameEvents.h">
-      <Filter>include\RE</Filter>
-    </ClInclude>
     <ClInclude Include="include\RE\Inventory.h">
       <Filter>include\RE</Filter>
     </ClInclude>
@@ -268,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="include\Exceptions.h">
       <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESEquipEvent.h">
+      <Filter>include\RE</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

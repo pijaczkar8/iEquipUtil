@@ -2,7 +2,7 @@
 
 #include "GameEvents.h"  // BSTEventSink, EventResult, EventDispatcher
 #include "PapyrusEvents.h"  // SKSEModCallbackEvent, RegistrationSetHolder, NullParameters
-#include "RE/GameEvents.h"  // RE::TESEquipEvent
+#include "RE/TESEquipEvent.h"  // RE::TESEquipEvent
 #include "RE/Inventory.h"  // RE::Inventory
 #include "RE/ItemCrafted.h"  // RE::ItemCrafted
 

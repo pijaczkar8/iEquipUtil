@@ -49,7 +49,7 @@ namespace iEquip
 				{ MAKE_STR(_isGeneratedID), _isGeneratedID },
 				{ _refHandle.ClassName(), refHandleSave }
 			};
-		} catch (std::exception& e) {
+		} catch (std::exception & e) {
 			_ERROR("[ERROR] %s", e.what());
 			return false;
 		}
@@ -83,7 +83,7 @@ namespace iEquip
 			if (!loadJsonObj(a_load, MAKE_STR(_isGeneratedID), _isGeneratedID)) {
 				return false;
 			}
-		} catch (std::exception& e) {
+		} catch (std::exception & e) {
 			_ERROR("[ERROR] %s", e.what());
 			return false;
 		}
@@ -132,7 +132,7 @@ namespace iEquip
 
 		UInt32 rawFormID = a_formID;
 		UInt8 idx = (a_formID >> (3 * 8)) & 0xFF;
-		const ModInfo* modInfo = 0;
+		const ModInfo * modInfo = 0;
 		bool isLightMod = idx == 0xFE;
 		bool isGeneratedID = idx == 0xFF;
 		if (isLightMod) {
@@ -173,6 +173,7 @@ namespace iEquip
 			DataHandler* dataHandler = DataHandler::GetSingleton();
 			const ModInfo* modInfo = 0;
 			if (_isLightMod) {
+#if _WIN64
 				modInfo = dataHandler->LookupLoadedLightModByName(_pluginName.c_str());
 				if (!modInfo) {
 					form->_rawFormID = kInvalid;
@@ -181,12 +182,19 @@ namespace iEquip
 				form->_loadedFormID = _rawFormID;
 				form->_loadedFormID += modInfo->lightIndex << ((1 * 8) + 4);
 				form->_loadedFormID += 0xFE << (3 * 8);
+#else
+				form->_rawFormID = kInvalid;
+#endif
 			} else {
 				if (_isGeneratedID) {
 					form->_loadedFormID = _rawFormID;
 					form->_loadedFormID += 0xFF << (3 * 8);
 				} else {
+#if _WIN64
 					modInfo = dataHandler->LookupLoadedModByName(_pluginName.c_str());
+#else
+					modInfo = dataHandler->LookupModByName(_pluginName.c_str());
+#endif
 					if (!modInfo) {
 						form->_rawFormID = kInvalid;
 						return kInvalid;
@@ -210,7 +218,12 @@ namespace iEquip
 	const ModInfo* ISerializableForm::LookupLoadedModByIndex(UInt8 a_index)
 	{
 		DataHandler* dataHandler = DataHandler::GetSingleton();
-		for (UInt32 i = 0; i < dataHandler->modList.loadedMods.count; ++i) {
+#if _WIN64
+		UInt32 size = dataHandler->modList.loadedMods.count;
+#else
+		UInt32 size = 0xFF;
+#endif
+		for (UInt32 i = 0; i < size; ++i) {
 			if (dataHandler->modList.loadedMods[i]->modIndex == a_index) {
 				return dataHandler->modList.loadedMods[i];
 			}
@@ -221,12 +234,14 @@ namespace iEquip
 
 	const ModInfo* ISerializableForm::LookupLoadedLightModByIndex(UInt16 a_index)
 	{
+#if _WIN64
 		DataHandler* dataHandler = DataHandler::GetSingleton();
 		for (UInt32 i = 0; i < dataHandler->modList.loadedCCMods.count; ++i) {
 			if (dataHandler->modList.loadedCCMods[i]->lightIndex == a_index) {
 				return dataHandler->modList.loadedCCMods[i];
 			}
 		}
+#endif
 		return 0;
 	}
 }

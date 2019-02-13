@@ -15,18 +15,18 @@
     <ProjectGuid>{811DE627-8F4E-4C7E-B5EA-9CF4D0D0D03E}</ProjectGuid>
     <RootNamespace>iEquipUtil</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -151,9 +151,9 @@
     <ClCompile Include="src\ISerializableForm.cpp" />
     <ClCompile Include="src\RefHandle.cpp" />
     <ClCompile Include="src\RefHandleManager.cpp" />
-    <ClCompile Include="src\RE\GameEvents.cpp" />
     <ClCompile Include="src\RE\Inventory.cpp" />
     <ClCompile Include="src\RE\ItemCrafted.cpp" />
+    <ClCompile Include="src\RE\TESEquipEvent.cpp" />
     <ClCompile Include="src\SerializableFormFactory.cpp" />
     <ClCompile Include="src\LocaleManager.cpp" />
     <ClCompile Include="src\Logging.cpp" />
@@ -205,10 +205,10 @@
     <ClInclude Include="include\RefHandleManager.h" />
     <ClInclude Include="include\RE\BSTList.h" />
     <ClInclude Include="include\RE\ExtraPoison.h" />
-    <ClInclude Include="include\RE\GameEvents.h" />
     <ClInclude Include="include\RE\Inventory.h" />
     <ClInclude Include="include\RE\ItemCrafted.h" />
     <ClInclude Include="include\RE\Memory.h" />
+    <ClInclude Include="include\RE\TESEquipEvent.h" />
     <ClInclude Include="include\RE\TESObjectREFR.h" />
     <ClInclude Include="include\Types.h" />
     <ClInclude Include="include\SerializableFormFactory.h" />

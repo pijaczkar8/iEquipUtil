@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameEvents.h"  // EventDispatcher
+#include "GameEvents.h"  // EventDispatcher, BSTEventSink
 
 class TESForm;
 
@@ -24,4 +24,15 @@ namespace RE
 
 		static EventDispatcher<ItemCrafted::Event>* GetEventSource();
 	};
+
+
+#ifndef _WIN64
+	template <>
+	class BSTEventSink<ItemCrafted::Event>
+	{
+	public:
+		virtual ~BSTEventSink() {}
+		virtual	EventResult ReceiveEvent(ItemCrafted::Event* a_event, EventDispatcher<ItemCrafted::Event>* a_dispatcher) = 0;
+	};
+#endif
 }

@@ -27,7 +27,7 @@
 #include "StringExt.h"  // RegisterFuncs
 #include "version.h"  // IEQUIP_VERSION_VERSTRING, IEQUIP_VERSION_MAJOR
 #include "WeaponExt.h"  // RegisterFuncs
-#include "RE/GameEvents.h"  // RE::TESEquipEvent
+#include "RE/TESEquipEvent.h"  // RE::TESEquipEvent
 #include "RE/Inventory.h"  // RE::Inventory
 #include "RE/ItemCrafted.h"  // RE::ItemCrafted
 
@@ -52,9 +52,9 @@ RE::g_equipEventDispatcher->AddEventSink(iEquip::EquipEventHandler::GetSingleton
 
 
 static PluginHandle					g_pluginHandle = kPluginHandle_Invalid;
-static SKSEPapyrusInterface*		g_papyrus = 0;
-static SKSEMessagingInterface*		g_messaging = 0;
-static SKSESerializationInterface*	g_serialization = 0;
+static SKSEPapyrusInterface* g_papyrus = 0;
+static SKSEMessagingInterface* g_messaging = 0;
+static SKSESerializationInterface* g_serialization = 0;
 
 constexpr UInt32 SERIALIZATION_VERSION = 1;
 
@@ -78,7 +78,7 @@ void SaveCallback(SKSESerializationInterface* a_intfc)
 #endif
 		std::string buf = save.dump();
 		g_serialization->WriteRecord('IEQP', SERIALIZATION_VERSION, buf.c_str(), buf.length() + 1);
-	} catch (std::exception& e) {
+	} catch (std::exception & e) {
 		_ERROR("[ERROR] %s", e.what());
 	}
 
@@ -86,7 +86,7 @@ void SaveCallback(SKSESerializationInterface* a_intfc)
 }
 
 
-void LoadCallback(SKSESerializationInterface* a_intfc)
+void LoadCallback(SKSESerializationInterface * a_intfc)
 {
 	using nlohmann::json;
 	using iEquip::InventoryHandler;
@@ -126,7 +126,7 @@ void LoadCallback(SKSESerializationInterface* a_intfc)
 			invHandler->Clear();
 			throw std::runtime_error("Inventory handler failed to load data!");
 		}
-	} catch (std::exception& e) {
+	} catch (std::exception & e) {
 		_ERROR("[ERROR] %s\n", e.what());
 	}
 
@@ -137,7 +137,7 @@ void LoadCallback(SKSESerializationInterface* a_intfc)
 }
 
 
-void MessageHandler(SKSEMessagingInterface::Message* a_msg)
+void MessageHandler(SKSEMessagingInterface::Message * a_msg)
 {
 	switch (a_msg->type) {
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
@@ -209,7 +209,7 @@ extern "C" {
 	{
 		_MESSAGE("[MESSAGE] %s loaded", IEQUIP_NAME);
 
-		g_papyrus = (SKSEPapyrusInterface *)a_skse->QueryInterface(kInterface_Papyrus);
+		g_papyrus = (SKSEPapyrusInterface*)a_skse->QueryInterface(kInterface_Papyrus);
 
 		if (iEquip::Settings::loadSettings()) {
 			_MESSAGE("[MESSAGE] Settings loaded successfully");
@@ -255,6 +255,7 @@ extern "C" {
 			return false;
 		}
 
+#if _DEBUG
 		g_serialization = (SKSESerializationInterface*)a_skse->QueryInterface(kInterface_Serialization);
 		if (g_serialization) {
 			g_serialization->SetUniqueID(g_pluginHandle, 'IEQP');
@@ -268,6 +269,7 @@ extern "C" {
 
 		iEquip::InstallHooks();
 		_MESSAGE("[MESSAGE] Installed hooks");
+#endif
 
 		return true;
 	}

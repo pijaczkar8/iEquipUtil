@@ -20,7 +20,7 @@
 #include "InventoryHandler.h"  // InventoryHandler
 #include "SerializableFormFactory.h"  // SerializableFormFactory
 #include "RE/BSTList.h"  // RE::BSSimpleList
-#include "RE/GameEvents.h"  // RE::TESEquipEvent
+#include "RE/TESEquipEvent.h"  // RE::TESEquipEvent
 
 
 #if _WIN64
