@@ -49,7 +49,7 @@ namespace iEquip
 				{ MAKE_STR(_isGeneratedID), _isGeneratedID },
 				{ _refHandle.ClassName(), refHandleSave }
 			};
-		} catch (std::exception & e) {
+		} catch (std::exception& e) {
 			_ERROR("[ERROR] %s", e.what());
 			return false;
 		}
@@ -83,7 +83,7 @@ namespace iEquip
 			if (!loadJsonObj(a_load, MAKE_STR(_isGeneratedID), _isGeneratedID)) {
 				return false;
 			}
-		} catch (std::exception & e) {
+		} catch (std::exception& e) {
 			_ERROR("[ERROR] %s", e.what());
 			return false;
 		}
@@ -132,7 +132,7 @@ namespace iEquip
 
 		UInt32 rawFormID = a_formID;
 		UInt8 idx = (a_formID >> (3 * 8)) & 0xFF;
-		const ModInfo * modInfo = 0;
+		const ModInfo* modInfo = 0;
 		bool isLightMod = idx == 0xFE;
 		bool isGeneratedID = idx == 0xFF;
 		if (isLightMod) {

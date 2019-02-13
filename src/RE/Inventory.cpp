@@ -13,7 +13,7 @@ namespace RE
 #if _WIN64
 		static RelocAddr<_GetEventSource_t*> _GetEventSource(0x001EF520);
 #else
-		static _GetEventSource_t* _GetEventSource = (_GetEventSource_t*)0xDEADBEEF;
+		static _GetEventSource_t* _GetEventSource = (_GetEventSource_t*)0x012E5FB0;
 #endif
 		return _GetEventSource();
 }
