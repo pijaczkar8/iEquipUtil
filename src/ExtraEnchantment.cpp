@@ -8,7 +8,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	ExtraEnchantment::ExtraEnchantment() :
 		IExtraDataType(),

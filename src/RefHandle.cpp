@@ -6,7 +6,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	RefHandle::RefHandle(bool a_isActive, ISerializableForm* a_form) :
 		_form(a_form),

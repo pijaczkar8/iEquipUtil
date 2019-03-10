@@ -9,17 +9,20 @@
 #include "json.hpp"  // json
 #include "Types.h"  // SerializableFormPtr
 
+struct SKSESerializationInterface;
 
-namespace iEquip
+
+constexpr UInt32 SERIALIZATION_VERSION = 1;
+
+
+namespace Forms
 {
 	class InventoryHandler
 	{
 	public:
 		using json = nlohmann::json;
-
-
-		typedef SerializableFormPtr key_type;
-		typedef SInt32 mapped_type;
+		using key_type = SerializableFormPtr;
+		using mapped_type = SInt32;
 
 
 		static InventoryHandler*	GetSingleton();
@@ -27,9 +30,12 @@ namespace iEquip
 
 		void						Clear();
 		bool						Save(json& a_save);
+		bool						Save(SKSESerializationInterface* a_intfc);
 		bool						Load(json& a_load);
 		void						AddForm(const key_type& a_form, mapped_type a_count);
-		void						RemoveFormsByID(UInt32 a_formID);
+		void						UpdateCount(const key_type& a_form, mapped_type a_count);
+		void						RemoveFormListByID(UInt32 a_formID);
+		void						GarbageCollectoFormList(UInt32 a_formID);
 
 	private:
 		struct key_compare
@@ -38,9 +44,9 @@ namespace iEquip
 		};
 
 
-		typedef std::map<key_type, mapped_type, key_compare> ItemMap;
-		typedef std::set<key_type> FormList;
-		typedef std::map<UInt32, FormList> FormMap;
+		using ItemMap = std::map<key_type, mapped_type, key_compare>;
+		using FormList = std::set<key_type, key_compare>;
+		using FormMap = std::map<UInt32, FormList>;
 
 
 		InventoryHandler();
@@ -52,8 +58,9 @@ namespace iEquip
 		InventoryHandler&	operator=(InventoryHandler&&) = delete;
 
 
-		static constexpr char*	KEY_STR = "count";
-		static constexpr char*	VALUE_STR = "form";
+		static constexpr char*	FORMTYPE_STR = "formType";
+		static constexpr char*	COUNT_STR = "count";
+		static constexpr char*	FORM_STR = "form";
 
 		static InventoryHandler*	_singleton;
 		ItemMap						_items;	// key = item, value = total count of that item

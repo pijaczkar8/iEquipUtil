@@ -29,7 +29,7 @@
 #endif
 
 
-namespace iEquip
+namespace Events
 {
 	template <typename T> void SetVMValue(VMValue* a_val, T a_arg)
 	{
@@ -110,11 +110,10 @@ namespace iEquip
 
 	void PushInventoryEntry(InventoryEntryData* a_entryData)
 	{
-		Serializable::FormFactory* formFactory = Serializable::FormFactory::GetSingleton();
-		InventoryHandler* invHandler = InventoryHandler::GetSingleton();
-		invHandler->RemoveFormsByID(a_entryData->type->formID);
+		Forms::FormFactory* formFactory = Forms::FormFactory::GetSingleton();
+		Forms::InventoryHandler* invHandler = Forms::InventoryHandler::GetSingleton();
 		SInt32 extraCount = 0;
-		SerializableFormPtr form;
+		Forms::SerializableFormPtr form = nullptr;
 		if (a_entryData->extendDataList) {
 			RE::BSSimpleList<BaseExtraList*>* exDataList = (RE::BSSimpleList<BaseExtraList*>*)a_entryData->extendDataList;
 			for (auto it = exDataList->begin(); it != exDataList->end(); ++it) {
@@ -252,8 +251,8 @@ namespace iEquip
 			return kEvent_Continue;
 		}
 
-		InventoryHandler* invHandler = InventoryHandler::GetSingleton();
-		invHandler->RemoveFormsByID(a_event->item->formID);
+		Forms::InventoryHandler* invHandler = Forms::InventoryHandler::GetSingleton();
+		invHandler->GarbageCollectoFormList(a_event->item->formID);
 
 		ExtraContainerChanges* changes = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 		if (changes && changes->data && changes->data->objList) {

@@ -1,7 +1,7 @@
 #include "ISerializableData.h"
 
 
-namespace iEquip
+namespace Forms
 {
 	ISerializableData::ISerializableData()
 	{}

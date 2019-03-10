@@ -5,7 +5,4 @@ class TESForm;
 class TESObjectREFR;
 
 
-namespace iEquip
-{
-	void InstallHooks();
-}
+void InstallHooks();

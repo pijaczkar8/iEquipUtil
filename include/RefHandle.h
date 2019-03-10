@@ -3,7 +3,7 @@
 #include "ISerializableData.h"  // ISerializableData
 
 
-namespace iEquip
+namespace Forms
 {
 	class ISerializableForm;
 

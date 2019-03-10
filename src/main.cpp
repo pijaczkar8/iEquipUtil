@@ -7,6 +7,7 @@
 #include <clocale>  // setlocale
 #include <exception>  // exception
 #include <stdexcept>  // runtime_error
+#include <vector>  // vector
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
 
@@ -17,7 +18,7 @@
 #include "FormExt.h"  // RegisterFuncs
 #include "Forms.h"  // FormFactory
 #include "Hooks.h"  // InstallHooks
-#include "InventoryHandler.h"  // InventoryHandler
+#include "InventoryHandler.h"  // InventoryHandler, SERIALIZATION_VERSION
 #include "json.hpp"  // json
 #include "LocaleManager.h"  // LocaleManager
 #include "RefHandleManager.h"  // RefHandleManager
@@ -27,6 +28,7 @@
 #include "StringExt.h"  // RegisterFuncs
 #include "version.h"  // IEQUIP_VERSION_VERSTRING, IEQUIP_VERSION_MAJOR
 #include "WeaponExt.h"  // RegisterFuncs
+
 #include "RE/TESEquipEvent.h"  // RE::TESEquipEvent
 #include "RE/Inventory.h"  // RE::Inventory
 #include "RE/ItemCrafted.h"  // RE::ItemCrafted
@@ -39,7 +41,7 @@ constexpr const char* IEQUIP_NAME = "iEquipUtil";
 
 #define SINK_EVENT_HANDLER \
 RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList()); \
-eventDispatcherList->equipDispatcher.AddEventSink(iEquip::EquipEventHandler::GetSingleton())
+eventDispatcherList->equipDispatcher.AddEventSink(Events::EquipEventHandler::GetSingleton())
 
 #else
 constexpr std::size_t IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_9_32_0;
@@ -47,7 +49,7 @@ constexpr const char* IEQUIP_LOG_PATH = "\\My Games\\Skyrim\\SKSE\\iEquipUtil.lo
 constexpr const char* IEQUIP_NAME = "iEquipUtil_LE";
 
 #define SINK_EVENT_HANDLER \
-RE::g_equipEventDispatcher->AddEventSink(iEquip::EquipEventHandler::GetSingleton())
+RE::g_equipEventDispatcher->AddEventSink(Events::EquipEventHandler::GetSingleton())
 #endif
 
 
@@ -56,28 +58,20 @@ static SKSEPapyrusInterface*		g_papyrus = 0;
 static SKSEMessagingInterface*		g_messaging = 0;
 static SKSESerializationInterface*	g_serialization = 0;
 
-constexpr UInt32 SERIALIZATION_VERSION = 1;
-
 
 void SaveCallback(SKSESerializationInterface* a_intfc)
 {
 	using nlohmann::json;
-	using iEquip::InventoryHandler;
+	using Forms::InventoryHandler;
 
 	InventoryHandler* invHandler = InventoryHandler::GetSingleton();
 
 	try {
 		json save;
-		if (!invHandler->Save(save)) {
+		if (!invHandler->Save(a_intfc)) {
 			invHandler->Clear();
 			throw std::runtime_error("Inventory handler failed to save data!");
 		}
-
-#if _DEBUG
-		_DMESSAGE("\nSERIALIZATION SAVE DUMP\n%s\n", save.dump(4).c_str());
-#endif
-		std::string buf = save.dump();
-		g_serialization->WriteRecord('IEQP', SERIALIZATION_VERSION, buf.c_str(), buf.length() + 1);
 	} catch (std::exception& e) {
 		_ERROR("[ERROR] %s", e.what());
 	}
@@ -89,49 +83,47 @@ void SaveCallback(SKSESerializationInterface* a_intfc)
 void LoadCallback(SKSESerializationInterface* a_intfc)
 {
 	using nlohmann::json;
-	using iEquip::InventoryHandler;
-	using iEquip::RefHandleManager;
+	using Forms::InventoryHandler;
+	using Forms::RefHandleManager;
 
 	InventoryHandler* invHandler = InventoryHandler::GetSingleton();
 	invHandler->Clear();
 	RefHandleManager* handleManager = RefHandleManager::GetSingleton();
 	handleManager->Clear();
 
-	UInt32 type;
-	UInt32 version;
-	UInt32 length;
-	char* buf = 0;
-
 	try {
-		if (!a_intfc->GetNextRecordInfo(&type, &version, &length)) {
-			throw std::runtime_error("Serialization interface failed to retrieve next record info!");
-		}
+		UInt32 type;
+		UInt32 version;
+		UInt32 length;
+		std::vector<char> buf;
+		json load;
+		while (a_intfc->GetNextRecordInfo(&type, &version, &length)) {
+			if (version != SERIALIZATION_VERSION) {
+				throw bad_record_version(SERIALIZATION_VERSION, version);
+			}
 
-		if (version != SERIALIZATION_VERSION) {
-			throw bad_record_version(SERIALIZATION_VERSION, version);
-		}
+			switch (type) {
+			case 'INVH':
+				buf.reserve(length);
+				if (!a_intfc->ReadRecordData(buf.data(), length)) {
+					throw std::runtime_error("Serialization interface failed to read record data!");
+				}
 
-		buf = new char[length];
-		if (!a_intfc->ReadRecordData(buf, length)) {
-			throw std::runtime_error("Serialization interface failed to read record data!");
-		}
+				load.clear();
+				load = json::parse(buf.data());
+				if (!invHandler->Load(load)) {
+					invHandler->Clear();
+					throw std::runtime_error("Inventory handler failed to load data!");
+				}
 
-		json load = json::parse(buf);
-
-#if _DEBUG
-		_DMESSAGE("\nSERIALIZATION LOAD DUMP\n%s\n", load.dump(4).c_str());
-#endif
-
-		if (!invHandler->Load(load)) {
-			invHandler->Clear();
-			throw std::runtime_error("Inventory handler failed to load data!");
+				break;
+			default:
+				throw std::runtime_error("Encountered unknown type during load (" + std::to_string(type) + ")!");
+			}
 		}
 	} catch (std::exception& e) {
 		_ERROR("[ERROR] %s\n", e.what());
 	}
-
-	delete buf;
-	buf = 0;
 
 	_MESSAGE("[MESSAGE] Finished loading data");
 }
@@ -143,33 +135,29 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
 	case SKSEMessagingInterface::kMessage_DataLoaded:
 		{
-#if 0
-			RE::Inventory::GetEventSource()->AddEventSink(iEquip::InventoryEventHandler::GetSingleton());
+#if _DEBUG
+			RE::Inventory::GetEventSource()->AddEventSink(Events::InventoryEventHandler::GetSingleton());
 			_MESSAGE("[MESSAGE] Sinked inventory event handler");
 
-			RE::ItemCrafted::GetEventSource()->AddEventSink(iEquip::ItemCraftedEventHandler::GetSingleton());
+			RE::ItemCrafted::GetEventSource()->AddEventSink(Events::ItemCraftedEventHandler::GetSingleton());
 			_MESSAGE("[MESSAGE] Sinked item crafted event handler");
 #endif
 
-			iEquip::g_boundWeaponEquippedCallbackRegs.Clear();
-			iEquip::g_boundWeaponUnequippedCallbackRegs.Clear();
+			Events::g_boundWeaponEquippedCallbackRegs.Clear();
+			Events::g_boundWeaponUnequippedCallbackRegs.Clear();
 			_DMESSAGE("[DEBUG] Registries cleared");
-			iEquip::FormFactory* formFactory = iEquip::FormFactory::GetSingleton();
+			FormFactory* formFactory = FormFactory::GetSingleton();
 			formFactory->ClearLoadedFormIDs();
 			_DMESSAGE("[DEBUG] Forms cleared");
-			iEquip::Settings::OnLoad();
+			Settings::OnLoad();
 			_DMESSAGE("[DEBUG] Forms loaded");
 		}
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
 		{
 			SINK_EVENT_HANDLER;
-			iEquip::LocaleManager* locManager = iEquip::LocaleManager::GetSingleton();
+			LocaleManager* locManager = LocaleManager::GetSingleton();
 			locManager->LoadLocalizationStrings();
-			_DMESSAGE("[MESSAGE] Localization strings loaded");
-			_DMESSAGE("");
-			locManager->Dump();
-			_DMESSAGE("");
 		}
 		break;
 	}
@@ -213,35 +201,35 @@ extern "C" {
 
 		g_papyrus = (SKSEPapyrusInterface*)a_skse->QueryInterface(kInterface_Papyrus);
 
-		if (iEquip::Settings::loadSettings()) {
+		if (Settings::loadSettings()) {
 			_MESSAGE("[MESSAGE] Settings loaded successfully");
 			_DMESSAGE("");
-			iEquip::Settings::dump();
+			Settings::dump();
 			_DMESSAGE("");
 		} else {
 			_FATALERROR("[FATAL ERROR] Settings failed to load!\n");
 			return false;
 		}
 
-		bool testActorExt = g_papyrus->Register(iEquip::ActorExt::RegisterFuncs);
+		bool testActorExt = g_papyrus->Register(ActorExt::RegisterFuncs);
 		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful") : _ERROR("[ERROR] iEquip_ActorExt registration failed!\n");
 
-		bool testAmmoExt = g_papyrus->Register(iEquip::AmmoExt::RegisterFuncs);
+		bool testAmmoExt = g_papyrus->Register(AmmoExt::RegisterFuncs);
 		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!\n");
 
-		bool testFormExt = g_papyrus->Register(iEquip::FormExt::RegisterFuncs);
+		bool testFormExt = g_papyrus->Register(FormExt::RegisterFuncs);
 		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful") : _ERROR("[ERROR] iEquip_FormExt registration failed!\n");
 
-		bool testSoulSeeker = g_papyrus->Register(iEquip::SoulSeeker::RegisterFuncs);
+		bool testSoulSeeker = g_papyrus->Register(SoulSeeker::RegisterFuncs);
 		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!\n");
 
-		bool testSpellExt = g_papyrus->Register(iEquip::SpellExt::RegisterFuncs);
+		bool testSpellExt = g_papyrus->Register(SpellExt::RegisterFuncs);
 		testSpellExt ? _MESSAGE("[MESSAGE] iEquip_SpellExt registration successful") : _ERROR("[ERROR] iEquip_SpellExt registration failed!\n");
 
-		bool testStringExt = g_papyrus->Register(iEquip::StringExt::RegisterFuncs);
+		bool testStringExt = g_papyrus->Register(StringExt::RegisterFuncs);
 		testStringExt ? _MESSAGE("[MESSAGE] iEquip_StringExt registration successful") : _ERROR("[ERROR] iEquip_StringExt registration failed!\n");
 
-		bool testWeaponExt = g_papyrus->Register(iEquip::WeaponExt::RegisterFuncs);
+		bool testWeaponExt = g_papyrus->Register(WeaponExt::RegisterFuncs);
 		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!\n");
 
 		if (!testActorExt || !testAmmoExt || !testFormExt || !testSoulSeeker || !testSpellExt || !testStringExt || !testWeaponExt) {
@@ -257,7 +245,7 @@ extern "C" {
 			return false;
 		}
 
-#if 0
+#if _DEBUG
 		g_serialization = (SKSESerializationInterface*)a_skse->QueryInterface(kInterface_Serialization);
 		if (g_serialization) {
 			g_serialization->SetUniqueID(g_pluginHandle, 'IEQP');
@@ -269,7 +257,7 @@ extern "C" {
 			return false;
 		}
 
-		iEquip::InstallHooks();
+		InstallHooks();
 		_MESSAGE("[MESSAGE] Installed hooks");
 #endif
 

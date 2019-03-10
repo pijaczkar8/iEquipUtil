@@ -8,7 +8,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	Armor::Armor(bool a_useHandle) :
 		ISerializableForm(a_useHandle)

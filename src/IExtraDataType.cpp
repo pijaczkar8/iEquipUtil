@@ -1,7 +1,7 @@
 #include "IExtraDataType.h"
 
 
-namespace iEquip
+namespace Forms
 {
 	IExtraDataType::IExtraDataType() :
 		ISerializableData()

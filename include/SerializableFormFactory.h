@@ -9,29 +9,26 @@
 #include "Types.h"  // SerializableFormPtr
 
 
-namespace iEquip
+namespace Forms
 {
-	namespace Serializable
+	class FormFactory
 	{
-		class FormFactory
-		{
-		public:
-			static FormFactory*	GetSingleton();
-			static void			Free();
-			SerializableFormPtr	GetForm(FormType a_type, bool a_useHandle);
-			SerializableFormPtr	GetForm(UInt32 a_type, bool a_useHandle);
+	public:
+		static FormFactory*	GetSingleton();
+		static void			Free();
+		SerializableFormPtr	GetForm(FormType a_type, bool a_useHandle);
+		SerializableFormPtr	GetForm(UInt32 a_type, bool a_useHandle);
 
-		private:
-			FormFactory();
-			FormFactory(const FormFactory&) = delete;
-			FormFactory(FormFactory&&) = delete;
-			~FormFactory();
+	private:
+		FormFactory();
+		FormFactory(const FormFactory&) = delete;
+		FormFactory(FormFactory&&) = delete;
+		~FormFactory();
 
-			FormFactory&	operator=(const FormFactory&) = delete;
-			FormFactory&	operator=(FormFactory&&) = delete;
+		FormFactory&	operator=(const FormFactory&) = delete;
+		FormFactory&	operator=(FormFactory&&) = delete;
 
 
-			static FormFactory* _singleton;
-		};
-	}
+		static FormFactory* _singleton;
+	};
 }

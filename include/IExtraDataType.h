@@ -7,7 +7,7 @@
 class BSExtraData;
 
 
-namespace iEquip
+namespace Forms
 {
 	class IExtraDataType : public ISerializableData
 	{

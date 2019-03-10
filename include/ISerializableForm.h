@@ -17,7 +17,7 @@ class TESForm;
 struct ModInfo;
 
 
-namespace iEquip
+namespace Forms
 {
 	enum
 	{
@@ -58,11 +58,11 @@ namespace iEquip
 		const ModInfo*		LookupLoadedLightModByIndex(UInt16 a_index);
 
 
-		UInt32		_rawFormID;
-		UInt32		_loadedFormID;
-		std::string	_pluginName;
-		bool		_isLightMod;
-		bool		_isGeneratedID;
-		RefHandle	_refHandle;
+		mutable UInt32	_rawFormID;
+		mutable UInt32	_loadedFormID;
+		std::string		_pluginName;
+		bool			_isLightMod;
+		bool			_isGeneratedID;
+		RefHandle		_refHandle;
 	};
 }

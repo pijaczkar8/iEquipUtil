@@ -8,7 +8,7 @@
 #include "ISerializableData.h"  // ISerializableData
 
 
-namespace iEquip
+namespace Forms
 {
 	class IExtraDataType;
 
@@ -31,8 +31,8 @@ namespace iEquip
 		void				Parse(BaseExtraList* a_baseExtraList);
 
 	protected:
-		typedef std::map<ExtraDataType, IExtraDataType*> ExtraDataMap;
-		typedef std::pair<ExtraDataMap::iterator, bool> GetOrCreate_Result;
+		using ExtraDataMap = std::map<ExtraDataType, IExtraDataType*>;
+		using GetOrCreate_Result = std::pair<ExtraDataMap::iterator, bool>;
 
 
 		GetOrCreate_Result	GetOrCreate(ExtraDataType a_type, bool a_tryToGet);

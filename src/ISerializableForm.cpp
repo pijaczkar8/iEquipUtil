@@ -7,7 +7,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	ISerializableForm::ISerializableForm(bool a_useHandle) :
 		ISerializableData(),
@@ -169,26 +169,25 @@ namespace iEquip
 		}
 
 		if (_loadedFormID == kInvalid) {
-			ISerializableForm* form = const_cast<ISerializableForm*>(this);
 			DataHandler* dataHandler = DataHandler::GetSingleton();
 			const ModInfo* modInfo = 0;
 			if (_isLightMod) {
 #if _WIN64
 				modInfo = dataHandler->LookupLoadedLightModByName(_pluginName.c_str());
 				if (!modInfo) {
-					form->_rawFormID = kInvalid;
+					_rawFormID = kInvalid;
 					return kInvalid;
 				}
-				form->_loadedFormID = _rawFormID;
-				form->_loadedFormID += modInfo->lightIndex << ((1 * 8) + 4);
-				form->_loadedFormID += 0xFE << (3 * 8);
+				_loadedFormID = _rawFormID;
+				_loadedFormID += modInfo->lightIndex << ((1 * 8) + 4);
+				_loadedFormID += 0xFE << (3 * 8);
 #else
-				form->_rawFormID = kInvalid;
+				_rawFormID = kInvalid;
 #endif
 			} else {
 				if (_isGeneratedID) {
-					form->_loadedFormID = _rawFormID;
-					form->_loadedFormID += 0xFF << (3 * 8);
+					_loadedFormID = _rawFormID;
+					_loadedFormID += 0xFF << (3 * 8);
 				} else {
 #if _WIN64
 					modInfo = dataHandler->LookupLoadedModByName(_pluginName.c_str());
@@ -196,11 +195,11 @@ namespace iEquip
 					modInfo = dataHandler->LookupModByName(_pluginName.c_str());
 #endif
 					if (!modInfo) {
-						form->_rawFormID = kInvalid;
+						_rawFormID = kInvalid;
 						return kInvalid;
 					}
-					form->_loadedFormID = _rawFormID;
-					form->_loadedFormID += modInfo->modIndex << (3 * 8);
+					_loadedFormID = _rawFormID;
+					_loadedFormID += modInfo->modIndex << (3 * 8);
 				}
 			}
 		}

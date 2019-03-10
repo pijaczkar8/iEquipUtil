@@ -3,7 +3,7 @@
 #include "IExtraDataType.h"  // IExtraDataType
 
 
-namespace iEquip
+namespace Forms
 {
 	class ExtraHealth : public IExtraDataType
 	{

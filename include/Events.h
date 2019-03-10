@@ -7,7 +7,7 @@
 #include "RE/ItemCrafted.h"  // RE::ItemCrafted
 
 
-namespace iEquip
+namespace Events
 {
 	void PushInventoryEntry(InventoryEntryData* a_entryData);
 

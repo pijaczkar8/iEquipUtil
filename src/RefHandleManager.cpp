@@ -6,7 +6,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	RefHandleManager* RefHandleManager::GetSingleton()
 	{

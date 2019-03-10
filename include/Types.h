@@ -3,7 +3,7 @@
 #include <memory>  // shared_ptr
 
 
-namespace iEquip
+namespace Forms
 {
 	class ISerializableForm;
 

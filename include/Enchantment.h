@@ -5,7 +5,7 @@
 #include "ISerializableForm.h"  // ISerializableForm
 
 
-namespace iEquip
+namespace Forms
 {
 	class Enchantment : public ISerializableForm
 	{

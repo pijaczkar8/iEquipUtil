@@ -4,7 +4,7 @@
 #include "IExtraDataType.h"  // IExtraDataType
 
 
-namespace iEquip
+namespace Forms
 {
 	class ExtraEnchantment : public IExtraDataType
 	{

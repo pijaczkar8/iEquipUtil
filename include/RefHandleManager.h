@@ -11,7 +11,7 @@
 #include "json.hpp"  // json
 
 
-namespace iEquip
+namespace Forms
 {
 	class ISerializableForm;
 

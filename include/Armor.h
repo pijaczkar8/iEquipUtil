@@ -4,7 +4,7 @@
 #include "ISerializableForm.h"  // ISerializableForm
 
 
-namespace iEquip
+namespace Forms
 {
 	class Armor : public ISerializableForm
 	{

@@ -7,7 +7,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	ExtraTextDisplayData::ExtraTextDisplayData() :
 		_name("")

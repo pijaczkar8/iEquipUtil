@@ -9,12 +9,12 @@ namespace RE
 {
 	EventDispatcher<Inventory::Event>* Inventory::GetEventSource()
 	{
-		typedef EventDispatcher<Inventory::Event>* _GetEventSource_t();
 #if _WIN64
+		typedef EventDispatcher<Inventory::Event>* _GetEventSource_t();
 		static RelocAddr<_GetEventSource_t*> _GetEventSource(0x001EF520);
-#else
-		static _GetEventSource_t* _GetEventSource = (_GetEventSource_t*)0x012E5FB0;
-#endif
 		return _GetEventSource();
-}
+#else
+		return (EventDispatcher<Inventory::Event>*)0x012E5FB0;
+#endif
+	}
 }

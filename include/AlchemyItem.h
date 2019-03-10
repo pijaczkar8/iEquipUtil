@@ -3,7 +3,7 @@
 #include "ISerializableForm.h"  // ISerializableForm
 
 
-namespace iEquip
+namespace Forms
 {
 	class AlchemyItem : public ISerializableForm
 	{

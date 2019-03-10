@@ -6,7 +6,7 @@
 #include "RE/ExtraPoison.h"  // RE::ExtraPoison
 
 
-namespace iEquip
+namespace Forms
 {
 	ExtraPoison::ExtraPoison() :
 		IExtraDataType(),

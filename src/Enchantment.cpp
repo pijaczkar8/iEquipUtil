@@ -5,7 +5,7 @@
 #include "version.h"  // MAKE_STR
 
 
-namespace iEquip
+namespace Forms
 {
 	Enchantment::Enchantment(bool a_useHandle) :
 		ISerializableForm(a_useHandle)
