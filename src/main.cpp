@@ -53,6 +53,9 @@ RE::g_equipEventDispatcher->AddEventSink(Events::EquipEventHandler::GetSingleton
 #endif
 
 
+#define INV_TRACKING false
+
+
 static PluginHandle					g_pluginHandle = kPluginHandle_Invalid;
 static SKSEPapyrusInterface*		g_papyrus = 0;
 static SKSEMessagingInterface*		g_messaging = 0;
@@ -135,7 +138,7 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
 	case SKSEMessagingInterface::kMessage_DataLoaded:
 		{
-#if _DEBUG
+#if INV_TRACKING
 			RE::Inventory::GetEventSource()->AddEventSink(Events::InventoryEventHandler::GetSingleton());
 			_MESSAGE("[MESSAGE] Sinked inventory event handler");
 
@@ -245,7 +248,7 @@ extern "C" {
 			return false;
 		}
 
-#if _DEBUG
+#if INV_TRACKING
 		g_serialization = (SKSESerializationInterface*)a_skse->QueryInterface(kInterface_Serialization);
 		if (g_serialization) {
 			g_serialization->SetUniqueID(g_pluginHandle, 'IEQP');
