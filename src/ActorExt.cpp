@@ -14,6 +14,8 @@
 #include "ActorExtLib.h"  // IActorEquipItem
 #include "ExtraLocator.h"  // ExtraListLocator
 
+#include "RE/BSTList.h"  // BSSimpleList
+
 
 namespace
 {
@@ -313,7 +315,6 @@ float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue
 	constexpr std::uintptr_t avVoicePointsOffset = 0x174;
 #endif
 
-
 	if (!a_actor) {
 		_ERROR("[ERROR] a_actor is a NONE form!\n");
 		return 0.0;
@@ -321,7 +322,6 @@ float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue
 		_ERROR("[ERROR] a_actorValue is out of range!\n");
 		return 0.0;
 	}
-
 
 	std::uintptr_t actorBase = reinterpret_cast<std::uintptr_t>(a_actor);
 	ActorValueModifiers* avMods = 0;
@@ -366,6 +366,30 @@ TESRace* GetBaseRace(StaticFunctionTag* a_base, Actor* a_actor)
 }
 
 
+float GetMagicEffectMagnitude(StaticFunctionTag* a_base, Actor* a_actor, EffectSetting* a_mgef)
+{
+	if (!a_actor) {
+		_ERROR("[ERROR] a_actor is a NONE form!\n");
+		return 0.0;
+	} else if (!a_mgef) {
+		_ERROR("[ERROR] a_mgef is a NONE form!\n");
+		return 0.0;
+	}
+
+	RE::BSSimpleList<ActiveEffect*>* activeEffects = reinterpret_cast<RE::BSSimpleList<ActiveEffect*>*>(a_actor->magicTarget.GetActiveEffects());
+	if (!activeEffects) {
+		return 0.0;
+	}
+
+	for (auto& activeEffect : *activeEffects) {
+		if (activeEffect->effect && activeEffect->effect->mgef == a_mgef) {
+			return activeEffect->effect->magnitude;
+		}
+	}
+	return 0.0;
+}
+
+
 namespace ActorExt
 {
 	bool RegisterFuncs(VMClassRegistry* a_registry)
@@ -387,6 +411,9 @@ namespace ActorExt
 
 		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, TESRace*, Actor*>("GetBaseRace", "iEquip_ActorExt", GetBaseRace, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, float, Actor*, EffectSetting*>("GetMagicEffectMagnitude", "iEquip_ActorExt", GetMagicEffectMagnitude, a_registry));
 
 		return true;
 	}
