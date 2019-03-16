@@ -17,7 +17,7 @@ T* GetForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod)
 	UInt32 formID = a_rawFormID;
 	if (a_isLightMod) {
 #if _WIN64
-		info = dataHandler->LookupLoadedLightModByName(a_pluginName);
+		info = dataHandler->LookupModByName(a_pluginName);
 		if (!info) {
 			return 0;
 		}
@@ -28,11 +28,7 @@ T* GetForm(UInt32 a_rawFormID, const char* a_pluginName, bool a_isLightMod)
 		return 0;
 #endif
 	} else {
-#if _WIN64
-		info = dataHandler->LookupLoadedModByName(a_pluginName);
-#else
 		info = dataHandler->LookupModByName(a_pluginName);
-#endif
 		if (!info) {
 			return 0;
 		}
@@ -48,9 +44,9 @@ class Form
 {
 	friend class FormFactory;
 public:
-	enum
+	enum : UInt32
 	{
-		kInvalid = 0xFFFFFFFF
+		kInvalid = static_cast<UInt32>(-1)
 	};
 
 

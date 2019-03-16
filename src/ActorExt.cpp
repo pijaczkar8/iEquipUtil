@@ -9,6 +9,7 @@
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
 
+#include <cmath>  // abs
 #include <cstdint>  // uintptr_t
 
 #include "ActorExtLib.h"  // IActorEquipItem
@@ -268,7 +269,8 @@ TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
 		entryData = containerData->objList->GetNthItem(i);
 		if (entryData && entryData->type->IsAmmo()) {
 			xListLocator.setEntryData(entryData);
-			if (xList = xListLocator.found()) {
+			xList = xListLocator.found();
+			if (xList) {
 				return static_cast<TESAmmo*>(entryData->type);
 			}
 		}
@@ -347,7 +349,7 @@ float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue
 		break;
 	}
 
-	return avMods ? avMods->modifiers[ActorValueModifiers::Modifiers::kDamage] : 0.0;
+	return avMods ? std::abs(avMods->modifiers[ActorValueModifiers::Modifiers::kDamage]) : 0.0;
 }
 
 

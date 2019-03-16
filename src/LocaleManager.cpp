@@ -221,7 +221,7 @@ bool LocaleManager::GetNestedLocalizations(const std::wstring& a_key, std::stack
 std::pair<std::wstring, bool> LocaleManager::FindLocalization(const std::wstring& a_key)
 {
 	LocalizationMap& localizations = GetLocalizationMap();
-	auto& it = localizations.find(a_key);
+	auto it = localizations.find(a_key);
 	if (it == localizations.end()) {
 		if (&localizations != &_localizations_ENG) {
 			it = _localizations_ENG.find(a_key);

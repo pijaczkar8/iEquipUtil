@@ -49,7 +49,7 @@ public:
 	{
 		Form* form = 0;
 		_DMESSAGE("%s: [", _key.c_str());
-		for (auto& it = begin(); it != end(); ++it) {
+		for (auto it = begin(); it != end(); ++it) {
 			form = *it;
 			_DMESSAGE("{");
 			_DMESSAGE("\t\t\"pluginName\": \"%s\",", form->PluginName());
@@ -66,7 +66,7 @@ public:
 		std::stringstream ss;
 		std::string str;
 		str = _key + ": [";
-		for (auto& it = begin(); it != end(); ++it) {
+		for (auto it = begin(); it != end(); ++it) {
 			form = *it;
 
 			str += "{";
@@ -92,7 +92,7 @@ public:
 	{
 		Form* form = 0;
 		_loadedFormIDs.clear();
-		for (auto& it = begin(); it != end(); ++it) {
+		for (auto it = begin(); it != end(); ++it) {
 			form = *it;
 			_loadedFormIDs.insert(form->GetLoadedFormID());
 		}
@@ -104,7 +104,7 @@ public:
 		_DMESSAGE("");
 		_DMESSAGE("=== FIND DUMP BEGIN ===");
 		_DMESSAGE("[%s]", key().c_str());
-		for (auto& it = begin(); it != end(); ++it) {
+		for (auto it = begin(); it != end(); ++it) {
 			form = *it;
 			_DMESSAGE("%s: 0x%08X", form->PluginName(), form->GetLoadedFormID());
 		}

@@ -56,7 +56,7 @@ namespace Forms
 	bool ExtraPoison::Load(json& a_load)
 	{
 		try {
-			auto& it = a_load.find(_poison.ClassName());
+			auto it = a_load.find(_poison.ClassName());
 			if (it == a_load.end() || !_poison.Load(*it)) {
 				return false;
 			}

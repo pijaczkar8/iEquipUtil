@@ -61,7 +61,7 @@ namespace Forms
 	bool Armor::Load(json& a_load)
 	{
 		try {
-			auto& it = a_load.find(ClassName());
+			auto it = a_load.find(ClassName());
 			if (it == a_load.end() || !ISerializableForm::Load(*it)) {
 				return false;
 			}

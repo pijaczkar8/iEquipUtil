@@ -19,7 +19,7 @@ struct ModInfo;
 
 namespace Forms
 {
-	enum
+	enum : UInt32
 	{
 		kInvalid = static_cast<UInt32>(-1)
 	};

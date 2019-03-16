@@ -173,7 +173,7 @@ namespace Forms
 			const ModInfo* modInfo = 0;
 			if (_isLightMod) {
 #if _WIN64
-				modInfo = dataHandler->LookupLoadedLightModByName(_pluginName.c_str());
+				modInfo = dataHandler->LookupModByName(_pluginName.c_str());
 				if (!modInfo) {
 					_rawFormID = kInvalid;
 					return kInvalid;
@@ -189,11 +189,7 @@ namespace Forms
 					_loadedFormID = _rawFormID;
 					_loadedFormID += 0xFF << (3 * 8);
 				} else {
-#if _WIN64
-					modInfo = dataHandler->LookupLoadedModByName(_pluginName.c_str());
-#else
 					modInfo = dataHandler->LookupModByName(_pluginName.c_str());
-#endif
 					if (!modInfo) {
 						_rawFormID = kInvalid;
 						return kInvalid;
@@ -225,10 +221,10 @@ namespace Forms
 		for (UInt32 i = 0; i < size; ++i) {
 			if (dataHandler->modList.loadedMods[i]->modIndex == a_index) {
 				return dataHandler->modList.loadedMods[i];
-			}
 		}
-		return 0;
 	}
+		return 0;
+}
 
 
 	const ModInfo* ISerializableForm::LookupLoadedLightModByIndex(UInt16 a_index)

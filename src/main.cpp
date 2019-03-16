@@ -26,6 +26,7 @@
 #include "SoulSeeker.h"  // RegisterFuncs
 #include "SpellExt.h"  // RegisterFuncs
 #include "StringExt.h"  // RegisterFuncs
+#include "UIExt.h"  // RegisterFuncs
 #include "version.h"  // IEQUIP_VERSION_VERSTRING, IEQUIP_VERSION_MAJOR
 #include "WeaponExt.h"  // RegisterFuncs
 
@@ -35,7 +36,7 @@
 
 
 #if _WIN64
-constexpr std::size_t IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_62;
+constexpr std::size_t IEQUIP_RUNTIME_VER_COMPAT = RUNTIME_VERSION_1_5_73;
 constexpr const char* IEQUIP_LOG_PATH = "\\My Games\\Skyrim Special Edition\\SKSE\\iEquipUtil.log";
 constexpr const char* IEQUIP_NAME = "iEquipUtil";
 
@@ -214,31 +215,29 @@ extern "C" {
 			return false;
 		}
 
-		bool testActorExt = g_papyrus->Register(ActorExt::RegisterFuncs);
-		testActorExt ? _MESSAGE("[MESSAGE] iEquip_ActorExt registration successful") : _ERROR("[ERROR] iEquip_ActorExt registration failed!\n");
+		g_papyrus->Register(ActorExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_ActorExt registration successful");
 
-		bool testAmmoExt = g_papyrus->Register(AmmoExt::RegisterFuncs);
-		testAmmoExt ? _MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful") : _ERROR("[ERROR] iEquip_AmmoExt registration failed!\n");
+		g_papyrus->Register(AmmoExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_AmmoExt registration successful");
 
-		bool testFormExt = g_papyrus->Register(FormExt::RegisterFuncs);
-		testFormExt ? _MESSAGE("[MESSAGE] iEquip_FormExt registration successful") : _ERROR("[ERROR] iEquip_FormExt registration failed!\n");
+		g_papyrus->Register(FormExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_FormExt registration successful");
 
-		bool testSoulSeeker = g_papyrus->Register(SoulSeeker::RegisterFuncs);
-		testSoulSeeker ? _MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful") : _ERROR("[ERROR] iEquip_SoulSeeker registration failed!\n");
+		g_papyrus->Register(SoulSeeker::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful");
 
-		bool testSpellExt = g_papyrus->Register(SpellExt::RegisterFuncs);
-		testSpellExt ? _MESSAGE("[MESSAGE] iEquip_SpellExt registration successful") : _ERROR("[ERROR] iEquip_SpellExt registration failed!\n");
+		g_papyrus->Register(SpellExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_SpellExt registration successful");
 
-		bool testStringExt = g_papyrus->Register(StringExt::RegisterFuncs);
-		testStringExt ? _MESSAGE("[MESSAGE] iEquip_StringExt registration successful") : _ERROR("[ERROR] iEquip_StringExt registration failed!\n");
+		g_papyrus->Register(StringExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_StringExt registration successful");
 
-		bool testWeaponExt = g_papyrus->Register(WeaponExt::RegisterFuncs);
-		testWeaponExt ? _MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful") : _ERROR("[ERROR] iEquip_WeaponExt registration failed!\n");
+		g_papyrus->Register(WeaponExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful");
 
-		if (!testActorExt || !testAmmoExt || !testFormExt || !testSoulSeeker || !testSpellExt || !testStringExt || !testWeaponExt) {
-			_FATALERROR("[FATAL ERROR] Papyrus registration failed!\n");
-			return false;
-		}
+		g_papyrus->Register(UIExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_UIExt registration successful");
 
 		g_messaging = (SKSEMessagingInterface*)a_skse->QueryInterface(kInterface_Messaging);
 		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {

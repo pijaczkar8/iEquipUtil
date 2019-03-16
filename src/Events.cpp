@@ -133,7 +133,6 @@ namespace Events
 				invHandler->AddForm(form, baseCount);
 			}
 		}
-		bool dummy = true;
 	}
 
 
@@ -264,8 +263,6 @@ namespace Events
 				}
 			}
 		}
-
-		bool dummy = true;
 
 		return kEvent_Continue;
 	}

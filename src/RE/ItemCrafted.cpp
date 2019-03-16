@@ -11,10 +11,10 @@ namespace RE
 	{
 #if _WIN64
 		typedef EventDispatcher<ItemCrafted::Event>* _GetEventSource_t();
-		static RelocAddr<_GetEventSource_t*> _GetEventSource(0x00870A90);
+		static RelocAddr<_GetEventSource_t*> _GetEventSource(0x008708A0);
 		return _GetEventSource();
 #else
 		return (EventDispatcher<ItemCrafted::Event>*)0x01B3E7F4;
 #endif
 	}
-	}
+}

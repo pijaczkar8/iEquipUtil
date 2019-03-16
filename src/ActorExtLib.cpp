@@ -124,8 +124,8 @@ bool ActorEquipEnchantedItem::validate()
 BaseExtraList* ActorEquipEnchantedItem::findExtraListByForm(InventoryEntryData* a_entryData)
 {
 	ExtraListLocator xListLocator(a_entryData, { kExtraData_Enchantment }, { kExtraData_Poison, kExtraData_Worn, kExtraData_WornLeft });
-	BaseExtraList* xList = 0;
-	while (xList = xListLocator.found()) {
+	BaseExtraList* xList = xListLocator.found();
+	while (xList) {
 		BSExtraData* xData = xList->m_data;
 		bool xEnchantmentFound = false;
 		while (xData) {
@@ -141,6 +141,7 @@ BaseExtraList* ActorEquipEnchantedItem::findExtraListByForm(InventoryEntryData* 
 		if (xEnchantmentFound) {
 			return xList;
 		}
+		xList = xListLocator.found();
 	}
 	return 0;
 }
@@ -172,8 +173,8 @@ bool ActorEquipPoisonedItem::validate()
 BaseExtraList* ActorEquipPoisonedItem::findExtraListByForm(InventoryEntryData* a_entryData)
 {
 	ExtraListLocator xListLocator(a_entryData, { kExtraData_Poison }, { kExtraData_Enchantment, kExtraData_Worn, kExtraData_WornLeft });
-	BaseExtraList* xList = 0;
-	while (xList = xListLocator.found()) {
+	BaseExtraList* xList = xListLocator.found();
+	while (xList) {
 		BSExtraData* xData = xList->m_data;
 		bool xPoisonFound = false;
 		while (xData) {
@@ -189,6 +190,7 @@ BaseExtraList* ActorEquipPoisonedItem::findExtraListByForm(InventoryEntryData* a
 		if (xPoisonFound) {
 			return xList;
 		}
+		xList = xListLocator.found();
 	}
 	return 0;
 }
@@ -213,8 +215,8 @@ bool ActorEquipEnchantedAndPoisonedItem::validate()
 BaseExtraList* ActorEquipEnchantedAndPoisonedItem::findExtraListByForm(InventoryEntryData* a_entryData)
 {
 	ExtraListLocator xListLocator(a_entryData, { kExtraData_Enchantment, kExtraData_Poison }, { kExtraData_Worn, kExtraData_WornLeft });
-	BaseExtraList* xList = 0;
-	while (xList = xListLocator.found()) {
+	BaseExtraList* xList = xListLocator.found();
+	while (xList) {
 		BSExtraData* xData = xList->m_data;
 		bool xEnchantmentFound = false;
 		bool xPoisonFound = false;
@@ -235,6 +237,7 @@ BaseExtraList* ActorEquipEnchantedAndPoisonedItem::findExtraListByForm(Inventory
 		if (xPoisonFound && xEnchantmentFound) {
 			return xList;
 		}
+		xList = xListLocator.found();
 	}
 	return 0;
 }

@@ -26,7 +26,7 @@ namespace Forms
 	template <typename T>
 	bool loadJsonObj(nlohmann::json& a_load, const char* a_name, T& a_val)
 	{
-		auto& it = a_load.find(a_name);
+		auto it = a_load.find(a_name);
 		if (it != a_load.end()) {
 			a_val = it.value();
 			return true;

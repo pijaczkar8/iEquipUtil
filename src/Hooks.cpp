@@ -28,7 +28,6 @@ UInt32& Hook_RemoveItem(PlayerCharacter* a_this, UInt32& a_droppedItemHandle, TE
 			ptr->Set(a_item, a_extraList);
 			Forms::InventoryHandler* invHandler = Forms::InventoryHandler::GetSingleton();
 			invHandler->UpdateCount(ptr, a_count * -1);
-			bool dummy = true;
 		}
 	}
 	return _RemoveItem(a_this, a_droppedItemHandle, a_item, a_count, a_mode, a_extraList, a_moveToRef, a_arg7, a_arg8);

@@ -28,9 +28,6 @@
     <ClCompile Include="src\ExtraLocator.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
-    <ClCompile Include="src\SoulSeekerLib.cpp">
-      <Filter>src\lib</Filter>
-    </ClCompile>
     <ClCompile Include="src\Logging.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
@@ -106,6 +103,9 @@
     <ClCompile Include="src\RE\TESEquipEvent.cpp">
       <Filter>src\RE</Filter>
     </ClCompile>
+    <ClCompile Include="src\UIExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -165,9 +165,6 @@
       <Filter>include\lib</Filter>
     </ClInclude>
     <ClInclude Include="include\ExtraLocator.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SoulSeekerLib.h">
       <Filter>include\lib</Filter>
     </ClInclude>
     <ClInclude Include="include\Utility.h">
@@ -268,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="include\RE\TESEquipEvent.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIExt.h">
+      <Filter>include\papyrus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

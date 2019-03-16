@@ -68,7 +68,7 @@ namespace Forms
 				if (result.second) {
 					result.first->second->Load(xData.value());
 				} else {
-					_ERROR("[ERROR] Failed to insert extra data block:\n%s", xData.value().dump(4));
+					_ERROR("[ERROR] Failed to insert extra data block:\n%s", xData.value().dump(4).c_str());
 					return false;
 				}
 			}

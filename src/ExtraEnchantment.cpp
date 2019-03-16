@@ -55,7 +55,7 @@ namespace Forms
 	bool ExtraEnchantment::Load(json& a_load)
 	{
 		try {
-			auto& it = a_load.find(_enchantment.ClassName());
+			auto it = a_load.find(_enchantment.ClassName());
 			if (it == a_load.end() || !_enchantment.Load(*it)) {
 				return false;
 			}
