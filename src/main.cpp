@@ -155,6 +155,9 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 			_DMESSAGE("[DEBUG] Forms cleared");
 			Settings::OnLoad();
 			_DMESSAGE("[DEBUG] Forms loaded");
+
+			auto str = GetTemperStringAtInventoryIndex(0, 0, 0);
+			_DMESSAGE("[DEBUG] temper string == %s", str.data);
 		}
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:

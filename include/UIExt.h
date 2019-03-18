@@ -1,11 +1,14 @@
 #pragma once
 
-class TESObjectREFR;
+#include "GameTypes.h"  // BSFixedString
+
+class TESForm;
 class VMClassRegistry;
 struct StaticFunctionTag;
 
 
-TESObjectREFR* GetObjectReferenceAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index);
+TESForm*		GetFormAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index);
+BSFixedString	GetTemperStringAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index, SInt32 a_count);
 
 
 namespace UIExt
