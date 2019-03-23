@@ -18,10 +18,9 @@
 #include "FormExt.h"  // RegisterFuncs
 #include "Forms.h"  // FormFactory
 #include "Hooks.h"  // InstallHooks
-#include "InventoryHandler.h"  // InventoryHandler, SERIALIZATION_VERSION
-#include "json.hpp"  // json
 #include "LocaleManager.h"  // LocaleManager
-#include "RefHandleManager.h"  // RefHandleManager
+#include "ObjectReferenceExt.h"  // RegisterFuncs
+#include "Registration.h"  // OnPlayerItemAddedRegSet
 #include "Settings.h"  // Settings
 #include "SoulSeeker.h"  // RegisterFuncs
 #include "SpellExt.h"  // RegisterFuncs
@@ -31,8 +30,6 @@
 #include "WeaponExt.h"  // RegisterFuncs
 
 #include "RE/TESEquipEvent.h"  // RE::TESEquipEvent
-#include "RE/Inventory.h"  // RE::Inventory
-#include "RE/ItemCrafted.h"  // RE::ItemCrafted
 
 
 #if _WIN64
@@ -54,28 +51,23 @@ RE::g_equipEventDispatcher->AddEventSink(Events::EquipEventHandler::GetSingleton
 #endif
 
 
-#define INV_TRACKING false
+enum : UInt32
+{
+	kSerializationVersion = 1,
+	kOnPlayerItemAdded = 'OPIA'
+};
 
 
-static PluginHandle					g_pluginHandle = kPluginHandle_Invalid;
-static SKSEPapyrusInterface*		g_papyrus = 0;
-static SKSEMessagingInterface*		g_messaging = 0;
-static SKSESerializationInterface*	g_serialization = 0;
+PluginHandle				g_pluginHandle = kPluginHandle_Invalid;
+SKSEPapyrusInterface*		g_papyrus = 0;
+SKSEMessagingInterface*		g_messaging = 0;
+SKSESerializationInterface*	g_serialization = 0;
 
 
 void SaveCallback(SKSESerializationInterface* a_intfc)
 {
-	using nlohmann::json;
-	using Forms::InventoryHandler;
-
-	InventoryHandler* invHandler = InventoryHandler::GetSingleton();
-
 	try {
-		json save;
-		if (!invHandler->Save(a_intfc)) {
-			invHandler->Clear();
-			throw std::runtime_error("Inventory handler failed to save data!");
-		}
+		OnPlayerItemAddedRegSet::GetSingleton()->Save(a_intfc, kOnPlayerItemAdded, kSerializationVersion);
 	} catch (std::exception& e) {
 		_ERROR("[ERROR] %s", e.what());
 	}
@@ -86,43 +78,22 @@ void SaveCallback(SKSESerializationInterface* a_intfc)
 
 void LoadCallback(SKSESerializationInterface* a_intfc)
 {
-	using nlohmann::json;
-	using Forms::InventoryHandler;
-	using Forms::RefHandleManager;
-
-	InventoryHandler* invHandler = InventoryHandler::GetSingleton();
-	invHandler->Clear();
-	RefHandleManager* handleManager = RefHandleManager::GetSingleton();
-	handleManager->Clear();
-
 	try {
 		UInt32 type;
 		UInt32 version;
 		UInt32 length;
-		std::vector<char> buf;
-		json load;
 		while (a_intfc->GetNextRecordInfo(&type, &version, &length)) {
-			if (version != SERIALIZATION_VERSION) {
-				throw bad_record_version(SERIALIZATION_VERSION, version);
-			}
-
 			switch (type) {
-			case 'INVH':
-				buf.reserve(length);
-				if (!a_intfc->ReadRecordData(buf.data(), length)) {
-					throw std::runtime_error("Serialization interface failed to read record data!");
+			case kOnPlayerItemAdded:
+				{
+					OnPlayerItemAddedRegSet* regs = OnPlayerItemAddedRegSet::GetSingleton();
+					regs->Clear();
+					regs->Load(a_intfc, version);
 				}
-
-				load.clear();
-				load = json::parse(buf.data());
-				if (!invHandler->Load(load)) {
-					invHandler->Clear();
-					throw std::runtime_error("Inventory handler failed to load data!");
-				}
-
 				break;
 			default:
-				throw std::runtime_error("Encountered unknown type during load (" + std::to_string(type) + ")!");
+				_ERROR("[ERROR] Invalid record type (%u)!", type);
+				break;
 			}
 		}
 	} catch (std::exception& e) {
@@ -139,14 +110,6 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 	case SKSEMessagingInterface::kMessage_PreLoadGame:
 	case SKSEMessagingInterface::kMessage_DataLoaded:
 		{
-#if INV_TRACKING
-			RE::Inventory::GetEventSource()->AddEventSink(Events::InventoryEventHandler::GetSingleton());
-			_MESSAGE("[MESSAGE] Sinked inventory event handler");
-
-			RE::ItemCrafted::GetEventSource()->AddEventSink(Events::ItemCraftedEventHandler::GetSingleton());
-			_MESSAGE("[MESSAGE] Sinked item crafted event handler");
-#endif
-
 			Events::g_boundWeaponEquippedCallbackRegs.Clear();
 			Events::g_boundWeaponUnequippedCallbackRegs.Clear();
 			_DMESSAGE("[DEBUG] Registries cleared");
@@ -155,9 +118,6 @@ void MessageHandler(SKSEMessagingInterface::Message* a_msg)
 			_DMESSAGE("[DEBUG] Forms cleared");
 			Settings::OnLoad();
 			_DMESSAGE("[DEBUG] Forms loaded");
-
-			auto str = GetTemperStringAtInventoryIndex(0, 0, 0);
-			_DMESSAGE("[DEBUG] temper string == %s", str.data);
 		}
 		break;
 	case SKSEMessagingInterface::kMessage_InputLoaded:
@@ -210,11 +170,27 @@ extern "C" {
 
 		if (Settings::loadSettings()) {
 			_MESSAGE("[MESSAGE] Settings loaded successfully");
-			_DMESSAGE("");
-			Settings::dump();
-			_DMESSAGE("");
 		} else {
 			_FATALERROR("[FATAL ERROR] Settings failed to load!\n");
+			return false;
+		}
+
+		g_serialization = (SKSESerializationInterface*)a_skse->QueryInterface(kInterface_Serialization);
+		if (g_serialization) {
+			g_serialization->SetUniqueID(g_pluginHandle, 'IEQP');
+			g_serialization->SetSaveCallback(g_pluginHandle, SaveCallback);
+			g_serialization->SetLoadCallback(g_pluginHandle, LoadCallback);
+			_MESSAGE("[MESSAGE] Serialization interface query successful");
+		} else {
+			_FATALERROR("[FATAL ERROR] Serialization interface query failed!\n");
+			return false;
+		}
+
+		g_messaging = (SKSEMessagingInterface*)a_skse->QueryInterface(kInterface_Messaging);
+		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {
+			_MESSAGE("[MESSAGE] Messaging interface registration successful");
+		} else {
+			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!\n");
 			return false;
 		}
 
@@ -227,6 +203,9 @@ extern "C" {
 		g_papyrus->Register(FormExt::RegisterFuncs);
 		_MESSAGE("[MESSAGE] iEquip_FormExt registration successful");
 
+		g_papyrus->Register(ObjectReferenceExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_ObjectReferenceExt registration successful");
+
 		g_papyrus->Register(SoulSeeker::RegisterFuncs);
 		_MESSAGE("[MESSAGE] iEquip_SoulSeeker registration successful");
 
@@ -236,35 +215,14 @@ extern "C" {
 		g_papyrus->Register(StringExt::RegisterFuncs);
 		_MESSAGE("[MESSAGE] iEquip_StringExt registration successful");
 
-		g_papyrus->Register(WeaponExt::RegisterFuncs);
-		_MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful");
-
 		g_papyrus->Register(UIExt::RegisterFuncs);
 		_MESSAGE("[MESSAGE] iEquip_UIExt registration successful");
 
-		g_messaging = (SKSEMessagingInterface*)a_skse->QueryInterface(kInterface_Messaging);
-		if (g_messaging->RegisterListener(g_pluginHandle, "SKSE", MessageHandler)) {
-			_MESSAGE("[MESSAGE] Messaging interface registration successful");
-		} else {
-			_FATALERROR("[FATAL ERROR] Messaging interface registration failed!\n");
-			return false;
-		}
-
-#if INV_TRACKING
-		g_serialization = (SKSESerializationInterface*)a_skse->QueryInterface(kInterface_Serialization);
-		if (g_serialization) {
-			g_serialization->SetUniqueID(g_pluginHandle, 'IEQP');
-			g_serialization->SetSaveCallback(g_pluginHandle, SaveCallback);
-			g_serialization->SetLoadCallback(g_pluginHandle, LoadCallback);
-			_MESSAGE("[MESSAGE] Serialization interface query successful");
-		} else {
-			_FATALERROR("[FATAL ERROR] Serialization interface query failed!\n");
-			return false;
-		}
+		g_papyrus->Register(WeaponExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] iEquip_WeaponExt registration successful");
 
 		InstallHooks();
 		_MESSAGE("[MESSAGE] Installed hooks");
-#endif
 
 		return true;
 	}

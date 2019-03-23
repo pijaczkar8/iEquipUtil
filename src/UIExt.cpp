@@ -8,6 +8,8 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 #include "GameMenus.h"  // IMenu, MenuManager, UIStringHolder
 
+#include "RE/BSTList.h"  // BSSimpleList
+
 #if _WIN64
 #include "Relocation.h"  // RelocAddr, RelocPtr
 #include "ScaleformValue.h"  // GFxValue
@@ -145,12 +147,22 @@ BSFixedString GetTemperStringAtInventoryIndex(StaticFunctionTag* a_base, UInt32 
 #endif
 
 	BaseExtraList* xList = 0;
-	ExtendDataList* extendDataList = entryData->extendDataList;
-	if (extendDataList) {
-		xList = extendDataList->GetNthItem(0);
+	SInt32 stackSize = 0;
+	RE::BSSimpleList<BaseExtraList*>* xDataList = reinterpret_cast<RE::BSSimpleList<BaseExtraList*>*>(entryData->extendDataList);
+	if (xDataList && !xDataList->empty()) {
+		xList = xDataList->front();
 		ExtraCount* xCount = static_cast<ExtraCount*>(xList->GetByType(kExtraData_Count));
-		if (!xCount || a_count > xCount->count) {
+		stackSize = xCount ? xCount->count : 1;
+		if (a_count > stackSize) {
 			xList = 0;
+		}
+	}
+
+	if (xList) {
+		if (xList->HasType(kExtraData_Worn) || xList->HasType(kExtraData_WornLeft)) {
+			if (stackSize < entryData->countDelta) {
+				xList = 0;
+			}
 		}
 	}
 

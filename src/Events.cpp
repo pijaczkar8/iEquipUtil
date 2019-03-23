@@ -1,13 +1,9 @@
 #include "Events.h"
 
-#undef min
-#undef max
-
 #include "GameAPI.h"  // g_thePlayer
 #include "GameEvents.h"  // EventResult, EventDispatcher
 #include "GameObjects.h"  // TESObjectWEAP, TESObjectARMO
 #include "GameTypes.h"  // BSFixedString
-#include "ITypes.h"  // UInt32, SInt32
 #include "PapyrusArgs.h"  // PackValue()
 #include "PapyrusEvents.h"  // EventRegistration, SKSEModCallbackEvent, NullParameters, RegistrationSetHolder, NullParameters
 #include "PapyrusVM.h"  // Output, VMClassRegistry, IFunctionArguments
@@ -16,9 +12,7 @@
 #include <memory>  // shared_ptr
 
 #include "ActorExtLib.h"  // GetEquippedHand
-#include "Armor.h"  // Armor
-#include "InventoryHandler.h"  // InventoryHandler
-#include "SerializableFormFactory.h"  // SerializableFormFactory
+
 #include "RE/BSTList.h"  // RE::BSSimpleList
 #include "RE/TESEquipEvent.h"  // RE::TESEquipEvent
 
@@ -29,19 +23,19 @@
 #endif
 
 
-namespace Events
+namespace
 {
-	template <typename T> void SetVMValue(VMValue* a_val, T a_arg)
+	template<class T> void SetVMValue(VMValue* a_val, T a_arg)
 	{
-		VMClassRegistry * registry = (*g_skyrimVM)->GetClassRegistry();
+		VMClassRegistry* registry = (*g_skyrimVM)->GetClassRegistry();
 		PackValue(a_val, &a_arg, registry);
 	}
 
 
-	template <> void SetVMValue<bool>(VMValue * val, bool arg) { val->SetBool(arg); }
-	template <> void SetVMValue<SInt32>(VMValue * val, SInt32 arg) { val->SetInt(arg); }
-	template <> void SetVMValue<float>(VMValue * val, float arg) { val->SetFloat(arg); }
-	template <> void SetVMValue<BSFixedString>(VMValue * val, BSFixedString arg) { val->SetString(arg.data); }
+	template<> void SetVMValue<bool>(VMValue* a_val, bool a_arg) { a_val->SetBool(a_arg); }
+	template<> void SetVMValue<SInt32>(VMValue* a_val, SInt32 a_arg) { a_val->SetInt(a_arg); }
+	template<> void SetVMValue<float>(VMValue* a_val, float a_arg) { a_val->SetFloat(a_arg); }
+	template<> void SetVMValue<const BSFixedString&>(VMValue* a_val, const BSFixedString& a_arg) { a_val->SetString(a_arg.data); }
 
 
 	template <typename T1>
@@ -106,36 +100,11 @@ namespace Events
 		T1				arg1;
 		T2				arg2;
 	};
+}
 
 
-	void PushInventoryEntry(InventoryEntryData* a_entryData)
-	{
-		Forms::FormFactory* formFactory = Forms::FormFactory::GetSingleton();
-		Forms::InventoryHandler* invHandler = Forms::InventoryHandler::GetSingleton();
-		SInt32 extraCount = 0;
-		Forms::SerializableFormPtr form = nullptr;
-		if (a_entryData->extendDataList) {
-			RE::BSSimpleList<BaseExtraList*>* exDataList = (RE::BSSimpleList<BaseExtraList*>*)a_entryData->extendDataList;
-			for (auto it = exDataList->begin(); it != exDataList->end(); ++it) {
-				++extraCount;
-				form = formFactory->GetForm(a_entryData->type->formType, true);
-				if (form) {
-					form->Set(a_entryData->type, *it);
-					invHandler->AddForm(form, 1);
-				}
-			}
-		}
-		SInt32 baseCount = a_entryData->countDelta - extraCount;
-		if (baseCount > 0) {
-			form = formFactory->GetForm(a_entryData->type->formType, true);
-			if (form) {
-				form->Set(a_entryData->type, 0);
-				invHandler->AddForm(form, baseCount);
-			}
-		}
-	}
-
-
+namespace Events
+{
 	EquipEventHandler::EquipEventHandler()
 	{}
 
@@ -192,99 +161,6 @@ namespace Events
 		delete _singleton;
 		_singleton = 0;
 	}
-
-
-	EquipEventHandler* EquipEventHandler::_singleton = 0;
-
-
-	InventoryEventHandler::InventoryEventHandler()
-	{}
-
-
-	InventoryEventHandler::~InventoryEventHandler()
-	{}
-
-
-	EventResult InventoryEventHandler::ReceiveEvent(RE::Inventory::Event* a_event, EventDispatcher<RE::Inventory::Event>* a_dispatcher)
-	{
-		if (!a_event || !a_event->entryData || !a_event->entryData->type || !a_event->objRefr || a_event->objRefr->formID != (*g_thePlayer)->formID) {
-			return kEvent_Continue;
-		}
-
-		PushInventoryEntry(a_event->entryData);
-
-		return kEvent_Continue;
-	}
-
-
-	InventoryEventHandler* InventoryEventHandler::GetSingleton()
-	{
-		if (!_singleton) {
-			_singleton = new InventoryEventHandler();
-		}
-		return _singleton;
-	}
-
-
-	void InventoryEventHandler::Free()
-	{
-		delete _singleton;
-		_singleton = 0;
-	}
-
-
-	InventoryEventHandler* InventoryEventHandler::_singleton = 0;
-
-
-	ItemCraftedEventHandler::ItemCraftedEventHandler()
-	{}
-
-
-	ItemCraftedEventHandler::~ItemCraftedEventHandler()
-	{}
-
-
-	EventResult ItemCraftedEventHandler::ReceiveEvent(RE::ItemCrafted::Event* a_event, EventDispatcher<RE::ItemCrafted::Event>* a_dispatcher)
-	{
-		if (!a_event | !a_event->item) {
-			return kEvent_Continue;
-		}
-
-		Forms::InventoryHandler* invHandler = Forms::InventoryHandler::GetSingleton();
-		invHandler->GarbageCollectoFormList(a_event->item->formID);
-
-		ExtraContainerChanges* changes = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
-		if (changes && changes->data && changes->data->objList) {
-			RE::BSSimpleList<InventoryEntryData*>* dataList = (RE::BSSimpleList<InventoryEntryData*>*)changes->data->objList;
-			for (auto it = dataList->begin(); it != dataList->end(); ++it) {
-				if ((*it)->type && (*it)->type->formID == a_event->item->formID) {
-					PushInventoryEntry(*it);
-					break;
-				}
-			}
-		}
-
-		return kEvent_Continue;
-	}
-
-
-	ItemCraftedEventHandler* ItemCraftedEventHandler::GetSingleton()
-	{
-		if (!_singleton) {
-			_singleton = new ItemCraftedEventHandler();
-		}
-		return _singleton;
-	}
-
-
-	void ItemCraftedEventHandler::Free()
-	{
-		delete _singleton;
-		_singleton = 0;
-	}
-
-
-	ItemCraftedEventHandler* ItemCraftedEventHandler::_singleton = 0;
 
 
 	RegistrationSetHolder<NullParameters> g_boundWeaponEquippedCallbackRegs;

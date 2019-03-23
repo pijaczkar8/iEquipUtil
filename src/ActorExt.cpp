@@ -14,6 +14,7 @@
 
 #include "ActorExtLib.h"  // IActorEquipItem
 #include "ExtraLocator.h"  // ExtraListLocator
+#include "Registration.h"  // Registration
 
 #include "RE/BSTList.h"  // BSSimpleList
 
@@ -248,6 +249,18 @@ namespace
 }
 
 
+void RegisterForPlayerItemAddedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] Cannot register a NONE form!\n");
+		return;
+	}
+
+	OnPlayerItemAddedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
+	_DMESSAGE("[DEBUG] Registered (0x%08X) for OnPlayerItemAdded", a_thisForm->formID);
+}
+
+
 TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
 {
 	if (!a_actor) {
@@ -396,6 +409,9 @@ namespace ActorExt
 {
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
+		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("RegisterForPlayerItemAddedEvent", "iEquip_ActorExt", RegisterForPlayerItemAddedEvent, a_registry));
+
 		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, TESAmmo*, Actor*>("GetEquippedAmmo", "iEquip_ActorExt", GetEquippedAmmo, a_registry));
 

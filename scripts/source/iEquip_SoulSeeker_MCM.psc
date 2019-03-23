@@ -54,6 +54,7 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("FormExt_IsGrenade_T", "Check if right hand is a grenade", "")
 		AddTextOptionST("SpellExt_GetBoundSpellWeapType_T", "Check the weapon type of the bound spell in the right hand", "")
 		AddTextOptionST("ActorExt_GetAVDamage_T", "Gets the av damage dealt to magicka", "")
+		AddTextOptionST("ActorExt_RegisterForPlayerItemAddedEvent_T", "Register for OnPlayerItemAdded event", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -445,6 +446,20 @@ State ActorExt_GetAVDamage_T
 EndState
 
 
+State ActorExt_RegisterForPlayerItemAddedEvent_T
+	Event OnSelectST()
+		iEquip_ActorExt.RegisterForPlayerItemAddedEvent(Self)
+		Debug.Trace("SoulSeekerDBG: Registered for OnPlayerItemAdded")
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
 State SoulSeeker_FillMethod_S
 	Event OnSliderOpenST()
 		SetSliderDialogStartValue(SoulSeeker_FillMethod.GetValue() As Float)
@@ -527,4 +542,14 @@ EndEvent
 
 Event OnBoundWeaponUnequipped(Weapon a_weap, Int a_unequipSlot)
 	Debug.Trace("SoulSeekerDBG: OnBoundWeaponUnequipped event recieved! (name == " + a_weap.GetName() + ") (slot == " + a_unequipSlot + ")")
+EndEvent
+
+
+Event OnPlayerItemAdded(Form a_baseItem, Int a_itemCount, ObjectReference a_itemReference, ObjectReference a_sourceContainer, String a_name)
+	Debug.Trace("SoulSeekerDBG: OnPlayerItemAdded event recieved!")
+	Debug.Trace("baseItem == " + a_baseItem)
+	Debug.Trace("itemCount == " + a_itemCount)
+	Debug.Trace("itemReference == " + a_itemReference)
+	Debug.Trace("sourceContainer == " + a_sourceContainer)
+	Debug.Trace("name == " + a_name)
 EndEvent
