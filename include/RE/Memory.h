@@ -2,6 +2,9 @@
 
 #include "GameAPI.h"  // Heap
 
+#include <cstdlib>  // size_t
+#include <new>  // operator new, operator delete
+
 
 namespace RE
 {
@@ -27,24 +30,20 @@ namespace RE
 	}
 
 
-	template<typename T>
+	template <typename T>
 	inline T* Heap_Allocate(void)
 	{
 		return reinterpret_cast<T*>(Heap_Allocate(sizeof(T)));
 	}
 
 
-#define TES_HEAP_REDEFINE_NEW()												\
-	static void* operator new(std::size_t a_size)							\
-	{ return Heap_Allocate(a_size); }										\
-	static void* operator new(std::size_t a_size, const std::nothrow_t&)	\
-	{ return Heap_Allocate(a_size); }										\
-	static void* operator new(std::size_t a_size, void* a_ptr)				\
-	{ return a_ptr; }														\
-	static void operator delete(void* a_ptr)								\
-	{ Heap_Free(a_ptr); }													\
-	static void operator delete(void* a_ptr, const std::nothrow_t &)		\
-	{ Heap_Free(a_ptr); }													\
-	static void operator delete(void*, void *)								\
-	{ }
+#define TES_HEAP_REDEFINE_NEW()																											\
+	void*	operator new(std::size_t a_count)													{ return RE::Heap_Allocate(a_count); }	\
+	void*	operator new[](std::size_t a_count)													{ return RE::Heap_Allocate(a_count); }	\
+	void*	operator new([[maybe_unused]] std::size_t a_count, void* a_plcmnt)					{ return a_plcmnt; }					\
+	void*	operator new[]([[maybe_unused]] std::size_t a_count, void* a_plcmnt)				{ return a_plcmnt; }					\
+	void	operator delete(void* a_ptr)														{ RE::Heap_Free(a_ptr); }				\
+	void	operator delete[](void* a_ptr)														{ RE::Heap_Free(a_ptr); }				\
+	void	operator delete([[maybe_unused]] void* a_ptr, [[maybe_unused]] void* a_plcmnt)		{ }										\
+	void	operator delete[]([[maybe_unused]] void* a_ptr, [[maybe_unused]] void* a_plcmnt)	{ }
 }

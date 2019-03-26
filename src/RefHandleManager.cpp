@@ -73,7 +73,7 @@ bool RefHandleManager::Load(SKSESerializationInterface* a_intfc, UInt32 a_versio
 }
 
 
-auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraList, SInt32 a_count)
+auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraList)
 -> HandleResult
 {
 	if (!IsTrackedType(a_item)) {
@@ -89,11 +89,11 @@ auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraLi
 		a_extraList = CreateBaseExtraList();
 	}
 
-	return ActivateHandle(a_item, *a_extraList, a_count, handle);
+	return ActivateHandle(a_item, *a_extraList, handle);
 }
 
 
-auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList, SInt32 a_count)
+auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList)
 -> HandleResult
 {
 	if (!IsTrackedType(a_item)) {
@@ -105,11 +105,11 @@ auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraLis
 		return _NRES;
 	}
 
-	return ActivateHandle(a_item, a_extraList, a_count, handle);
+	return ActivateHandle(a_item, a_extraList, handle);
 }
 
 
-auto RefHandleManager::InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraList, UInt32 a_count)
+auto RefHandleManager::InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraList)
 -> HandleResult
 {
 	if (!IsTrackedType(a_item)) {
@@ -125,6 +125,7 @@ auto RefHandleManager::InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraL
 	RefHandle handle = it->second;
 	_handleToIDMap.erase(handle);
 	_idToHandleMap.erase(it);
+	UnmarkHandle(handle);
 
 	return { handle , true };
 }
@@ -135,7 +136,7 @@ auto RefHandleManager::LookupEntry(TESForm* a_form, RefHandle a_handle)
 {
 	EntryData entryData;
 	if (a_handle > kLargestHandle) {
-		_ERROR("[ERROR] Ref handle is too large!\n");
+		_ERROR("[ERROR] Ref handle is invalid!\n");
 		return entryData;
 	}
 
@@ -181,7 +182,6 @@ bool RefHandleManager::IsTrackedType(TESForm* a_form)
 
 
 RefHandleManager::RefHandleManager() :
-	_nextFreeID{ kFirstUniqueID },
 	_activeHandles{ 0 }
 {}
 
@@ -206,17 +206,18 @@ EventResult RefHandleManager::ReceiveEvent(RE::TESUniqueIDChangeEvent* a_event, 
 }
 
 
-auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList, SInt32 a_count, RefHandle a_handle)
+auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList, RefHandle a_handle)
 -> HandleResult
 {
 	auto xID = static_cast<ExtraUniqueID*>(a_extraList.GetByType(kExtraData_UniqueID));
 	if (xID) {
 		_ERROR("[ERROR] Item already has ExtraUniqueID!\n");
-		_nextFreeID = xID->uniqueId + 1;
+		UnmarkHandle(a_handle);
+		return _NRES;
 	} else {
 		xID = ExtraUniqueID::Create();
 		xID->ownerFormId = kPlayerRefID;
-		xID->uniqueId = _nextFreeID++;
+		xID->uniqueId = GetNextUniqueID();
 		AddExtraData(&a_extraList, xID);
 	}
 
@@ -283,6 +284,21 @@ BaseExtraList* RefHandleManager::CreateBaseExtraList()
 	std::memset(xList, 0, XLIST_SIZE);
 
 	return xList;
+}
+
+
+auto RefHandleManager::GetNextUniqueID()
+-> UniqueID
+{
+	using func_t = UniqueID(ExtraContainerChanges::Data*);
+#if _WIN64
+	// E8 ? ? ? ? 44 0F B7 F8
+	RelocAddr<func_t*> func(0x001ECD30);	// 1_5_73
+#else
+	auto func = reinterpret_cast<func_t*>(0x00481EF0);
+#endif
+	auto containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
+	return func(containerChanges->data);
 }
 
 

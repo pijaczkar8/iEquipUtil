@@ -11,7 +11,9 @@
 
 #include <string>  // string
 
+#include "InventoryUtil.h"  // ForEachInvEntry, ForEachExtraList
 #include "RefHandleManager.h"  // RefHandleManager
+#include "Registration.h"  // OnRefHandleActiveRegSet, OnRefHandleInvalidatedRegSet
 
 #include "RE/ExtraPoison.h"  // ExtraPoison
 #include "RE/ExtraTextDisplayData.h"  // ExtraTextDisplayData
@@ -32,11 +34,6 @@ namespace
 
 	bool LookupEntry(TESForm* a_item, UInt32 a_refHandle, EntryData& a_entryDataOut)
 	{
-		if (!a_item) {
-			_ERROR("[ERROR] a_item is a NONE form!\n");
-			return false;
-		}
-
 		RefHandleManager* refHandleManager = RefHandleManager::GetSingleton();
 		auto result = refHandleManager->LookupEntry(a_item, a_refHandle);
 		if (!result.invEntryData || !result.extraList) {
@@ -100,14 +97,103 @@ namespace
 }
 
 
+void RegisterForRefHandleActiveEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		return;
+	} else {
+		OnRefHandleActiveRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
+		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnRefHandleActive", a_thisForm->formID);
+	}
+}
+
+
+void UnregisterForRefHandleActiveEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		return;
+	} else {
+		OnRefHandleActiveRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
+		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnRefHandleActive", a_thisForm->formID);
+	}
+}
+
+
+void RegisterForOnRefHandleInvalidatedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		return;
+	} else {
+		OnRefHandleInvalidatedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
+		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnRefHandleInvalidated", a_thisForm->formID);
+	}
+}
+
+
+void UnregisterForOnRefHandleInvalidatedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		return;
+	} else {
+		OnRefHandleInvalidatedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
+		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnRefHandleInvalidated", a_thisForm->formID);
+	}
+}
+
+
+void ParseInventory(StaticFunctionTag* a_base)
+{
+	auto manager = RefHandleManager::GetSingleton();
+	auto regs = OnRefHandleActiveRegSet::GetSingleton();
+	ForEachInvEntry([&](InventoryEntryData* a_entryData) -> bool
+	{
+		if (manager->IsTrackedType(a_entryData->type)) {
+			SInt32 rawCount = a_entryData->countDelta;
+			if (a_entryData->extendDataList) {
+				ForEachExtraList(a_entryData, [&](BaseExtraList* a_extraList) -> bool
+				{
+					auto xCount = static_cast<ExtraCount*>(a_extraList->GetByType(kExtraData_Count));
+					SInt32 count = xCount ? xCount->count : 1;
+					rawCount -= count;
+					auto result = manager->ActivateHandle(a_entryData->type, a_extraList);
+					if (result.second) {
+						regs->QueueEvent(a_entryData->type, result.first, count);
+					}
+					return true;
+				});
+			}
+			BaseExtraList* xListOut;
+			for (SInt32 i = 0; i < rawCount; ++i) {
+				xListOut = 0;
+				auto result = manager->ActivateHandle(a_entryData->type, xListOut);
+				if (result.second) {
+					regs->QueueEvent(a_entryData->type, result.first, 1);
+				}
+			}
+		}
+		return true;
+	});
+}
+
+
 BSFixedString GetLongName(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle)
 {
+	if (!a_item) {
+		_ERROR("[ERROR] a_item is a NONE form!\n");
+		return "";
+	}
+
 	EntryData entryData;
 	bool result = LookupEntry(a_item, a_refHandle, entryData);
 	if (!result) {
 		return "";
 	}
 
+	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText) {
 		return xText->name;
@@ -120,12 +206,18 @@ BSFixedString GetLongName(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_r
 
 BSFixedString GetShortName(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle)
 {
+	if (!a_item) {
+		_ERROR("[ERROR] a_item is a NONE form!\n");
+		return "";
+	}
+
 	EntryData entryData;
 	bool result = LookupEntry(a_item, a_refHandle, entryData);
 	if (!result) {
 		return "";
 	}
 
+	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText) {
 		std::string name(xText->name.data, xText->rawNameLen);
@@ -139,26 +231,42 @@ BSFixedString GetShortName(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_
 
 SInt32 GetPoisonCount(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle)
 {
+	if (!a_item) {
+		_ERROR("[ERROR] a_item is a NONE form!\n");
+		return 0;
+	} else if (a_item->formType != kFormType_Weapon) {
+		_ERROR("[ERROR] a_item is not a weapon!\n");
+		return 0;
+	}
+
 	EntryData entryData;
 	bool result = LookupEntry(a_item, a_refHandle, entryData);
 	if (!result) {
 		return 0;
 	}
 
-	auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
+	auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_Poison));
 	return xPoison ? xPoison->count : 0;
 }
 
 
 void SetPoisonCount(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle, UInt32 a_newCount)
 {
+	if (!a_item) {
+		_ERROR("[ERROR] a_item is a NONE form!\n");
+		return;
+	} else if (a_item->formType != kFormType_Weapon) {
+		_ERROR("[ERROR] a_item is not a weapon!\n");
+		return;
+	}
+
 	EntryData entryData;
 	bool result = LookupEntry(a_item, a_refHandle, entryData);
 	if (!result) {
 		return;
 	}
 
-	auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
+	auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_Poison));
 	if (xPoison) {
 		xPoison->count = a_newCount;
 	}
@@ -167,6 +275,11 @@ void SetPoisonCount(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHand
 
 EnchantmentItem* GetEnchantment(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle)
 {
+	if (!a_item) {
+		_ERROR("[ERROR] a_item is a NONE form!\n");
+		return false;
+	}
+
 	EntryData entryData;
 	bool result = LookupEntry(a_item, a_refHandle, entryData);
 	if (!result) {
@@ -174,7 +287,7 @@ EnchantmentItem* GetEnchantment(StaticFunctionTag* a_base, TESForm* a_item, UInt
 	}
 
 	TESEnchantableForm* enchForm = DYNAMIC_CAST(a_item, TESForm, TESEnchantableForm);
-	if (enchForm) {
+	if (enchForm && enchForm->enchantment) {
 		return enchForm->enchantment;
 	} else {
 		auto xEnch = static_cast<ExtraEnchantment*>(entryData.extraList->GetByType(kExtraData_Enchantment));
@@ -247,22 +360,37 @@ namespace InventoryExt
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, BSFixedString, TESForm*, UInt32>("GetLongName", "iEquip_ObjectReferenceExt", GetLongName, a_registry));
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("RegisterForRefHandleActiveEvent", "iEquip_InventoryExt", RegisterForRefHandleActiveEvent, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, BSFixedString, TESForm*, UInt32>("GetShortName", "iEquip_ObjectReferenceExt", GetShortName, a_registry));
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("UnregisterForRefHandleActiveEvent", "iEquip_InventoryExt", UnregisterForRefHandleActiveEvent, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, SInt32, TESForm*, UInt32>("GetPoisonCount", "iEquip_ObjectReferenceExt", GetPoisonCount, a_registry));
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("RegisterForOnRefHandleInvalidatedEvent", "iEquip_InventoryExt", RegisterForOnRefHandleInvalidatedEvent, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction3<StaticFunctionTag, void, TESForm*, UInt32, UInt32>("SetPoisonCount", "iEquip_ObjectReferenceExt", SetPoisonCount, a_registry));
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("UnregisterForOnRefHandleInvalidatedEvent", "iEquip_InventoryExt", UnregisterForOnRefHandleInvalidatedEvent, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, EnchantmentItem*, TESForm*, UInt32>("GetEnchantment", "iEquip_ObjectReferenceExt", GetEnchantment, a_registry));
+			new NativeFunction0<StaticFunctionTag, void>("ParseInventory", "iEquip_InventoryExt", ParseInventory, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction6<StaticFunctionTag, void, TESForm*, UInt32, Actor*, SInt32, bool, bool>("EquipItem", "iEquip_ObjectReferenceExt", EquipItem, a_registry));
+			new NativeFunction2<StaticFunctionTag, BSFixedString, TESForm*, UInt32>("GetLongName", "iEquip_InventoryExt", GetLongName, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, BSFixedString, TESForm*, UInt32>("GetShortName", "iEquip_InventoryExt", GetShortName, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, SInt32, TESForm*, UInt32>("GetPoisonCount", "iEquip_InventoryExt", GetPoisonCount, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction3<StaticFunctionTag, void, TESForm*, UInt32, UInt32>("SetPoisonCount", "iEquip_InventoryExt", SetPoisonCount, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, EnchantmentItem*, TESForm*, UInt32>("GetEnchantment", "iEquip_InventoryExt", GetEnchantment, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction6<StaticFunctionTag, void, TESForm*, UInt32, Actor*, SInt32, bool, bool>("EquipItem", "iEquip_InventoryExt", EquipItem, a_registry));
 
 		return true;
 	}

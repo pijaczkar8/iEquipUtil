@@ -1,15 +1,20 @@
 ScriptName iEquip_InventoryExt
 
 
-; @brief Registers the passes script to be notified when a ref handle becomes active
+; @brief Registers the passed script to be notified when a ref handle becomes active.
 ; @param a_thisForm The form to register for the event (i.e. Self).
 Function RegisterForRefHandleActiveEvent(Form a_thisForm) Global Native
 
 
-; @brief Fires whenever an item of a tracked type is added to the player's inventory
-; @param a_item The form of the item added
-; @param a_refHandle The handle for identifying the item
-; @param a_itemCount The number of items added
+; @brief Unregisters the passed script to no longer be notified when a ref handle becomes active.
+; @param a_thisForm The form to register for the event (i.e. Self).
+Function UnregisterForRefHandleActiveEvent(Form a_thisForm) Global Native
+
+
+; @brief Fires whenever an item of a tracked type is added to the player's inventory.
+; @param a_item The form of the item added.
+; @param a_refHandle The handle for identifying the item.
+; @param a_itemCount The number of items added.
 ; @notes Tracked types include:
 ; * Weapon
 ; * Armor
@@ -17,19 +22,29 @@ Event OnRefHandleActive(Form a_item, Int a_refHandle, Int a_itemCount)
 EndEvent
 
 
-; @brief Registers the passes script to be notified when a ref handle becomes invalidated
+; @brief Registers the passed script to be notified when a ref handle becomes invalidated.
 ; @param a_thisForm The form to register for the event (i.e. Self).
 Function RegisterForOnRefHandleInvalidatedEvent(Form a_thisForm) Global Native
 
 
-; @brief Fires whenever an item of a tracked type is removed from the player's inventory
-; @param a_item The form of the item added
-; @param a_refHandle The handle for identifying the item
+; @brief Unregisters the passed script to no longer be notified when a ref handle becomes invalidated.
+; @param a_thisForm The form to register for the event (i.e. Self).
+Function UnregisterForOnRefHandleInvalidatedEvent(Form a_thisForm) Global Native
+
+
+; @brief Fires whenever an item of a tracked type is removed from the player's inventory.
+; @param a_item The form of the item added.
+; @param a_refHandle The handle for identifying the item.
 ; @notes Tracked types include:
 ; * Weapon
 ; * Armor
 Event OnRefHandleInvalidated(Form a_item, Int a_refHandle)
 EndEvent
+
+
+; @brief Parses the player's inventory and assigns ref handles.
+; 	Must be run so the player's existing inventory can be tracked.
+Function ParseInventory() Global Native
 
 
 ; @brief Retrieves the full display name of the item.
@@ -57,6 +72,7 @@ Int Function GetPoisonCount(Form a_item, Int a_refHandle) Global Native
 ; @param a_item The item to set the poison count on.
 ; @param a_refHandle The handle to the item.
 ; @param a_newCount The new poison count.
+; @notes Only works if the weapon has an existing poison applied.
 Function SetPoisonCount(Form a_item, Int a_refHandle, Int a_newCount) Global Native
 
 

@@ -44,9 +44,9 @@ public:
 	void			Clear() noexcept;
 	bool			Save(SKSESerializationInterface* a_intfc, UInt32 a_type, UInt32 a_version);
 	bool			Load(SKSESerializationInterface* a_intfc, UInt32 a_version);
-	HandleResult	ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraList, SInt32 a_count);
-	HandleResult	ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList, SInt32 a_count);
-	HandleResult	InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraList, UInt32 a_count);
+	HandleResult	ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraList);
+	HandleResult	ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList);
+	HandleResult	InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraList);
 	EntryData		LookupEntry(TESForm* a_form, RefHandle a_handle);
 	bool			IsTrackedType(TESForm* a_form);
 
@@ -57,7 +57,6 @@ private:
 		kRefHandle,
 		kTotal,
 
-		kFirstUniqueID = 1,
 		kPlayerRefID = 0x14,
 
 		kRefArrSize = std::numeric_limits<UInt16>::max() / 8,
@@ -67,26 +66,26 @@ private:
 
 
 	RefHandleManager();
-	virtual ~RefHandleManager() = default;
 	RefHandleManager(const RefHandleManager&) = delete;
 	RefHandleManager(RefHandleManager&&) = delete;
+	virtual ~RefHandleManager() = default;
 
 	RefHandleManager& operator=(const RefHandleManager&) = delete;
 	RefHandleManager& operator=(RefHandleManager&&) = delete;
 
-	virtual	EventResult	ReceiveEvent(RE::TESUniqueIDChangeEvent* a_event, EventDispatcher<RE::TESUniqueIDChangeEvent>* a_dispatcher) override;
+	virtual	EventResult ReceiveEvent(RE::TESUniqueIDChangeEvent* a_event, EventDispatcher<RE::TESUniqueIDChangeEvent>* a_dispatcher) override;
 
-	HandleResult		ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList, SInt32 a_count, RefHandle a_handle);
-	RefHandle			GetFreeHandle();
-	void				MarkHandle(RefHandle a_handle);
-	void				UnmarkHandle(RefHandle a_handle);
-	void				AddExtraData(BaseExtraList* a_extraList, BSExtraData* a_extraData);
-	BaseExtraList*		CreateBaseExtraList();
+	HandleResult	ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList, RefHandle a_handle);
+	RefHandle		GetFreeHandle();
+	void			MarkHandle(RefHandle a_handle);
+	void			UnmarkHandle(RefHandle a_handle);
+	void			AddExtraData(BaseExtraList* a_extraList, BSExtraData* a_extraData);
+	BaseExtraList*	CreateBaseExtraList();
+	UniqueID		GetNextUniqueID();
 
 
 	static const HandleResult		_NRES;
 	std::map<UniqueID, RefHandle>	_idToHandleMap;
 	std::map<RefHandle, UniqueID>	_handleToIDMap;
-	UniqueID						_nextFreeID;
 	UInt8							_activeHandles[kRefArrSize];
 };

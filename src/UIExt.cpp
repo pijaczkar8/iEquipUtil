@@ -62,7 +62,7 @@ namespace
 			GFxValue		categoryListRoot;	// 08 - kDisplayObject
 			GFxValue		unk20;				// 20 - kArray
 			tArray<Item*>	items;				// 38
-		};
+			};
 #if _WIN64
 		STATIC_ASSERT(offsetof(InventoryData, items) == 0x38);
 #else
@@ -79,13 +79,13 @@ namespace
 #endif
 		GFxValue		root;			// 30 - kDisplayObject
 		InventoryData*	inventoryData;	// 48
-	};
+		};
 #if _WIN64
 	STATIC_ASSERT(offsetof(InventoryMenu, inventoryData) == 0x48);
 #else
 	STATIC_ASSERT(offsetof(InventoryMenu, inventoryData) == 0x30);
 #endif
-}
+	}
 
 
 TESForm* GetFormAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index)
@@ -109,83 +109,12 @@ TESForm* GetFormAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index)
 }
 
 
-BSFixedString GetTemperStringAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index, SInt32 a_count)
-{
-	MenuManager* mm = MenuManager::GetSingleton();
-	UIStringHolder* uiStrHolder = UIStringHolder::GetSingleton();
-	InventoryMenu* invMenu = static_cast<InventoryMenu*>(mm->GetMenu(&uiStrHolder->inventoryMenu));
-	if (!invMenu) {
-		_ERROR("[ERROR] Inventory menu is not open!\n");
-		return "";
-	}
-
-	auto& items = invMenu->inventoryData->items;
-	if (a_index >= items.count) {
-		_ERROR("[ERROR] Index is out of range!\n");
-		return "";
-	}
-
-	auto item = items[a_index];
-	InventoryEntryData* entryData = item ? item->data.objDesc : 0;
-	if (!entryData) {
-		_ERROR("[ERROR] Item does not have entry data!\n");
-		return "";
-	}
-
-	using func_t = const char*(float a_temperFactor, bool a_isWeapon);
-#if _WIN64
-	// E8 ? ? ? ? F3 0F 11 73 2C
-	constexpr std::uintptr_t FUNC_CALL = 0x0013CC20 + 0x59;	// 1_5_73
-	RelocPtr<SInt32> callAddr(FUNC_CALL + 0x1);
-	RelocAddr<std::uintptr_t> absAddr(FUNC_CALL + 0x5);
-	func_t* func = reinterpret_cast<func_t*>(absAddr.GetUIntPtr() + *callAddr);
-#else
-	constexpr std::uintptr_t FUNC_CALL = 0x004278A0 + 0xB5;
-	SInt32 callAddr = *reinterpret_cast<SInt32*>(FUNC_CALL + 0x1);
-	std::uintptr_t absAddr = FUNC_CALL + 0x5;
-	func_t* func = reinterpret_cast<func_t*>(absAddr + callAddr);
-#endif
-
-	BaseExtraList* xList = 0;
-	SInt32 stackSize = 0;
-	RE::BSSimpleList<BaseExtraList*>* xDataList = reinterpret_cast<RE::BSSimpleList<BaseExtraList*>*>(entryData->extendDataList);
-	if (xDataList && !xDataList->empty()) {
-		xList = xDataList->front();
-		ExtraCount* xCount = static_cast<ExtraCount*>(xList->GetByType(kExtraData_Count));
-		stackSize = xCount ? xCount->count : 1;
-		if (a_count > stackSize) {
-			xList = 0;
-		}
-	}
-
-	if (xList) {
-		if (xList->HasType(kExtraData_Worn) || xList->HasType(kExtraData_WornLeft)) {
-			if (stackSize < entryData->countDelta) {
-				xList = 0;
-			}
-		}
-	}
-
-	if (xList) {
-		ExtraHealth* xHealth = static_cast<ExtraHealth*>(xList->GetByType(kExtraData_Health));
-		if (xHealth) {
-			bool isWeapon = entryData->type && entryData->type->formType == kFormType_Weapon;
-			return func(xHealth->health, isWeapon);
-		}
-	}
-	return "";
-}
-
-
 namespace UIExt
 {
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, TESForm*, UInt32>("GetFormAtInventoryIndex", "iEquip_UIExt", GetFormAtInventoryIndex, a_registry));
-
-		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, BSFixedString, UInt32, SInt32>("GetTemperStringAtInventoryIndex", "iEquip_UIExt", GetTemperStringAtInventoryIndex, a_registry));
 
 		return true;
 	}

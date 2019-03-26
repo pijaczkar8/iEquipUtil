@@ -20,6 +20,18 @@ void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_t
 }
 
 
+void UnregisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		return;
+	} else {
+		OnBoundWeaponEquippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
+		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnBoundWeaponEquippedEvent", a_thisForm->formID);
+	}
+}
+
+
 void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
@@ -28,6 +40,18 @@ void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a
 	} else {
 		OnBoundWeaponUnequippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
+	}
+}
+
+
+void UnregisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+{
+	if (!a_thisForm) {
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		return;
+	} else {
+		OnBoundWeaponUnequippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
+		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
 	}
 }
 
@@ -136,7 +160,13 @@ namespace FormExt
 			new NativeFunction1<StaticFunctionTag, void, TESForm*>("RegisterForBoundWeaponEquippedEvent", "iEquip_FormExt", RegisterForBoundWeaponEquippedEvent, a_registry));
 
 		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("UnregisterForBoundWeaponEquippedEvent", "iEquip_FormExt", UnregisterForBoundWeaponEquippedEvent, a_registry));
+
+		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, void, TESForm*>("RegisterForBoundWeaponUnequippedEvent", "iEquip_FormExt", RegisterForBoundWeaponUnequippedEvent, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("UnregisterForBoundWeaponUnequippedEvent", "iEquip_FormExt", UnregisterForBoundWeaponUnequippedEvent, a_registry));
 
 		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsSpear", "iEquip_FormExt", IsSpear, a_registry));

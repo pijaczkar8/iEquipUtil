@@ -9,6 +9,11 @@ class VMClassRegistry;
 struct StaticFunctionTag;
 
 
+void				RegisterForRefHandleActiveEvent(StaticFunctionTag* a_base, TESForm* a_thisForm);
+void				UnregisterForRefHandleActiveEvent(StaticFunctionTag* a_base, TESForm* a_thisForm);
+void				RegisterForOnRefHandleInvalidatedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm);
+void				UnregisterForOnRefHandleInvalidatedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm);
+void				ParseInventory(StaticFunctionTag* a_base);
 BSFixedString		GetLongName(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle);
 BSFixedString		GetShortName(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle);
 SInt32				GetPoisonCount(StaticFunctionTag* a_base, TESForm* a_item, UInt32 a_refHandle);

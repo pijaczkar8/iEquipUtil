@@ -21,6 +21,8 @@ Event OnConfigInit()
 	g_forms = new Form[10]
 	g_refHandles = new Int[10]
 	g_arrSize = 0
+
+	iEquip_InventoryExt.ParseInventory()
 EndEvent
 
 
@@ -152,6 +154,7 @@ EndState
 
 State InventoryExt_DumpAll_T
 	Event OnSelectST()
+	Debug.Trace("")
 		Int i = 0
 		While (i < g_arrSize)
 			String longName = iEquip_InventoryExt.GetLongName(g_forms[i], g_refHandles[i])
