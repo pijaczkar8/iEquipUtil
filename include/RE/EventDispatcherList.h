@@ -113,29 +113,28 @@ namespace RE
 		EventDispatcher<TESWaitStopEvent>					waitStopEventSource;				// 1188 - sink offset 1A8
 		EventDispatcher<TESSwitchRaceCompleteEvent>			switchRaceCompleteEventSource;		// 11E0 - sink offset 1B0
 	};
-
 #else
-
-	template <>
-	class BSTEventSink <TESEquipEvent>
-	{
-	public:
-		virtual ~BSTEventSink() {}
-		virtual	EventResult ReceiveEvent(TESEquipEvent* a_event, EventDispatcher<TESEquipEvent>* a_dispatcher) = 0;
-	};
-
-
-	template <>
-	class BSTEventSink <TESUniqueIDChangeEvent>
-	{
-	public:
-		virtual ~BSTEventSink() {}
-		virtual	EventResult ReceiveEvent(TESUniqueIDChangeEvent* a_event, EventDispatcher<TESUniqueIDChangeEvent>* a_dispatcher) = 0;
-	};
-
-
 	extern EventDispatcher<TESEquipEvent>* g_equipEventDispatcher;
 	extern EventDispatcher<TESUniqueIDChangeEvent>* g_uniqueIDChangedEventDispatcher;
-
 #endif
 }
+
+
+#ifndef _WIN64
+template <>
+class BSTEventSink<RE::TESEquipEvent>
+{
+public:
+	virtual ~BSTEventSink() {}
+	virtual	EventResult ReceiveEvent(RE::TESEquipEvent* a_event, EventDispatcher<RE::TESEquipEvent>* a_dispatcher) = 0;
+};
+
+
+template <>
+class BSTEventSink<RE::TESUniqueIDChangeEvent>
+{
+public:
+	virtual ~BSTEventSink() {}
+	virtual	EventResult ReceiveEvent(RE::TESUniqueIDChangeEvent* a_event, EventDispatcher<RE::TESUniqueIDChangeEvent>* a_dispatcher) = 0;
+};
+#endif

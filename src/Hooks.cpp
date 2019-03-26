@@ -40,7 +40,11 @@ namespace
 		{
 			auto manager = RefHandleManager::GetSingleton();
 			auto regs = OnRefHandleInvalidatedRegSet::GetSingleton();
+#if _WIN64
 			UInt32* ret = g_invalidRefHandle;
+#else
+			UInt32* ret = const_cast<UInt32*>(g_invalidRefHandle);
+#endif
 			if (a_extraList || a_count == 1 || !manager->IsTrackedType(a_item)) {
 				auto result = manager->InvalidateHandle(a_item, a_extraList);
 				ret = (this->*_RemoveItem)(a_dropHandle, a_item, a_count, a_removeType, a_extraList, a_moveToRef, a_arg7, a_arg8);

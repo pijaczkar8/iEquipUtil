@@ -8,6 +8,7 @@
 
 #include "function_view.h"  // function_view
 
+#include "RE/EventDispatcherList.h"  // BSTEventSink
 #include "RE/TESUniqueIDChangeEvent.h"  // TESUniqueIDChangeEvent
 
 class BaseExtraList;

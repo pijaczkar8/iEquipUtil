@@ -15,6 +15,7 @@
 #include "InventoryUtil.h"  // ForEachInvEntry, ForEachExtraList
 
 #include "RE/BSTList.h"  // BSSimpleList
+#include "RE/Memory.h"  // Heap_Allocate
 
 
 RefHandleManager* RefHandleManager::GetSingleton()
@@ -265,14 +266,21 @@ void RefHandleManager::UnmarkHandle(RefHandle a_handle)
 
 void RefHandleManager::AddExtraData(BaseExtraList* a_extraList, BSExtraData* a_extraData)
 {
-	using func_t = BSExtraData * (BaseExtraList*, BSExtraData*);
 #if _WIN64
+	using func_t = BSExtraData * (BaseExtraList*, BSExtraData*);
 	// E8 ? ? ? ? 4C 8D 75 10
 	RelocAddr<func_t*> func(0x00131990);	// 1_5_73
-#else
-	func_t* func = reinterpret_cast<func_t*>(0x0040A790);
-#endif
 	func(a_extraList, a_extraData);
+#else
+	using func_t = BSExtraData * (BaseExtraList::*)(BSExtraData*);
+	union
+	{
+		std::uintptr_t addr;
+		func_t func;
+	};
+	addr = 0x0040A790;
+	(a_extraList->*func)(a_extraData);
+#endif
 }
 
 
@@ -280,7 +288,7 @@ BaseExtraList* RefHandleManager::CreateBaseExtraList()
 {
 	constexpr std::size_t XLIST_SIZE = sizeof(BaseExtraList);
 
-	auto xList = static_cast<BaseExtraList*>(Heap_Allocate(XLIST_SIZE));
+	auto xList = static_cast<BaseExtraList*>(RE::Heap_Allocate(XLIST_SIZE));
 	std::memset(xList, 0, XLIST_SIZE);
 
 	return xList;
@@ -295,7 +303,7 @@ auto RefHandleManager::GetNextUniqueID()
 	// E8 ? ? ? ? 44 0F B7 F8
 	RelocAddr<func_t*> func(0x001ECD30);	// 1_5_73
 #else
-	auto func = reinterpret_cast<func_t*>(0x00481EF0);
+	func_t* func = reinterpret_cast<func_t*>(0x00481FE0);
 #endif
 	auto containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 	return func(containerChanges->data);

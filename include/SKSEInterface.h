@@ -19,7 +19,9 @@ public:
 	static SKSESerializationInterface*	GetSerializationInterface();
 	static SKSETaskInterface*			GetTaskInterface();
 	static SKSEMessagingInterface*		GetMessagingInterface();
+#if _WIN64
 	static SKSEObjectInterface*			GetObjectInterface();
+#endif
 	static void							AddTask(TaskFn a_fn);
 
 private:
@@ -53,5 +55,7 @@ private:
 	inline static SKSESerializationInterface*	_serializationInterface = 0;
 	inline static SKSETaskInterface*			_taskInterface = 0;
 	inline static SKSEMessagingInterface*		_messagingInterface = 0;
+#if _WIN64
 	inline static SKSEObjectInterface*			_objectInterface = 0;
+#endif
 };

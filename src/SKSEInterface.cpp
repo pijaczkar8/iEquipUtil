@@ -35,11 +35,13 @@ bool SKSE::Set(const SKSEInterface* a_skse)
 		return false;
 	}
 
+#if _WIN64
 	_objectInterface = static_cast<SKSEObjectInterface*>(a_skse->QueryInterface(kInterface_Object));
 	if (!_objectInterface) {
 		_ERROR("[ERROR] Failed to query object interface!\n");
 		return false;
 	}
+#endif
 
 	return true;
 }
@@ -81,10 +83,12 @@ SKSEMessagingInterface* SKSE::GetMessagingInterface()
 }
 
 
+#if _WIN64
 SKSEObjectInterface* SKSE::GetObjectInterface()
 {
 	return _objectInterface;
 }
+#endif
 
 
 void SKSE::AddTask(TaskFn a_fn)
