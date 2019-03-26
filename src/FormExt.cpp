@@ -4,17 +4,17 @@
 #include "PapyrusNativeFunctions.h"  // NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
 
-#include "Events.h"  // g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
+#include "Registration.h"  // OnBoundWeaponEquippedRegSet, OnBoundWeaponUnequippedRegSet
 #include "Settings.h"  // Settings
 
 
 void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] Cannot register a NONE form!\n");
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
 		return;
 	} else {
-		Events::g_boundWeaponEquippedCallbackRegs.Register<TESForm>(a_thisForm->formType, a_thisForm);
+		OnBoundWeaponEquippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnBoundWeaponEquippedEvent", a_thisForm->formID);
 	}
 }
@@ -23,10 +23,10 @@ void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_t
 void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] Cannot register a NONE form!\n");
+		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
 		return;
 	} else {
-		Events::g_boundWeaponUnequippedCallbackRegs.Register<TESForm>(a_thisForm->formType, a_thisForm);
+		OnBoundWeaponUnequippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
 	}
 }

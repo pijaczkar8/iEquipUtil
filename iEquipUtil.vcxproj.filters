@@ -49,17 +49,23 @@
     <ClCompile Include="src\Hooks.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
-    <ClCompile Include="src\RE\TESEquipEvent.cpp">
-      <Filter>src\RE</Filter>
-    </ClCompile>
     <ClCompile Include="src\UIExt.cpp">
       <Filter>src\papyrus</Filter>
     </ClCompile>
     <ClCompile Include="src\Registration.cpp">
       <Filter>src\lib</Filter>
     </ClCompile>
-    <ClCompile Include="src\ObjectReferenceExt.cpp">
+    <ClCompile Include="src\RefHandleManager.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InventoryExt.cpp">
       <Filter>src\papyrus</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SKSEInterface.cpp">
+      <Filter>src\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\EventDispatcherList.cpp">
+      <Filter>src\RE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,20 +167,38 @@
     <ClInclude Include="include\Exceptions.h">
       <Filter>include\lib</Filter>
     </ClInclude>
-    <ClInclude Include="include\RE\TESEquipEvent.h">
-      <Filter>include\RE</Filter>
-    </ClInclude>
     <ClInclude Include="include\UIExt.h">
       <Filter>include\papyrus</Filter>
     </ClInclude>
     <ClInclude Include="include\Registration.h">
       <Filter>include\lib</Filter>
     </ClInclude>
-    <ClInclude Include="include\ObjectReferenceExt.h">
-      <Filter>include\papyrus</Filter>
-    </ClInclude>
     <ClInclude Include="include\RE\ExtraTextDisplayData.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RefHandleManager.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InventoryExt.h">
+      <Filter>include\papyrus</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SKSEInterface.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\function_view.h">
+      <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESUniqueIDChangeEvent.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\EventDispatcherList.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESEquipEvent.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InventoryUtil.h">
+      <Filter>include\lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -15,9 +15,9 @@ enum
 };
 
 
-InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item);
-BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID);
-bool canEquipBothHands(Actor* a_actor, TESForm* a_item);
+InventoryEntryData*	FindEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item);
+BGSEquipSlot*		GetEquipSlotByID(SInt32 a_slotID);
+bool				CanEquipBothHands(Actor* a_actor, TESForm* a_item);
 
 /* @brief Checks in which slots the given weapon is equipped by the given actor.
  * @param a_actor The actor to check.
@@ -29,7 +29,7 @@ bool canEquipBothHands(Actor* a_actor, TESForm* a_item);
  * 2 - Left hand
  * 3 - Dual wield
  */
-UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap);
+UInt32 GetEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap);
 
 /* @brief Checks which slots the given actor does not have a weapon equipped in.
  * @param a_actor The actor to check.
@@ -40,7 +40,7 @@ UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap);
  * 2 - Left hand
  * 3 - Dual wield
  */
-UInt32 getUnequippedSlots(Actor* a_actor);
+UInt32 GetUnequippedSlots(Actor* a_actor);
 
 
 class IActorEquipItem

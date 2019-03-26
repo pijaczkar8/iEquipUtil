@@ -1,23 +1,24 @@
 #include"Hooks.h"
 
-#if _WIN64
-#include "Relocation.h"  // RelocPtr
-#endif
-#include "SafeWrite.h"  // SafeWrite
 #include "GameBSExtraData.h"  // BaseExtraList
-#include "GameExtraData.h"  // ExtraTextDisplayData
+#include "GameExtraData.h"  // InventoryEntryData
 #include "GameForms.h"  // TESForm
 #include "GameObjects.h"  // TESObjectREFR
 #include "GameReferences.h"  // Actor, PlayerCharacter
-#include "GameRTTI.h"  // DYNAMIC_CAST
-#include "GameTypes.h"  // BSFixedString
+#include "SafeWrite.h"  // SafeWrite
 
 #include <cstdint>  // uintptr_t
-#include <string>  // string
 
-#include "Registration.h"  // OnPlayerItemAddedRegSet
+#include "InventoryUtil.h"  // ForEachInvEntry, ForEachExtraList
+#include "RefHandleManager.h"  // RefHandleManager
+#include "Registration.h"  // OnRefHandleInvalidatedRegSet, OnRefHandleActiveRegSet
 
-#include "RE/ExtraTextDisplayData.h"  // ExtraTextDisplayData
+#include "RE/BSTList.h"  // BSSimpleList
+
+
+#if _WIN64
+#include "Relocation.h"  // RelocPtr, RelocAddr
+#endif
 
 
 namespace
@@ -25,64 +26,92 @@ namespace
 	class PlayerCharacterEx : public PlayerCharacter
 	{
 	public:
-		using AddItem_t = void(TESObjectREFR::*)(TESForm* a_item, BaseExtraList* a_extraList, UInt32 a_count, TESObjectREFR* a_fromRefr);
+		using RemoveItem_t = UInt32 * (TESObjectREFR::*)(UInt32& a_dropHandle, TESForm* a_item, SInt32 a_count, UInt32 a_removeType, BaseExtraList* a_extraList, TESObjectREFR* a_moveToRef, void* a_arg7, void* a_arg8);
+		inline static RemoveItem_t _RemoveItem;
+
+		using AddItem_t = void(TESObjectREFR::*)(TESForm* a_item, BaseExtraList* a_extraList, SInt32 a_count, TESObjectREFR* a_fromRefr);
 		inline static AddItem_t _AddItem;
 
-		using PickUpItem_t = void(Actor::*)(TESObjectREFR* a_item, UInt32 a_count, bool a_arg3, bool a_playSound);
+		using PickUpItem_t = void(Actor::*)(TESObjectREFR* a_item, SInt32 a_count, bool a_arg3, bool a_playSound);
 		inline static PickUpItem_t _PickUpItem;
 
 
-		void Hook_AddItem(TESForm* a_item, BaseExtraList* a_extraList, UInt32 a_count, TESObjectREFR* a_fromRefr)
+		UInt32* Hook_RemoveItem(UInt32& a_dropHandle, TESForm* a_item, SInt32 a_count, UInt32 a_removeType, BaseExtraList* a_extraList, TESObjectREFR* a_moveToRef, void* a_arg7, void* a_arg8)
 		{
-			std::string name = "";
+			auto manager = RefHandleManager::GetSingleton();
+			auto regs = OnRefHandleInvalidatedRegSet::GetSingleton();
+			UInt32* ret = g_invalidRefHandle;
+			if (a_extraList || a_count == 1 || !manager->IsTrackedType(a_item)) {
+				auto result = manager->InvalidateHandle(a_item, a_extraList, a_count);
+				ret = (this->*_RemoveItem)(a_dropHandle, a_item, a_count, a_removeType, a_extraList, a_moveToRef, a_arg7, a_arg8);
+				if (result.second) {
+					regs->QueueEvent(a_item, result.first);
+				}
+			} else {
+				std::size_t i = 0;
+				ForEachInvEntry([&](InventoryEntryData* a_entryData) -> bool
+				{
+					if (a_entryData->type == a_item) {
+						while (a_entryData->extendDataList && i < a_count) {
+							auto xLists = reinterpret_cast<RE::BSSimpleList<BaseExtraList*>&>(*a_entryData->extendDataList);
+							if (xLists.empty()) {
+								break;
+							} else {
+								auto result = manager->InvalidateHandle(a_item, xLists.front(), 1);
+								ret = (this->*_RemoveItem)(a_dropHandle, a_item, 1, a_removeType, xLists.front(), a_moveToRef, a_arg7, a_arg8);
+								if (result.second) {
+									regs->QueueEvent(a_item, result.first);
+								}
+								++i;
+							}
+						}
+						return false;
+					} else {
+						return true;
+					}
+				});
+				if (i < a_count) {
+					ret = (this->*_RemoveItem)(a_dropHandle, a_item, a_count - i, a_removeType, 0, a_moveToRef, a_arg7, a_arg8);
+				}
+			}
+
+			return ret;
+		}
+
+
+		void Hook_AddItem(TESForm* a_item, BaseExtraList* a_extraList, SInt32 a_count, TESObjectREFR* a_fromRefr)
+		{
+			auto manager = RefHandleManager::GetSingleton();
+			auto regs = OnRefHandleActiveRegSet::GetSingleton();
 			if (a_extraList) {
-				RE::ExtraTextDisplayData* xText = static_cast<RE::ExtraTextDisplayData*>(a_extraList->GetByType(kExtraData_TextDisplayData));
-				if (xText) {
-					name.assign(xText->name.data, xText->rawNameLen);
+				auto result = manager->ActivateHandle(a_item, a_extraList, 1);
+				(this->*_AddItem)(a_item, a_extraList, a_count, a_fromRefr);
+				if (result.second) {
+					regs->QueueEvent(a_item, result.first, a_count);
+				}
+			} else {
+				for (std::size_t i = 0; i < a_count; ++i) {
+					BaseExtraList* xListOut = 0;
+					auto result = manager->ActivateHandle(a_item, xListOut, 1);
+					(this->*_AddItem)(a_item, xListOut, 1, a_fromRefr);
+					if (result.second) {
+						regs->QueueEvent(a_item, result.first, 1);
+					}
 				}
 			}
-
-			if (name.empty()) {
-				TESFullName* fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
-				if (fullName) {
-					name = fullName->GetName();
-				}
-			}
-
-			BSFixedString fixedName(name.c_str());
-
-			(this->*_AddItem)(a_item, a_extraList, a_count, a_fromRefr);
-
-			OnPlayerItemAddedRegSet* regs = OnPlayerItemAddedRegSet::GetSingleton();
-			regs->SendEvent(a_item, a_count, 0, a_fromRefr, fixedName);
-			CALL_MEMBER_FN(&fixedName, Release)();
 		}
 
 
 		void Hook_PickUpItem(TESObjectREFR* a_item, UInt32 a_count, bool a_arg3, bool a_playSound)
 		{
-			TESObjectREFR* outRefr = (a_item->flags >> 10) & 1 ? a_item : 0;	// persistent flag
-
-			std::string name = "";
-			RE::ExtraTextDisplayData* xText = static_cast<RE::ExtraTextDisplayData*>(a_item->extraData.GetByType(kExtraData_TextDisplayData));
-			if (xText) {
-				name.assign(xText->name.data, xText->rawNameLen);
-			}
-
-			if (name[0] == '\0') {
-				TESFullName* fullName = DYNAMIC_CAST(a_item->baseForm, TESForm, TESFullName);
-				if (fullName) {
-					name = fullName->GetName();
-				}
-			}
-
-			BSFixedString fixedName(name.c_str());
+			auto manager = RefHandleManager::GetSingleton();
+			auto result = manager->ActivateHandle(a_item->baseForm, a_item->extraData, a_count);
 
 			(this->*_PickUpItem)(a_item, a_count, a_arg3, a_playSound);
 
-			OnPlayerItemAddedRegSet* regs = OnPlayerItemAddedRegSet::GetSingleton();
-			regs->SendEvent(a_item->baseForm, a_count, outRefr, 0, fixedName);
-			CALL_MEMBER_FN(&fixedName, Release)();
+			if (result.second) {
+				OnRefHandleActiveRegSet::GetSingleton()->QueueEvent(a_item, result.first, a_count);
+			}
 		}
 
 
@@ -97,6 +126,19 @@ namespace
 
 			{
 #if _WIN64
+				RelocPtr<RemoveItem_t> vFunc(PLAYER_CHARACTER_VTBL + (PSIZE * 0x56));
+				_RemoveItem = *vFunc;
+				SafeWrite64(vFunc.GetUIntPtr(), GetFnAddr(&Hook_RemoveItem));
+#else
+				std::uintptr_t addr = PLAYER_CHARACTER_VTBL + (PSIZE * 0x56);
+				_RemoveItem = *reinterpret_cast<RemoveItem_t*>(addr);
+				SafeWrite32(addr, GetFnAddr(&Hook_RemoveItem));
+#endif
+				_MESSAGE("[MESSAGE] Installed remove item hook");
+			}
+
+			{
+#if _WIN64
 				RelocPtr<AddItem_t> vFunc(PLAYER_CHARACTER_VTBL + (PSIZE * 0x5A));
 				_AddItem = *vFunc;
 				SafeWrite64(vFunc.GetUIntPtr(), GetFnAddr(&Hook_AddItem));
@@ -105,7 +147,7 @@ namespace
 				_AddItem = *reinterpret_cast<AddItem_t*>(addr);
 				SafeWrite32(addr, GetFnAddr(&Hook_AddItem));
 #endif
-				_MESSAGE("[MESSAGE] Installed add up item hook");
+				_MESSAGE("[MESSAGE] Installed add item hook");
 			}
 
 			{

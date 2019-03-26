@@ -1,40 +1,74 @@
 #include "Registration.h"
 
+#include "GameForms.h"  // TESForm, LookupFormByID
+#include "GameObjects.h"  // TESObjectWEAP
 #include "GameTypes.h"  // BSFixedString
 #include "PapyrusArgs.h"  // PackValue
 #include "PapyrusVM.h"  // VMClassRegistry, IFunctionArguments
 
+#include <tuple>  // tuple, tuple_size, get
+#include <type_traits>  // enable_if_t, is_integral, false_type
+
+#include "SKSEInterface.h"  // SKSE
+
 
 namespace
 {
-	template<class T> void SetVMValue(VMValue* a_val, T a_arg)
+	template <class T>
+	struct is_numeric : public std::is_integral<T> {};
+
+
+	template <>
+	struct is_numeric<bool> : std::false_type {};
+
+
+	template <class T, class Enable = void>
+	void SetVMValue(VMValue* a_val, T a_arg)
 	{
 		VMClassRegistry* registry = (*g_skyrimVM)->GetClassRegistry();
 		PackValue(a_val, &a_arg, registry);
 	}
 
 
-	template<> void SetVMValue<bool>(VMValue* a_val, bool a_arg) { a_val->SetBool(a_arg); }
-	template<> void SetVMValue<SInt32>(VMValue* a_val, SInt32 a_arg) { a_val->SetInt(a_arg); }
-	template<> void SetVMValue<float>(VMValue* a_val, float a_arg) { a_val->SetFloat(a_arg); }
-	template<> void SetVMValue<const BSFixedString&>(VMValue* a_val, const BSFixedString& a_arg) { a_val->SetString(a_arg.data); }
+	template <class T, std::enable_if_t<is_numeric<T>::value>>
+	void SetVMValue(VMValue* a_val, T a_arg)
+	{
+		a_val->SetInt(static_cast<SInt32>(a_arg));
+	}
 
 
-	template <class T1, class T2, class T3, class T4, class T5>
-	class EventQueueFunctor5 : public IFunctionArguments
+	template <>
+	void SetVMValue<bool>(VMValue* a_val, bool a_arg)
+	{
+		a_val->SetBool(a_arg);
+	}
+
+
+	template <>
+	void SetVMValue<float>(VMValue* a_val, float a_arg)
+	{
+		a_val->SetFloat(a_arg);
+	}
+
+
+	template <>
+	void SetVMValue<const BSFixedString&>(VMValue* a_val, const BSFixedString& a_arg)
+	{
+		a_val->SetString(a_arg.data);
+	}
+
+
+	template <class RegParams, class... Args>
+	class EventQueueFunctor : public IFunctionArguments
 	{
 	public:
-		EventQueueFunctor5(BSFixedString& a_eventName, T1 a_arg1, T2 a_arg2, T3 a_arg3, T4 a_arg4, T5 a_arg5) :
+		EventQueueFunctor(const BSFixedString& a_eventName, Args... a_args) :
 			_eventName(a_eventName.data),
-			_arg1(a_arg1),
-			_arg2(a_arg2),
-			_arg3(a_arg3),
-			_arg4(a_arg4),
-			_arg5(a_arg5)
+			_args(a_args...)
 		{}
 
 
-		~EventQueueFunctor5()
+		~EventQueueFunctor()
 		{
 			CALL_MEMBER_FN(&_eventName, Release)();
 		}
@@ -42,55 +76,119 @@ namespace
 
 		virtual bool Copy(Output* a_dst) override
 		{
-			a_dst->Resize(5);
-			SetVMValue(a_dst->Get(0), _arg1);
-			SetVMValue(a_dst->Get(1), _arg2);
-			SetVMValue(a_dst->Get(2), _arg3);
-			SetVMValue(a_dst->Get(3), _arg4);
-			SetVMValue(a_dst->Get(4), _arg5);
+			constexpr UInt32 NUM_ARGS = std::tuple_size<decltype(_args)>::value;
+			a_dst->Resize(NUM_ARGS);
+			UInt32 i = 0;
+			std::apply([&](auto&&... a_args)
+			{
+				((SetVMValue(a_dst->Get(i++), a_args)), ...);
+			}, _args);
 			return true;
 		}
 
 
-		void operator()(const EventRegistration<NullParameters>& a_reg)
+		void operator()(const EventRegistration<RegParams>& a_reg)
 		{
 			VMClassRegistry* registry = (*g_skyrimVM)->GetClassRegistry();
 			registry->QueueEvent(a_reg.handle, &_eventName, this);
 		}
 
 	private:
-		BSFixedString	_eventName;
-		T1				_arg1;
-		T2				_arg2;
-		T3				_arg3;
-		T4				_arg4;
-		T5				_arg5;
+		BSFixedString		_eventName;
+		std::tuple<Args...>	_args;
 	};
 }
 
 
-OnPlayerItemAddedRegSet* OnPlayerItemAddedRegSet::GetSingleton()
+OnBoundWeaponEquippedRegSet* OnBoundWeaponEquippedRegSet::GetSingleton()
 {
-	if (!_singleton) {
-		_singleton = new OnPlayerItemAddedRegSet();
-	}
-	return _singleton;
+	static OnBoundWeaponEquippedRegSet singleton;
+	return &singleton;
 }
 
 
-void OnPlayerItemAddedRegSet::Free()
+void OnBoundWeaponEquippedRegSet::QueueEvent(UInt32 a_weaponType, UInt32 a_equipSlot)
 {
-	delete _singleton;
-	_singleton = 0;
+	SKSE::AddTask([this, a_weaponType, a_equipSlot]()
+	{
+		ForEach(EventQueueFunctor<RegParams, UInt32, UInt32>(_callback, a_weaponType, a_equipSlot));
+		_DMESSAGE("[DEBUG] Sent %s event", _callback.data);
+	});
 }
 
 
-void OnPlayerItemAddedRegSet::SendEvent(TESForm* a_baseItem, SInt32 a_itemCount, TESObjectREFR* a_itemReference, TESObjectREFR* a_sourceContainer, const BSFixedString& a_name)
+OnBoundWeaponEquippedRegSet::OnBoundWeaponEquippedRegSet() :
+	_callback("OnBoundWeaponEquipped")
+{}
+
+
+OnBoundWeaponUnequippedRegSet* OnBoundWeaponUnequippedRegSet::GetSingleton()
 {
-	static BSFixedString callback = "OnPlayerItemAdded";
-	ForEach(EventQueueFunctor5<TESForm*, SInt32, TESObjectREFR*, TESObjectREFR*, BSFixedString>(callback, a_baseItem, a_itemCount, a_itemReference, a_sourceContainer, a_name));
+	static OnBoundWeaponUnequippedRegSet singleton;
+	return &singleton;
 }
 
 
-OnPlayerItemAddedRegSet::OnPlayerItemAddedRegSet()
+void OnBoundWeaponUnequippedRegSet::QueueEvent(TESObjectWEAP* a_weap, UInt32 a_equipSlot)
+{
+	UInt32 weapFormID = a_weap->formID;
+	SKSE::AddTask([this, weapFormID, a_equipSlot]()
+	{
+		TESObjectWEAP* weap = static_cast<TESObjectWEAP*>(LookupFormByID(weapFormID));
+		ForEach(EventQueueFunctor<RegParams, TESObjectWEAP*, UInt32>(_callback, weap, a_equipSlot));
+		_DMESSAGE("[DEBUG] Sent %s event", _callback.data);
+	});
+}
+
+
+OnBoundWeaponUnequippedRegSet::OnBoundWeaponUnequippedRegSet() :
+	_callback("OnBoundWeaponUnequipped")
+{}
+
+
+OnRefHandleActiveRegSet* OnRefHandleActiveRegSet::GetSingleton()
+{
+	static OnRefHandleActiveRegSet singleton;
+	return &singleton;
+}
+
+
+void OnRefHandleActiveRegSet::QueueEvent(TESForm* a_baseItem, RefHandle a_refHandle, SInt32 a_itemCount)
+{
+	UInt32 baseItemFormID = a_baseItem->formID;
+	SKSE::AddTask([this, baseItemFormID, a_refHandle, a_itemCount]()
+	{
+		TESForm* baseItem = LookupFormByID(baseItemFormID);
+		ForEach(EventQueueFunctor<RegParams, TESForm*, UInt32, SInt32>(_callback, baseItem, a_refHandle, a_itemCount));
+		_DMESSAGE("[DEBUG] Sent %s event", _callback.data);
+	});
+}
+
+
+OnRefHandleActiveRegSet::OnRefHandleActiveRegSet() :
+	_callback("OnRefHandleActive")
+{}
+
+
+OnRefHandleInvalidatedRegSet* OnRefHandleInvalidatedRegSet::GetSingleton()
+{
+	static OnRefHandleInvalidatedRegSet singleton;
+	return &singleton;
+}
+
+
+void OnRefHandleInvalidatedRegSet::QueueEvent(TESForm* a_baseItem, RefHandle a_refHandle)
+{
+	UInt32 baseItemFormID = a_baseItem->formID;
+	SKSE::AddTask([this, baseItemFormID, a_refHandle]()
+	{
+		TESForm* baseItem = LookupFormByID(baseItemFormID);
+		ForEach(EventQueueFunctor<RegParams, TESForm*, UInt32>(_callback, baseItem, a_refHandle));
+		_DMESSAGE("[DEBUG] Sent %s event", _callback.data);
+	});
+}
+
+
+OnRefHandleInvalidatedRegSet::OnRefHandleInvalidatedRegSet() :
+	_callback("OnRefHandleInvalidated")
 {}

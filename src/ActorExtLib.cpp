@@ -6,13 +6,13 @@
 #include "GameForms.h"  // TESForm
 #include "GameObjects.h"  // AlchemyItem, EnchantmentItem
 #include "GameRTTI.h"  // DYNAMIC_CAST
-#include "IDebugLog.h"  // gLog
 
 #include "ExtraLocator.h"  // ExtraListLocator
-#include "RE/ExtraPoison.h"  // RE::ExtraPoison
+
+#include "RE/ExtraPoison.h"  // ExtraPoison
 
 
-InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item)
+InventoryEntryData* FindEntryData(ExtraContainerChanges::Data* a_containerData, TESForm* a_item)
 {
 	InventoryEntryData* entryData = 0;
 	for (UInt32 i = 0; i < a_containerData->objList->Count(); ++i) {
@@ -27,7 +27,7 @@ InventoryEntryData* findEntryData(ExtraContainerChanges::Data* a_containerData, 
 }
 
 
-BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID)
+BGSEquipSlot* GetEquipSlotByID(SInt32 a_slotID)
 {
 	switch (a_slotID) {
 	case kSlotID_Right:
@@ -40,7 +40,7 @@ BGSEquipSlot* getEquipSlotByID(SInt32 a_slotID)
 }
 
 
-bool canEquipBothHands(Actor* a_actor, TESForm* a_item)
+bool CanEquipBothHands(Actor* a_actor, TESForm* a_item)
 {
 	BGSEquipType * equipType = DYNAMIC_CAST(a_item, TESForm, BGSEquipType);
 	if (!equipType) {
@@ -62,7 +62,7 @@ bool canEquipBothHands(Actor* a_actor, TESForm* a_item)
 }
 
 
-UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap)
+UInt32 GetEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap)
 {
 	if (!a_actor) {
 		_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!\n");
@@ -86,7 +86,7 @@ UInt32 getEquippedSlots(Actor* a_actor, TESObjectWEAP* a_weap)
 }
 
 
-UInt32 getUnequippedSlots(Actor* a_actor)
+UInt32 GetUnequippedSlots(Actor* a_actor)
 {
 	if (!a_actor) {
 		_ERROR("[ERROR] In GetEquippedHand() : a_actor is a NONE form!\n");
@@ -270,13 +270,13 @@ void EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipIt
 	}
 
 	// Copy/merge of extraData can fail in edge cases. Obtain it ourselves.
-	InventoryEntryData* entryData = findEntryData(containerData, a_item);
+	InventoryEntryData* entryData = FindEntryData(containerData, a_item);
 	if (!entryData) {
 		_ERROR("[ERROR] No entry data!\n");
 		return;
 	}
 
-	BGSEquipSlot* targetEquipSlot = getEquipSlotByID(a_slotID);
+	BGSEquipSlot* targetEquipSlot = GetEquipSlotByID(a_slotID);
 
 	SInt32 itemCount = entryData->countDelta;
 
@@ -340,7 +340,7 @@ void EquipItemEx(Actor* a_actor, TESForm* a_item, SInt32 a_slotID, IActorEquipIt
 
 	// For dual wield, prevent that 1 item can be equipped in two hands if its already equipped
 	bool isEquipped = (rightEquipList || leftEquipList);
-	if (targetEquipSlot && isEquipped && canEquipBothHands(a_actor, a_item)) {
+	if (targetEquipSlot && isEquipped && CanEquipBothHands(a_actor, a_item)) {
 		hasItemMinCount = itemCount > 1;
 	}
 

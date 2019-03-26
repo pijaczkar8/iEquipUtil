@@ -65,7 +65,7 @@
       <UseFullPaths>false</UseFullPaths>
       <CompileAs>CompileAsCpp</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4201;4100;4127;4245;4239;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4201;4100;4127;4245;4239;4189;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
       <UndefinePreprocessorDefinitions>min;max;%(UndefinePreprocessorDefinitions)</UndefinePreprocessorDefinitions>
     </ClCompile>
@@ -143,17 +143,19 @@
     <ClCompile Include="src\Forms.cpp" />
     <ClCompile Include="src\FormExt.cpp" />
     <ClCompile Include="src\Hooks.cpp" />
-    <ClCompile Include="src\ObjectReferenceExt.cpp" />
+    <ClCompile Include="src\InventoryExt.cpp" />
     <ClCompile Include="src\Registration.cpp" />
-    <ClCompile Include="src\RE\TESEquipEvent.cpp" />
+    <ClCompile Include="src\RE\EventDispatcherList.cpp" />
     <ClCompile Include="src\LocaleManager.cpp" />
     <ClCompile Include="src\Logging.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Settings.cpp" />
+    <ClCompile Include="src\SKSEInterface.cpp" />
     <ClCompile Include="src\SoulSeeker.cpp" />
     <ClCompile Include="src\SpellExt.cpp" />
     <ClCompile Include="src\StringExt.cpp" />
     <ClCompile Include="src\UIExt.cpp" />
+    <ClCompile Include="src\RefHandleManager.cpp" />
     <ClCompile Include="src\WeaponExt.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,19 +177,24 @@
     <ClInclude Include="include\ActorExtLib.h" />
     <ClInclude Include="include\AmmoExt.h" />
     <ClInclude Include="include\Exceptions.h" />
+    <ClInclude Include="include\function_view.h" />
     <ClInclude Include="include\Hooks.h" />
     <ClInclude Include="include\Events.h" />
     <ClInclude Include="include\ExtraLocator.h" />
     <ClInclude Include="include\Forms.h" />
     <ClInclude Include="include\FormExt.h" />
-    <ClInclude Include="include\ObjectReferenceExt.h" />
+    <ClInclude Include="include\InventoryExt.h" />
+    <ClInclude Include="include\InventoryUtil.h" />
     <ClInclude Include="include\Registration.h" />
     <ClInclude Include="include\RE\BSTList.h" />
     <ClInclude Include="include\RE\ExtraPoison.h" />
     <ClInclude Include="include\RE\ExtraTextDisplayData.h" />
     <ClInclude Include="include\RE\Memory.h" />
+    <ClInclude Include="include\RE\EventDispatcherList.h" />
     <ClInclude Include="include\RE\TESEquipEvent.h" />
     <ClInclude Include="include\RE\TESObjectREFR.h" />
+    <ClInclude Include="include\RE\TESUniqueIDChangeEvent.h" />
+    <ClInclude Include="include\SKSEInterface.h" />
     <ClInclude Include="include\Types.h" />
     <ClInclude Include="include\LocaleManager.h" />
     <ClInclude Include="include\Logging.h" />
@@ -196,6 +203,7 @@
     <ClInclude Include="include\SpellExt.h" />
     <ClInclude Include="include\StringExt.h" />
     <ClInclude Include="include\UIExt.h" />
+    <ClInclude Include="include\RefHandleManager.h" />
     <ClInclude Include="include\Utility.h" />
     <ClInclude Include="include\version.h" />
     <ClInclude Include="include\WeaponExt.h" />
