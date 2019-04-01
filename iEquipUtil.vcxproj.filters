@@ -164,9 +164,6 @@
     <ClInclude Include="include\RE\Memory.h">
       <Filter>include\RE</Filter>
     </ClInclude>
-    <ClInclude Include="include\Exceptions.h">
-      <Filter>include\lib</Filter>
-    </ClInclude>
     <ClInclude Include="include\UIExt.h">
       <Filter>include\papyrus</Filter>
     </ClInclude>
@@ -199,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="include\InventoryUtil.h">
       <Filter>include\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\InventoryMenu.h">
+      <Filter>include\RE</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

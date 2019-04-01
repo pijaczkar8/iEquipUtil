@@ -1,27 +1,22 @@
-﻿#include "GameEvents.h"  // EventDispatcherList
+﻿#include "GameEvents.h"  // GetEventDispatcherList
 #include "IDebugLog.h"  // gLog, IDebugLog
-#include "PapyrusEvents.h"  // SKSEModCallbackEvent
-#include "PluginAPI.h"  // PluginHandle, SKSEPapyrusInterface, SKSEMessagingInterface, SKSEInterface, PluginInfo
+#include "PluginAPI.h"  // SKSEMessagingInterface, SKSEInterface, PluginInfo
 #include "skse_version.h"  // RUNTIME_VERSION
 
 #include <clocale>  // setlocale
-#include <exception>  // exception
-#include <stdexcept>  // runtime_error
-#include <vector>  // vector
+#include <cstdlib>  // size_t
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
 
 #include "ActorExt.h"  // RegisterFuncs
 #include "AmmoExt.h"  // RegisterFuncs
-#include "Events.h"  // EquipEventHandler, InventoryEventHandler, ItemCraftedEventHandler, g_boundWeaponEquippedCallbackRegs, g_boundWeaponUnequippedCallbackRegs
-#include "Exceptions.h"  // bad_record_version
+#include "Events.h"  // EquipEventHandler
 #include "FormExt.h"  // RegisterFuncs
-#include "Forms.h"  // FormFactory
 #include "Hooks.h"  // InstallHooks
 #include "InventoryExt.h"  // InventoryExt
 #include "LocaleManager.h"  // LocaleManager
 #include "RefHandleManager.h"  // RefHandleManager
-#include "Registration.h"  // OnRefHandleActiveRegSet, OnRefHandleInvalidatedRegSet
+#include "Registration.h"  // OnBoundWeaponEquippedRegSet, OnBoundWeaponUnequippedRegSet, OnRefHandleActiveRegSet, OnRefHandleInvalidatedRegSet
 #include "Settings.h"  // Settings
 #include "SKSEInterface.h"  // SKSE
 #include "SoulSeeker.h"  // RegisterFuncs
@@ -161,7 +156,7 @@ namespace
 		case SKSEMessagingInterface::kMessage_InputLoaded:
 			{
 #if _WIN64
-				RE::EventDispatcherList* eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList());
+				auto eventDispatcherList = reinterpret_cast<RE::EventDispatcherList*>(GetEventDispatcherList());
 				eventDispatcherList->equipEventSource.AddEventSink(Events::EquipEventHandler::GetSingleton());
 				eventDispatcherList->uniqueIDChangeEventSource.AddEventSink(RefHandleManager::GetSingleton());
 #else
@@ -192,16 +187,10 @@ extern "C" {
 		a_info->name = NAME;
 		a_info->version = IEQUIP_VERSION_MAJOR;
 
-		if (!SKSE::Set(a_skse)) {
-			return false;
-		}
-
 		if (a_skse->isEditor) {
 			_FATALERROR("[FATAL ERROR] Loaded in editor, marking as incompatible!\n");
 			return false;
-		}
-
-		if (a_skse->runtimeVersion != RUNTIME_VER_COMPAT) {
+		} else if (a_skse->runtimeVersion != RUNTIME_VER_COMPAT) {
 			_FATALERROR("[FATAL ERROR] Unsupported runtime version %08X!\n", a_skse->runtimeVersion);
 			return false;
 		}
@@ -213,6 +202,10 @@ extern "C" {
 	bool SKSEPlugin_Load(const SKSEInterface* a_skse)
 	{
 		_MESSAGE("[MESSAGE] %s loaded", NAME);
+
+		if (!SKSE::Init(a_skse)) {
+			return false;
+		}
 
 		if (Settings::loadSettings()) {
 			_MESSAGE("[MESSAGE] Settings loaded successfully");

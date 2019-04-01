@@ -51,6 +51,9 @@ Event OnPageReset(String a_page)
 		AddTextOptionST("InventoryExt_RegisterForRefHandleActiveEvent_T", "Register for OnRefHandleActive event", "")
 		AddTextOptionST("InventoryExt_RegisterForOnRefHandleInvalidatedEvent_T", "Register for OnRefHandleInvalidated event", "")
 		AddTextOptionST("InventoryExt_DumpAll_T", "Dump info for all ref handles", "")
+		AddTextOptionST("InventoryExt_GetRefHandleAtInvIndex_T", "GetRefHandleAtInvIndex", "")
+		AddTextOptionST("InventoryExt_GetRefHandleFromWornObject_T", "GetRefHandleFromWornObject", "")
+		AddTextOptionST("MyClass_HelloWorld_T", "Hello world", "")
 		SetCursorPosition(1)
 		AddSliderOptionST("SoulSeeker_FillMethod_S", "Fill Method:", SoulSeeker_FillMethod.GetValue() As Float)
 		AddToggleOptionST("SoulSeeker_PartialFill_B", "Partial Fill:", SoulSeeker_PartialFill.GetValue() As Bool)
@@ -154,7 +157,7 @@ EndState
 
 State InventoryExt_DumpAll_T
 	Event OnSelectST()
-	Debug.Trace("")
+		Debug.Trace("")
 		Int i = 0
 		While (i < g_arrSize)
 			String longName = iEquip_InventoryExt.GetLongName(g_forms[i], g_refHandles[i])
@@ -168,6 +171,88 @@ State InventoryExt_DumpAll_T
 			Debug.Trace("Enchantment == " + ench)
 			i += 1
 		EndWhile
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State InventoryExt_GetRefHandleAtInvIndex_T
+	Event OnSelectST()
+		Int handle
+
+		handle = iEquip_InventoryExt.GetRefHandleAtInvIndex(0)
+		Debug.Trace("SoulSeekerDBG: handle at idx 0 == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleAtInvIndex(1)
+		Debug.Trace("SoulSeekerDBG: handle at idx 1 == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleAtInvIndex(2)
+		Debug.Trace("SoulSeekerDBG: handle at idx 2 == " + handle)
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State InventoryExt_GetRefHandleFromWornObject_T
+	Event OnSelectST()
+		Int handle
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(0)
+		Debug.Trace("SoulSeekerDBG: handle from head == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(1)
+		Debug.Trace("SoulSeekerDBG: handle from chest == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(2)
+		Debug.Trace("SoulSeekerDBG: handle from boots == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(3)
+		Debug.Trace("SoulSeekerDBG: handle from gloves == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(4)
+		Debug.Trace("SoulSeekerDBG: handle from right hand == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(5)
+		Debug.Trace("SoulSeekerDBG: handle from left hand == " + handle)
+	EndEvent
+
+	Event OnDefaultST()
+	EndEvent
+
+	Event OnHighlightST()
+	EndEvent
+EndState
+
+
+State MyClass_HelloWorld_T
+	Event OnSelectST()
+	int[] arr
+	int ARR_SIZE = 1
+	arr = new int[1]
+	int i = 0
+	int j = ARR_SIZE - 1
+	while (i < ARR_SIZE)
+		arr[i] = j
+		j -= 1
+		i += 1
+	EndWhile
+	String result = MyClass.HelloWorld(arr)
+	Debug.Trace("SoulSeekerDBG: " + result)
+	i = 0
+	while (i < ARR_SIZE)
+		Debug.Trace(arr[i])
+		i += 1
+	EndWhile
 	EndEvent
 
 	Event OnDefaultST()

@@ -68,7 +68,7 @@ namespace
 		{}
 
 
-		~EventQueueFunctor()
+		virtual ~EventQueueFunctor()
 		{
 			CALL_MEMBER_FN(&_eventName, Release)();
 		}

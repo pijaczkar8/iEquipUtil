@@ -45,7 +45,7 @@ Function EquipEnchantedAndPoisonedItemEx(Actor a_actor, Form a_item, Int a_slotI
 ; @param a_actor The actor to fetch the actor value from
 ; @param a_actorValue The actor value to calculate
 ; @return Returns 0.0 on error, else returns the damage dealt to the actor value as a function of its maximum - current
-; VALID ACTOR VALUES:
+; @notes Valid actor values:
 ; Anything in the range [0, 163]
 ; 24 - Health
 ; 25 - Magicka

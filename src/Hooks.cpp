@@ -110,11 +110,12 @@ namespace
 		{
 			auto manager = RefHandleManager::GetSingleton();
 			auto result = manager->ActivateHandle(a_item->baseForm, a_item->extraData);
+			TESForm* baseform = a_item->baseForm;
 
 			(this->*_PickUpItem)(a_item, a_count, a_arg3, a_playSound);
 
 			if (result.second) {
-				OnRefHandleActiveRegSet::GetSingleton()->QueueEvent(a_item, result.first, a_count);
+				OnRefHandleActiveRegSet::GetSingleton()->QueueEvent(baseform, result.first, a_count);
 			}
 		}
 

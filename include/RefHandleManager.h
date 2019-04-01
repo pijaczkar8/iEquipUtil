@@ -4,6 +4,7 @@
 
 #include <limits>  // numeric_limits
 #include <map>  // map
+#include <mutex>  // mutex, lock_guard
 #include <set>  // set
 
 #include "function_view.h"  // function_view
@@ -29,6 +30,9 @@ public:
 	using HandleResult = std::pair<RefHandle, bool>;
 
 
+	enum { kInvalidRefHandle = static_cast<RefHandle>(-1) };
+
+
 	struct EntryData
 	{
 		constexpr EntryData() : invEntryData(0), extraList(0) {}
@@ -49,9 +53,13 @@ public:
 	HandleResult	ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList);
 	HandleResult	InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraList);
 	EntryData		LookupEntry(TESForm* a_form, RefHandle a_handle);
+	RefHandle		LookupHandle(UniqueID a_uniqueID);
 	bool			IsTrackedType(TESForm* a_form);
 
 private:
+	using Locker = std::lock_guard<std::mutex>;
+
+
 	enum
 	{
 		kUniqueID = 0,
@@ -61,8 +69,7 @@ private:
 		kPlayerRefID = 0x14,
 
 		kRefArrSize = std::numeric_limits<UInt16>::max() / 8,
-		kLargestHandle = kRefArrSize * 8 - 1,
-		kInvalidRefHandle = static_cast<RefHandle>(-1)
+		kLargestHandle = kRefArrSize * 8 - 1
 	};
 
 
@@ -85,7 +92,9 @@ private:
 	UniqueID		GetNextUniqueID();
 
 
-	static const HandleResult		_NRES;
+	static const HandleResult _NRES;
+
+	std::mutex						_lock;
 	std::map<UniqueID, RefHandle>	_idToHandleMap;
 	std::map<RefHandle, UniqueID>	_handleToIDMap;
 	UInt8							_activeHandles[kRefArrSize];

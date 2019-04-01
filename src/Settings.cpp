@@ -10,12 +10,10 @@ bool Settings::loadSettings(bool a_dumpParse)
 
 void Settings::OnLoad()
 {
-	if (settings) {
-		for (auto& setting : *settings) {
-			aSetting<Form*>* arr = dynamic_cast<aSetting<Form*>*>(setting);
-			if (arr) {
-				arr->sort();
-			}
+	for (auto& setting : settings) {
+		aSetting<Form*>* arr = dynamic_cast<aSetting<Form*>*>(setting);
+		if (arr) {
+			arr->sort();
 		}
 	}
 }

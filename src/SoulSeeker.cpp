@@ -17,18 +17,25 @@
 #include "RE/TESObjectREFR.h"  // RE::TESObjectREFR
 
 
-#if _WIN64
-#define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
-CALL_MEMBER_FN(entryData, fn)
-#else
-#include "RE_InventoryEntryData.h"
-#define CALL_MEMBER_FN_ENTRYDATA(entryData, fn) \
-CALL_MEMBER_FN(reinterpret_cast<RE::InventoryEntryData*>(entryData), fn)
-#endif
-
-
 namespace
 {
+	SoulLevel GetSoulLevel(InventoryEntryData* a_entryData)
+	{
+#if _WIN64
+		return static_cast<SoulLevel>(CALL_MEMBER_FN(a_entryData, GetSoulLevel)());
+#else
+		using func_t = UInt32(InventoryEntryData::*)();
+		union
+		{
+			std::uintptr_t addr;
+			func_t func;
+		};
+		addr = 0x004756F0;
+		return static_cast<SoulLevel>((a_entryData->*func)());
+#endif
+	}
+
+
 	const SoulGem& NearestNeighbour(const GemList& a_gems, const SoulGem& a_comp)
 	{
 		static auto diffX = [](const SoulGem& a_lhs, const SoulGem& a_rhs) -> float
@@ -130,7 +137,7 @@ namespace
 			if (entry->type && entry->type->formType == kFormType_SoulGem) {
 				TESSoulGem* soulGem = static_cast<TESSoulGem*>(entry->type);
 				SoulLevel gemSize = static_cast<SoulLevel>(soulGem->gemSize);
-				SoulLevel soulSize = static_cast<SoulLevel>(CALL_MEMBER_FN_ENTRYDATA(entry, GetSoulLevel)());
+				SoulLevel soulSize = GetSoulLevel(entry);
 				if (soulSize > SoulLevel::kNone) {
 					SoulGem gem(gemSize, soulSize, entry);
 					if (!a_partialFill) {

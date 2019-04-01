@@ -24,7 +24,7 @@ namespace RE
 		using pointer = value_type * ;
 		using const_pointer = std::pointer_traits<pointer>::rebind<const value_type>;
 
-	protected:
+
 		struct Node
 		{
 			Node() :
@@ -95,7 +95,7 @@ namespace RE
 			Node*		next;
 		};
 
-	public:
+
 		template <class U>
 		struct iterator_traits
 		{
@@ -164,7 +164,7 @@ namespace RE
 			static void swap(iterator_base& a_lhs, iterator_base& a_rhs)
 			{
 				std::swap(a_lhs._cur, a_rhs._cur);
-				std::swap(a_lhs._cur, a_rhs._cur);
+				std::swap(a_lhs._managed, a_rhs._managed);
 			}
 
 

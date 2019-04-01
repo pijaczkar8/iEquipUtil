@@ -176,7 +176,6 @@
     <ClInclude Include="include\ActorExt.h" />
     <ClInclude Include="include\ActorExtLib.h" />
     <ClInclude Include="include\AmmoExt.h" />
-    <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\function_view.h" />
     <ClInclude Include="include\Hooks.h" />
     <ClInclude Include="include\Events.h" />
@@ -189,6 +188,7 @@
     <ClInclude Include="include\RE\BSTList.h" />
     <ClInclude Include="include\RE\ExtraPoison.h" />
     <ClInclude Include="include\RE\ExtraTextDisplayData.h" />
+    <ClInclude Include="include\RE\InventoryMenu.h" />
     <ClInclude Include="include\RE\Memory.h" />
     <ClInclude Include="include\RE\EventDispatcherList.h" />
     <ClInclude Include="include\RE\TESEquipEvent.h" />

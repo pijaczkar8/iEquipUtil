@@ -1,6 +1,9 @@
 ScriptName iEquip_InventoryExt
 
 
+; INVALID_REFHANDLE == 0xFFFF
+
+
 ; @brief Registers the passed script to be notified when a ref handle becomes active.
 ; @param a_thisForm The form to register for the event (i.e. Self).
 Function RegisterForRefHandleActiveEvent(Form a_thisForm) Global Native
@@ -47,6 +50,25 @@ EndEvent
 Function ParseInventory() Global Native
 
 
+; @brief Retrieves the ref handle from the item at the given inventory index.
+; @param a_index The inventory index of the item to retrieve the ref handle of.
+; @return Returns INVALID_REFHANDLE on error, else returns the ref handle for the item.
+Int Function GetRefHandleAtInvIndex(Int a_index) Global Native
+
+
+; @brief Retrieves the ref handle from the worn object.
+; @param a_equipSlot The slot the object is equipped to.
+; @return Returns INVALID_REFHANDLE on error, else returns the ref handle for the worn object.
+; @notes Valid equip slots:
+; 0 - Head
+; 1 - Chest
+; 2 - Boots
+; 3 - Gloves
+; 4 - RightHand
+; 5 - LeftHand
+Int Function GetRefHandleFromWornObject(Int a_equipSlot) Global Native
+
+
 ; @brief Retrieves the full display name of the item.
 ; @param a_item The item to retrieve the full display name of.
 ; @param a_refHandle The handle to the item.
@@ -90,4 +112,8 @@ Enchantment Function GetEnchantment(Form a_item, Int a_refHandle) Global Native
 ; @param a_equipSlot The slot to equip the item to.
 ; @param a_preventUnequip If True, prevents the player from unequiping the item.
 ; @param a_equipSound If True, plays the equip sound.
+; @notes Valid equip slots:
+; 0 - Default
+; 1 - Right hand
+; 2 - Left hand
 Function EquipItem(Form a_item, Int a_refHandle, Actor a_actor, Int a_equipSlot = 0, Bool a_preventUnequip = False, Bool a_equipSound = True) Global Native

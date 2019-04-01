@@ -27,6 +27,8 @@ RefHandleManager* RefHandleManager::GetSingleton()
 
 void RefHandleManager::Clear() noexcept
 {
+	Locker locker(_lock);
+
 	_idToHandleMap.clear();
 	_handleToIDMap.clear();
 	std::memset(_activeHandles, 0, sizeof(_activeHandles));
@@ -35,6 +37,8 @@ void RefHandleManager::Clear() noexcept
 
 bool RefHandleManager::Save(SKSESerializationInterface* a_intfc, UInt32 a_type, UInt32 a_version)
 {
+	Locker locker(_lock);
+
 	a_intfc->OpenRecord(a_type, a_version);
 	std::size_t numEntries = _idToHandleMap.size();
 	a_intfc->WriteRecordData(&numEntries, sizeof(numEntries));
@@ -52,6 +56,8 @@ bool RefHandleManager::Save(SKSESerializationInterface* a_intfc, UInt32 a_type, 
 
 bool RefHandleManager::Load(SKSESerializationInterface* a_intfc, UInt32 a_version)
 {
+	Locker locker(_lock);
+
 	std::size_t numEntries;
 	if (!a_intfc->ReadRecordData(&numEntries, sizeof(numEntries))) {
 		_ERROR("[ERROR] Failed to load handle count!\n");
@@ -77,6 +83,8 @@ bool RefHandleManager::Load(SKSESerializationInterface* a_intfc, UInt32 a_versio
 auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraList)
 -> HandleResult
 {
+	Locker locker(_lock);
+
 	if (!IsTrackedType(a_item)) {
 		return _NRES;
 	}
@@ -97,6 +105,8 @@ auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList*& a_extraLi
 auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraList)
 -> HandleResult
 {
+	Locker locker(_lock);
+
 	if (!IsTrackedType(a_item)) {
 		return _NRES;
 	}
@@ -113,6 +123,8 @@ auto RefHandleManager::ActivateHandle(TESForm* a_item, BaseExtraList& a_extraLis
 auto RefHandleManager::InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraList)
 -> HandleResult
 {
+	Locker locker(_lock);
+
 	if (!IsTrackedType(a_item)) {
 		return _NRES;
 	}
@@ -135,6 +147,8 @@ auto RefHandleManager::InvalidateHandle(TESForm* a_item, BaseExtraList* a_extraL
 auto RefHandleManager::LookupEntry(TESForm* a_form, RefHandle a_handle)
 -> EntryData
 {
+	Locker locker(_lock);
+
 	EntryData entryData;
 	if (a_handle > kLargestHandle) {
 		_ERROR("[ERROR] Ref handle is invalid!\n");
@@ -167,6 +181,16 @@ auto RefHandleManager::LookupEntry(TESForm* a_form, RefHandle a_handle)
 	});
 
 	return entryData;
+}
+
+
+auto RefHandleManager::LookupHandle(UniqueID a_uniqueID)
+-> RefHandle
+{
+	Locker locker(_lock);
+
+	auto it = _idToHandleMap.find(a_uniqueID);
+	return it != _idToHandleMap.end() ? it->second : kInvalidRefHandle;
 }
 
 
@@ -298,15 +322,23 @@ BaseExtraList* RefHandleManager::CreateBaseExtraList()
 auto RefHandleManager::GetNextUniqueID()
 -> UniqueID
 {
-	using func_t = UniqueID(ExtraContainerChanges::Data*);
 #if _WIN64
+	using func_t = UniqueID(ExtraContainerChanges::Data*);
 	// E8 ? ? ? ? 44 0F B7 F8
 	RelocAddr<func_t*> func(0x001ECD30);	// 1_5_73
-#else
-	func_t* func = reinterpret_cast<func_t*>(0x00481FE0);
-#endif
 	auto containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 	return func(containerChanges->data);
+#else
+	using func_t = UniqueID(ExtraContainerChanges::Data::*)();
+	union
+	{
+		std::uintptr_t addr;
+		func_t func;
+	};
+	addr = 0x00481FE0;
+	auto containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
+	return (containerChanges->data->*func)();
+#endif
 }
 
 
