@@ -40,7 +40,8 @@ namespace
 		kXSlotID_Boots = 2,
 		kXSlotID_Gloves = 3,
 		kXSlotID_RightHand = 4,
-		kXSlotID_LeftHand = 5
+		kXSlotID_LeftHand = 5,
+		kXSlotID_Shield = 6
 	};
 
 
@@ -142,6 +143,7 @@ namespace
 			a_xDataType = kExtraData_Worn;
 			break;
 		case kXSlotID_LeftHand:
+		case kXSlotID_Shield:
 			a_xDataType = kExtraData_WornLeft;
 			break;
 		default:
@@ -154,6 +156,7 @@ namespace
 		case kXSlotID_Chest:
 		case kXSlotID_Boots:
 		case kXSlotID_Gloves:
+		case kXSlotID_Shield:
 			a_formType = kFormType_Armor;
 			break;
 		case kXSlotID_RightHand:
@@ -180,6 +183,7 @@ namespace
 			break;
 		case kXSlotID_RightHand:
 		case kXSlotID_LeftHand:
+		case kXSlotID_Shield:
 			a_firstPersonFlag = kFirstPersonFlag_None;
 			break;
 		default:
