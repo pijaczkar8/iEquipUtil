@@ -35,13 +35,13 @@ namespace
 
 	enum : UInt32
 	{
-		kXSlotID_Head = 0,
-		kXSlotID_Chest = 1,
-		kXSlotID_Boots = 2,
-		kXSlotID_Gloves = 3,
-		kXSlotID_RightHand = 4,
-		kXSlotID_LeftHand = 5,
-		kXSlotID_Shield = 6
+		kXSlotID_LeftHand = 0,
+		kXSlotID_RightHand = 1,
+		kXSlotID_Shield = 2,
+		kXSlotID_Head = 3,
+		kXSlotID_Chest = 4,
+		kXSlotID_Boots = 5,
+		kXSlotID_Gloves = 6
 	};
 
 
@@ -140,10 +140,10 @@ namespace
 		case kXSlotID_Boots:
 		case kXSlotID_Gloves:
 		case kXSlotID_RightHand:
+		case kXSlotID_Shield:
 			a_xDataType = kExtraData_Worn;
 			break;
 		case kXSlotID_LeftHand:
-		case kXSlotID_Shield:
 			a_xDataType = kExtraData_WornLeft;
 			break;
 		default:
@@ -183,8 +183,10 @@ namespace
 			break;
 		case kXSlotID_RightHand:
 		case kXSlotID_LeftHand:
-		case kXSlotID_Shield:
 			a_firstPersonFlag = kFirstPersonFlag_None;
+			break;
+		case kXSlotID_Shield:
+			a_firstPersonFlag = kFirstPersonFlag_Shield;
 			break;
 		default:
 			_ERROR("[ERROR] Invalid slot ID!\n");

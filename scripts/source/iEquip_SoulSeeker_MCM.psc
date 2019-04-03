@@ -224,6 +224,9 @@ State InventoryExt_GetRefHandleFromWornObject_T
 
 		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(5)
 		Debug.Trace("SoulSeekerDBG: handle from left hand == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(6)
+		Debug.Trace("SoulSeekerDBG: handle from shield == " + handle)
 	EndEvent
 
 	Event OnDefaultST()

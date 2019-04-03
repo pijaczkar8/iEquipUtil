@@ -43,7 +43,7 @@ namespace
 			return static_cast<float>(a_lhs.gemSize - a_rhs.gemSize);
 		};
 
-		static auto diffY = [](const SoulGem& a_lhs, const SoulGem& a_rhs)-> float
+		static auto diffY = [](const SoulGem& a_lhs, const SoulGem& a_rhs) -> float
 		{
 			return static_cast<float>(a_lhs.soulSize - a_rhs.soulSize);
 		};
@@ -171,9 +171,10 @@ SInt32 BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fill
 	ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
 	auto invChanges = containerChanges ? containerChanges->data : 0;
 	if (!invChanges) {
-		_ERROR("[ERROR] No inventory cahnges!\n");
+		_ERROR("[ERROR] No inventory changes!\n");
 		return -1;
 	}
+
 	RE::BSSimpleList<InventoryEntryData*>* entryList = reinterpret_cast<RE::BSSimpleList<InventoryEntryData*>*>(invChanges->objList);
 	if (!entryList) {
 		_ERROR("[ERROR] No entry list!\n");
