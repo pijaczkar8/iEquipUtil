@@ -208,25 +208,25 @@ State InventoryExt_GetRefHandleFromWornObject_T
 		Int handle
 
 		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(0)
-		Debug.Trace("SoulSeekerDBG: handle from head == " + handle)
-
-		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(1)
-		Debug.Trace("SoulSeekerDBG: handle from chest == " + handle)
-
-		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(2)
-		Debug.Trace("SoulSeekerDBG: handle from boots == " + handle)
-
-		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(3)
-		Debug.Trace("SoulSeekerDBG: handle from gloves == " + handle)
-
-		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(4)
-		Debug.Trace("SoulSeekerDBG: handle from right hand == " + handle)
-
-		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(5)
 		Debug.Trace("SoulSeekerDBG: handle from left hand == " + handle)
 
-		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(6)
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(1)
+		Debug.Trace("SoulSeekerDBG: handle from right hand == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(2)
 		Debug.Trace("SoulSeekerDBG: handle from shield == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(3)
+		Debug.Trace("SoulSeekerDBG: handle from head == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(4)
+		Debug.Trace("SoulSeekerDBG: handle from chest hand == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(5)
+		Debug.Trace("SoulSeekerDBG: handle from boots hand == " + handle)
+
+		handle = iEquip_InventoryExt.GetRefHandleFromWornObject(6)
+		Debug.Trace("SoulSeekerDBG: handle from gloves == " + handle)
 	EndEvent
 
 	Event OnDefaultST()
