@@ -239,23 +239,10 @@ EndState
 
 State MyClass_HelloWorld_T
 	Event OnSelectST()
-	int[] arr
-	int ARR_SIZE = 1
-	arr = new int[1]
-	int i = 0
-	int j = ARR_SIZE - 1
-	while (i < ARR_SIZE)
-		arr[i] = j
-		j -= 1
-		i += 1
-	EndWhile
-	String result = MyClass.HelloWorld(arr)
-	Debug.Trace("SoulSeekerDBG: " + result)
-	i = 0
-	while (i < ARR_SIZE)
-		Debug.Trace(arr[i])
-		i += 1
-	EndWhile
+	ConsoleUtil.SetSelectedReference(PlayerRef)
+	Debug.Trace("SoulSeekerDBG: SetSelectedReference")
+	ConsoleUtil.ExecuteCommand("setav health 1000")
+	Debug.Trace("SoulSeekerDBG: ExecuteCommand")
 	EndEvent
 
 	Event OnDefaultST()
@@ -264,6 +251,16 @@ State MyClass_HelloWorld_T
 	Event OnHighlightST()
 	EndEvent
 EndState
+
+
+Event OnContainerOpenAnim()
+	Debug.Trace("SoulSeekerDBG: Receieved OnContainerOpenAnim event")
+EndEvent
+
+
+Event OnContainerCloseAnim()
+	Debug.Trace("SoulSeekerDBG: Receieved OnContainerCloseAnim event")
+EndEvent
 
 
 State SoulSeeker_FillMethod_S

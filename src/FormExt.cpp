@@ -8,7 +8,20 @@
 #include "Settings.h"  // Settings
 
 
-void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+namespace
+{
+	UInt32& GetLightRadius(TESObjectLIGH* a_light)
+	{
+#if _WIN64
+		return a_light->unkE0.radius;
+#else
+		return a_light->unk78.unk04;
+#endif
+	}
+}
+
+
+void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
 		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
@@ -20,7 +33,7 @@ void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_t
 }
 
 
-void UnregisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+void UnregisterForBoundWeaponEquippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
 		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
@@ -32,7 +45,7 @@ void UnregisterForBoundWeaponEquippedEvent(StaticFunctionTag* a_base, TESForm* a
 }
 
 
-void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
 		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
@@ -44,7 +57,7 @@ void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a
 }
 
 
-void UnregisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm* a_thisForm)
+void UnregisterForBoundWeaponUnequippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
 		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
@@ -53,6 +66,74 @@ void UnregisterForBoundWeaponUnequippedEvent(StaticFunctionTag* a_base, TESForm*
 		OnBoundWeaponUnequippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
 		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
 	}
+}
+
+
+SInt32 GetLightDuration(StaticFunctionTag*, TESForm* a_light)
+{
+	if (!a_light) {
+		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		return -1;
+	} else if (a_light->formType != kFormType_Light) {
+		_ERROR("[ERROR] a_torch is a not a light!\n");
+		return -1;
+	}
+
+	auto light = static_cast<TESObjectLIGH*>(a_light);
+#if _WIN64
+	return light->unkE0.time;
+#else
+	return light->unk78.unk00;
+#endif
+}
+
+
+SInt32 GetLightRadius(StaticFunctionTag*, TESForm* a_light)
+{
+	if (!a_light) {
+		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		return -1;
+	} else if (a_light->formType != kFormType_Light) {
+		_ERROR("[ERROR] a_torch is a not a light!\n");
+		return -1;
+	}
+
+	auto light = static_cast<TESObjectLIGH*>(a_light);
+	return GetLightRadius(light);
+}
+
+
+void SetLightRadius(StaticFunctionTag*, TESForm* a_light, SInt32 a_radius)
+{
+	if (!a_light) {
+		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		return;
+	} else if (a_light->formType != kFormType_Light) {
+		_ERROR("[ERROR] a_torch is a not a light!\n");
+		return;
+	} else if (a_light < 0) {
+		_ERROR("[ERROR] a_radius can not be negative!\n");
+		return;
+	}
+
+	auto light = static_cast<TESObjectLIGH*>(a_light);
+	GetLightRadius(light) = a_radius;
+}
+
+
+void ResetLightRadius(StaticFunctionTag*, TESForm* a_light)
+{
+	if (!a_light) {
+		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		return;
+	} else if (a_light->formType != kFormType_Light) {
+		_ERROR("[ERROR] a_torch is a not a light!\n");
+		return;
+	}
+
+	auto origLight = static_cast<TESObjectLIGH*>(LookupFormByID(a_light->formID));
+	auto light = static_cast<TESObjectLIGH*>(a_light);
+	GetLightRadius(light) = GetLightRadius(origLight);
 }
 
 
@@ -68,85 +149,85 @@ bool IsT(TESForm* a_form)
 }
 
 
-bool IsSpear(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsSpear(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::spears>(a_form);
 }
 
 
-bool IsJavelin(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsJavelin(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::javelins>(a_form);
 }
 
 
-bool IsGrenade(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsGrenade(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::grenades>(a_form);
 }
 
 
-bool IsThrowingAxe(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsThrowingAxe(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::throwingAxes>(a_form);
 }
 
 
-bool IsThrowingKnife(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsThrowingKnife(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::throwingKnives>(a_form);
 }
 
 
-bool IsWax(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsWax(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::waxes>(a_form);
 }
 
 
-bool IsOil(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsOil(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::oils>(a_form);
 }
 
 
-bool IsSpellWard(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsSpellWard(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::spellWards>(a_form);
 }
 
 
-bool HasFire(StaticFunctionTag* a_base, TESForm* a_form)
+bool HasFire(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::fire>(a_form);
 }
 
 
-bool HasIce(StaticFunctionTag* a_base, TESForm* a_form)
+bool HasIce(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::ice>(a_form);
 }
 
 
-bool HasShock(StaticFunctionTag* a_base, TESForm* a_form)
+bool HasShock(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::shock>(a_form);
 }
 
 
-bool HasPoison(StaticFunctionTag* a_base, TESForm* a_form)
+bool HasPoison(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::poison>(a_form);
 }
 
 
-bool IsSalve(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsSalve(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::salves>(a_form);
 }
 
 
-bool IsBandage(StaticFunctionTag* a_base, TESForm* a_form)
+bool IsBandage(StaticFunctionTag*, TESForm* a_form)
 {
 	return IsT<Settings::bandages>(a_form);
 }
@@ -167,6 +248,18 @@ namespace FormExt
 
 		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, void, TESForm*>("UnregisterForBoundWeaponUnequippedEvent", "iEquip_FormExt", UnregisterForBoundWeaponUnequippedEvent, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, SInt32, TESForm*>("GetLightDuration", "iEquip_FormExt", GetLightDuration, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, SInt32, TESForm*>("GetLightRadius", "iEquip_FormExt", GetLightRadius, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, void, TESForm*, SInt32>("SetLightRadius", "iEquip_FormExt", SetLightRadius, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, void, TESForm*>("ResetLightRadius", "iEquip_FormExt", ResetLightRadius, a_registry));
 
 		a_registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, bool, TESForm*>("IsSpear", "iEquip_FormExt", IsSpear, a_registry));
