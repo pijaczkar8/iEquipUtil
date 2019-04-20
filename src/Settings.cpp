@@ -10,26 +10,28 @@ bool Settings::loadSettings(bool a_dumpParse)
 
 void Settings::OnLoad()
 {
-	for (auto& setting : settings) {
-		aSetting<Form*>* arr = dynamic_cast<aSetting<Form*>*>(setting);
-		if (arr) {
-			arr->sort();
+	if (settings) {
+		for (auto& setting : *settings) {
+			auto arr = dynamic_cast<aSetting<Form*>*>(setting);
+			if (arr) {
+				arr->sort();
+			}
 		}
 	}
 }
 
 
-aSetting<Form*>	Settings::spears("spears", false);
-aSetting<Form*>	Settings::javelins("javelins", false);
-aSetting<Form*>	Settings::grenades("grenades", false);
-aSetting<Form*>	Settings::throwingAxes("throwingAxes", false);
-aSetting<Form*>	Settings::throwingKnives("throwingKnives", false);
-aSetting<Form*>	Settings::waxes("waxes", false);
-aSetting<Form*>	Settings::oils("oils", false);
-aSetting<Form*>	Settings::spellWards("spellWards", false);
-aSetting<Form*>	Settings::fire("fire", false);
-aSetting<Form*>	Settings::ice("ice", false);
-aSetting<Form*>	Settings::shock("shock", false);
-aSetting<Form*>	Settings::poison("poison", false);
-aSetting<Form*>	Settings::salves("salves", false);
-aSetting<Form*>	Settings::bandages("bandages", false);
+decltype(Settings::spears)			Settings::spears("spears", false);
+decltype(Settings::javelins)		Settings::javelins("javelins", false);
+decltype(Settings::grenades)		Settings::grenades("grenades", false);
+decltype(Settings::throwingAxes)	Settings::throwingAxes("throwingAxes", false);
+decltype(Settings::throwingKnives)	Settings::throwingKnives("throwingKnives", false);
+decltype(Settings::waxes)			Settings::waxes("waxes", false);
+decltype(Settings::oils)			Settings::oils("oils", false);
+decltype(Settings::spellWards)		Settings::spellWards("spellWards", false);
+decltype(Settings::fire)			Settings::fire("fire", false);
+decltype(Settings::ice)				Settings::ice("ice", false);
+decltype(Settings::shock)			Settings::shock("shock", false);
+decltype(Settings::poison)			Settings::poison("poison", false);
+decltype(Settings::salves)			Settings::salves("salves", false);
+decltype(Settings::bandages)		Settings::bandages("bandages", false);

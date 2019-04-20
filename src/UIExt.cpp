@@ -19,19 +19,19 @@
 #endif
 
 
-TESForm* GetFormAtInventoryIndex(StaticFunctionTag* a_base, UInt32 a_index)
+TESForm* GetFormAtInventoryIndex(StaticFunctionTag*, UInt32 a_index)
 {
 	MenuManager* mm = MenuManager::GetSingleton();
 	UIStringHolder* uiStrHolder = UIStringHolder::GetSingleton();
 	RE::InventoryMenu* invMenu = static_cast<RE::InventoryMenu*>(mm->GetMenu(&uiStrHolder->inventoryMenu));
 	if (!invMenu) {
-		_ERROR("[ERROR] Inventory menu is not open!\n");
+		_WARNING("[WARNING] Inventory menu is not open!");
 		return 0;
 	}
 
 	auto& items = invMenu->inventoryData->items;
 	if (a_index >= items.count) {
-		_ERROR("[ERROR] Index is out of range!\n");
+		_WARNING("[WARNING] Index is out of range!");
 		return 0;
 	}
 

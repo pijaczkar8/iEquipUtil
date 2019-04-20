@@ -121,7 +121,7 @@ public:
 		_DMESSAGE("");
 
 		bool found = _loadedFormIDs.find(a_key) != _loadedFormIDs.end();
-		found ? _DMESSAGE("Form found") : _DMESSAGE("Form not found");
+		found ? _DMESSAGE("[DEBUG] Form found") : _DMESSAGE("[DEBUG] Form not found");
 		return found;
 	}
 

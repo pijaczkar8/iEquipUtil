@@ -9,7 +9,9 @@
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 #include "PapyrusVM.h"  // VMClassRegistry
 
+#include <map>  // map
 #include <string>  // string
+#include <utility>  // pair
 
 #include "InventoryUtil.h"  // ForEachInvEntry, ForEachExtraList
 #include "RefHandleManager.h"  // RefHandleManager
@@ -68,6 +70,12 @@ namespace
 	};
 
 
+	enum : UInt32
+	{
+		kFormID_Gold = 0x0000000F
+	};
+
+
 	bool LookupEntry(TESForm* a_item, UInt32 a_refHandle, EntryData& a_entryDataOut)
 	{
 		RefHandleManager* refHandleManager = RefHandleManager::GetSingleton();
@@ -87,11 +95,11 @@ namespace
 		switch (a_equipSlot) {
 		case kSlotID_Default:
 			if (a_item->IsWeapon()) {
-				_ERROR("[ERROR] a_equipSlot is an invalid slot for a_item!\n");
+				_WARNING("[WARNING] a_equipSlot is an invalid slot for a_item!");
 				return false;
 			} else {
 				if (a_worn) {
-					_ERROR("[ERROR] a_item is already worn!\n");
+					_WARNING("[WARNING] a_item is already worn!");
 					return false;
 				} else {
 					a_slotOut = 0;
@@ -100,11 +108,11 @@ namespace
 			break;
 		case kSlotID_Right:
 			if (!a_item->IsWeapon()) {
-				_ERROR("[ERROR] a_equipSlot is an invalid slot for a_item!\n");
+				_WARNING("[WARNING] a_equipSlot is an invalid slot for a_item!");
 				return false;
 			} else {
 				if (a_worn) {
-					_ERROR("[ERROR] a_item is already worn!\n");
+					_WARNING("[WARNING] a_item is already worn!");
 					return false;
 				} else {
 					a_slotOut = GetRightHandSlot();
@@ -113,11 +121,11 @@ namespace
 			break;
 		case kSlotID_Left:
 			if (!a_item->IsWeapon()) {
-				_ERROR("[ERROR] a_equipSlot is an invalid slot for a_item!\n");
+				_WARNING("[WARNING] a_equipSlot is an invalid slot for a_item!");
 				return false;
 			} else {
 				if (a_wornLeft) {
-					_ERROR("[ERROR] a_item is already worn!\n");
+					_WARNING("[WARNING] a_item is already worn!");
 					return false;
 				} else {
 					a_slotOut = GetLeftHandSlot();
@@ -125,7 +133,7 @@ namespace
 			}
 			break;
 		default:
-			_ERROR("[ERROR] a_equipSlot is not a slot (%i)!\n", a_equipSlot);
+			_WARNING("[WARNING] a_equipSlot is not a slot (%i)!", a_equipSlot);
 			return false;
 		}
 		return true;
@@ -147,7 +155,7 @@ namespace
 			a_xDataType = kExtraData_WornLeft;
 			break;
 		default:
-			_ERROR("[ERROR] Invalid slot ID!\n");
+			_WARNING("[WARNING] a_equipSlot is an invalid slot ID!");
 			return false;
 		}
 
@@ -164,7 +172,7 @@ namespace
 			a_formType = kFormType_Weapon;
 			break;
 		default:
-			_ERROR("[ERROR] Invalid slot ID!\n");
+			_WARNING("[WARNING] a_equipSlot is an invalid slot ID!");
 			return false;
 		}
 
@@ -189,7 +197,7 @@ namespace
 			a_firstPersonFlag = kFirstPersonFlag_Shield;
 			break;
 		default:
-			_ERROR("[ERROR] Invalid slot ID!\n");
+			_WARNING("[WARNING] a_equipSlot is an invalid slot ID!");
 			return false;
 		}
 
@@ -201,83 +209,117 @@ namespace
 void RegisterForRefHandleActiveEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnRefHandleActiveRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnRefHandleActive", a_thisForm->formID);
 	}
+
+	OnRefHandleActiveRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void UnregisterForRefHandleActiveEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnRefHandleActiveRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnRefHandleActive", a_thisForm->formID);
 	}
+
+	OnRefHandleActiveRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void RegisterForOnRefHandleInvalidatedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnRefHandleInvalidatedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnRefHandleInvalidated", a_thisForm->formID);
 	}
+
+	OnRefHandleInvalidatedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void UnregisterForOnRefHandleInvalidatedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnRefHandleInvalidatedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnRefHandleInvalidated", a_thisForm->formID);
 	}
+
+	OnRefHandleInvalidatedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void ParseInventory(StaticFunctionTag*)
 {
+	using FormID = UInt32;
+	using Count = SInt32;
+
 	auto manager = RefHandleManager::GetSingleton();
-	auto regs = OnRefHandleActiveRegSet::GetSingleton();
+	auto container = DYNAMIC_CAST((*g_thePlayer)->baseForm, TESForm, TESContainer);
+	if (!container) {
+		_ERROR("[ERROR] Failed to get player's default inventory!\n");
+		manager->SetInit();
+		return;
+	}
+
+	// extra items
+	std::map<FormID, std::pair<Count, InventoryEntryData*>> itemMap;
 	ForEachInvEntry([&](InventoryEntryData* a_entryData) -> bool
 	{
 		if (manager->IsTrackedType(a_entryData->type)) {
-			SInt32 rawCount = a_entryData->countDelta;
-			if (a_entryData->extendDataList) {
-				ForEachExtraList(a_entryData, [&](BaseExtraList* a_extraList) -> bool
-				{
-					auto xCount = static_cast<ExtraCount*>(a_extraList->GetByType(kExtraData_Count));
-					SInt32 count = xCount ? xCount->count : 1;
-					rawCount -= count;
-					auto result = manager->ActivateHandle(a_entryData->type, a_extraList);
-					if (result.second) {
-						regs->QueueEvent(a_entryData->type, result.first, count);
-					}
-					return true;
-				});
-			}
-			BaseExtraList* xListOut;
-			for (SInt32 i = 0; i < rawCount; ++i) {
-				xListOut = 0;
-				auto result = manager->ActivateHandle(a_entryData->type, xListOut);
-				if (result.second) {
-					regs->QueueEvent(a_entryData->type, result.first, 1);
-				}
-			}
+			itemMap.insert({ a_entryData->type->formID, { a_entryData->countDelta, a_entryData} });
 		}
 		return true;
 	});
+
+	// default items
+	auto xChanges = static_cast<ExtraContainerChanges*>((*g_thePlayer)->extraData.GetByType(kExtraData_ContainerChanges));
+	for (UInt32 i = 0; i < container->numEntries; ++i) {
+		auto entry = container->entries[i];
+		auto it = itemMap.find(entry->form->formID);
+		if (it != itemMap.end() && it->first != kFormID_Gold) {
+			it->second.first += entry->count;
+		} else {
+			if (manager->IsTrackedType(entry->form)) {
+				auto entryData = InventoryEntryData::Create(entry->form, 0);
+				xChanges->data->objList->Insert(entryData);
+				itemMap.insert({ entryData->type->formID, { entry->count, entryData } });
+			}
+		}
+	}
+
+	auto regs = OnRefHandleActiveRegSet::GetSingleton();
+	for (auto& item : itemMap) {
+		SInt32 rawCount = item.second.first;
+		InventoryEntryData* entryData = item.second.second;
+		if (entryData->extendDataList) {
+			ForEachExtraList(entryData, [&](BaseExtraList* a_extraList) -> bool
+			{
+				auto xCount = static_cast<ExtraCount*>(a_extraList->GetByType(kExtraData_Count));
+				SInt32 count = xCount ? xCount->count : 1;
+				rawCount -= count;
+				auto result = manager->ActivateHandle(entryData->type, a_extraList);
+				if (result.second) {
+					regs->QueueEvent(entryData->type, result.first, count);
+				}
+				return true;
+			});
+		}
+		BaseExtraList* xListOut;
+		for (SInt32 i = 0; i < rawCount; ++i) {
+			xListOut = 0;
+			auto result = manager->ActivateHandle(entryData->type, xListOut);
+			if (xListOut) {
+				entryData->extendDataList->Insert(xListOut);
+			}
+			if (result.second) {
+				regs->QueueEvent(entryData->type, result.first, 1);
+			}
+		}
+	}
+
+	manager->SetInit();
 }
 
 
@@ -287,13 +329,13 @@ UInt32 GetRefHandleAtInvIndex(StaticFunctionTag*, UInt32 a_index)
 	UIStringHolder* uiStrHolder = UIStringHolder::GetSingleton();
 	RE::InventoryMenu* invMenu = static_cast<RE::InventoryMenu*>(mm->GetMenu(&uiStrHolder->inventoryMenu));
 	if (!invMenu) {
-		_ERROR("[ERROR] Inventory menu is not open!\n");
+		_WARNING("[WARNING] Inventory menu is not open!");
 		return RefHandleManager::kInvalidRefHandle;
 	}
 
 	auto& items = invMenu->inventoryData->items;
 	if (a_index >= items.count) {
-		_ERROR("[ERROR] Index is out of range!\n");
+		_WARNING("[WARNING] Index is out of range!");
 		return RefHandleManager::kInvalidRefHandle;
 	}
 
@@ -387,7 +429,7 @@ UInt32 GetRefHandleFromWornObject(StaticFunctionTag*, UInt32 a_equipSlot)
 BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
 	if (!a_item) {
-		_ERROR("[ERROR] a_item is a NONE form!\n");
+		_WARNING("[WARNING] a_item is a NONE form!");
 		return "";
 	}
 
@@ -411,7 +453,7 @@ BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandl
 BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
 	if (!a_item) {
-		_ERROR("[ERROR] a_item is a NONE form!\n");
+		_WARNING("[WARNING] a_item is a NONE form!");
 		return "";
 	}
 
@@ -436,10 +478,10 @@ BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHand
 SInt32 GetPoisonCount(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
 	if (!a_item) {
-		_ERROR("[ERROR] a_item is a NONE form!\n");
+		_WARNING("[WARNING] a_item is a NONE form!");
 		return 0;
 	} else if (a_item->formType != kFormType_Weapon) {
-		_ERROR("[ERROR] a_item is not a weapon!\n");
+		_WARNING("[WARNING] a_item is not a weapon!");
 		return 0;
 	}
 
@@ -457,10 +499,10 @@ SInt32 GetPoisonCount(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 void SetPoisonCount(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle, UInt32 a_newCount)
 {
 	if (!a_item) {
-		_ERROR("[ERROR] a_item is a NONE form!\n");
+		_WARNING("[WARNING] a_item is a NONE form!");
 		return;
 	} else if (a_item->formType != kFormType_Weapon) {
-		_ERROR("[ERROR] a_item is not a weapon!\n");
+		_WARNING("[WARNING] a_item is not a weapon!");
 		return;
 	}
 
@@ -480,7 +522,7 @@ void SetPoisonCount(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle, UIn
 EnchantmentItem* GetEnchantment(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
 	if (!a_item) {
-		_ERROR("[ERROR] a_item is a NONE form!\n");
+		_WARNING("[WARNING] a_item is a NONE form!");
 		return false;
 	}
 
@@ -503,7 +545,7 @@ EnchantmentItem* GetEnchantment(StaticFunctionTag*, TESForm* a_item, UInt32 a_re
 void EquipItem(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle, Actor* a_actor, UInt32 a_equipSlot, bool a_preventUnequip, bool a_equipSound)
 {
 	if (!a_actor) {
-		_ERROR("[ERROR] a_actor is a NONE form!\n");
+		_WARNING("[WARNING] a_actor is a NONE form!");
 		return;
 	}
 
@@ -532,16 +574,10 @@ void EquipItem(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle, Actor* a
 		return;
 	}
 
-	if (worn || wornLeft) {
-		if (count < 2) {
-			_ERROR("[ERROR] Item count is too small to equip!\n");
-			return;
-		}
-	} else {
-		if (count < 1) {
-			_ERROR("[ERROR] Item count is too small to equip!\n");
-			return;
-		}
+	SInt32 countReq = (worn || wornLeft) ? 2 : 1;
+	if (count < countReq) {
+		_ERROR("[ERROR] Item count is too small to equip!\n");
+		return;
 	}
 
 	SInt32 equipCount;

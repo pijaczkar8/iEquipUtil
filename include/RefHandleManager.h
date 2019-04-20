@@ -4,7 +4,7 @@
 
 #include <limits>  // numeric_limits
 #include <map>  // map
-#include <mutex>  // mutex, lock_guard
+#include <mutex>  // recursive_mutex, lock_guard
 #include <set>  // set
 
 #include "function_view.h"  // function_view
@@ -55,9 +55,11 @@ public:
 	EntryData		LookupEntry(TESForm* a_form, RefHandle a_handle);
 	RefHandle		LookupHandle(UniqueID a_uniqueID);
 	bool			IsTrackedType(TESForm* a_form);
+	bool			IsInit() const;
+	void			SetInit();
 
 private:
-	using Locker = std::lock_guard<std::mutex>;
+	using Locker = std::lock_guard<std::recursive_mutex>;
 
 
 	enum
@@ -94,8 +96,9 @@ private:
 
 	static const HandleResult _NRES;
 
-	std::mutex						_lock;
+	mutable std::recursive_mutex	_lock;
 	std::map<UniqueID, RefHandle>	_idToHandleMap;
 	std::map<RefHandle, UniqueID>	_handleToIDMap;
 	UInt8							_activeHandles[kRefArrSize];
+	bool							_init;
 };

@@ -5,7 +5,7 @@ class TESAmmo;
 class VMClassRegistry;
 
 
-bool IsAmmoBound(StaticFunctionTag* a_base, TESAmmo* a_ammo);
+bool IsAmmoBound(StaticFunctionTag*, TESAmmo* a_ammo);
 
 
 namespace AmmoExt

@@ -144,6 +144,7 @@
     <ClCompile Include="src\FormExt.cpp" />
     <ClCompile Include="src\Hooks.cpp" />
     <ClCompile Include="src\InventoryExt.cpp" />
+    <ClCompile Include="src\ObjectReferenceExt.cpp" />
     <ClCompile Include="src\Registration.cpp" />
     <ClCompile Include="src\RE\EventDispatcherList.cpp" />
     <ClCompile Include="src\LocaleManager.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="include\FormExt.h" />
     <ClInclude Include="include\InventoryExt.h" />
     <ClInclude Include="include\InventoryUtil.h" />
+    <ClInclude Include="include\ObjectReferenceExt.h" />
     <ClInclude Include="include\Registration.h" />
     <ClInclude Include="include\RE\BSTList.h" />
     <ClInclude Include="include\RE\ExtraPoison.h" />

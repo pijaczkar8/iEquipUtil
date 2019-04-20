@@ -70,7 +70,7 @@ namespace
 	bool ValidateParams(SoulLevel a_reqCharge, FillMethod a_fillMethod)
 	{
 		if (a_reqCharge < SoulLevel::kPetty || a_reqCharge > SoulLevel::kGrand) {
-			_ERROR("[ERROR] Invalid soul size! (%i)\n", to_underlying(a_reqCharge));
+			_WARNING("[WARNING] Invalid soul size! (%i)", to_underlying(a_reqCharge));
 			return false;
 		}
 
@@ -79,7 +79,7 @@ namespace
 		case FillMethod::kUseLargestSoul:
 			break;
 		default:
-			_ERROR("[ERROR] Invalid fill method! (%i)\n", to_underlying(a_fillMethod));
+			_WARNING("[WARNING] Invalid fill method! (%i)", to_underlying(a_fillMethod));
 			return false;
 		}
 
@@ -157,14 +157,14 @@ namespace
 }
 
 
-SInt32 BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
+SInt32 BringMeASoul(StaticFunctionTag*, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK)
 {
 	using RemoveType = RE::TESObjectREFR::RemoveType;
 
 	SoulLevel reqCharge = static_cast<SoulLevel>(a_reqCharge);
 	FillMethod fillMethod = static_cast<FillMethod>(a_fillMethod);
 	if (!ValidateParams(reqCharge, fillMethod)) {
-		_ERROR("[ERROR] Parameters failed to validate!\n");
+		_WARNING("[WARNING] Parameters failed to validate!");
 		return -1;
 	}
 

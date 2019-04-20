@@ -67,6 +67,9 @@
     <ClCompile Include="src\RE\EventDispatcherList.cpp">
       <Filter>src\RE</Filter>
     </ClCompile>
+    <ClCompile Include="src\ObjectReferenceExt.cpp">
+      <Filter>src\papyrus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
@@ -199,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="include\RE\InventoryMenu.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ObjectReferenceExt.h">
+      <Filter>include\papyrus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

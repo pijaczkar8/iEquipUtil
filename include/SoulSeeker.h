@@ -73,7 +73,7 @@ namespace
 }
 
 
-SInt32 BringMeASoul(StaticFunctionTag* a_base, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK);
+SInt32 BringMeASoul(StaticFunctionTag*, UInt32 a_reqCharge, UInt32 a_fillMethod, bool a_partialFill, bool a_wasteOK);
 
 
 namespace SoulSeeker

@@ -5,10 +5,10 @@
 #include "PapyrusVM.h"  // VMClassRegistry
 
 
-bool IsHealingSpell(StaticFunctionTag* a_base, SpellItem* a_spell)
+bool IsHealingSpell(StaticFunctionTag*, SpellItem* a_spell)
 {
 	if (!a_spell) {
-		_ERROR("[ERROR] a_spell is a NONE form!\n");
+		_WARNING("[WARNING] a_spell is a NONE form!");
 		return false;
 	}
 
@@ -28,10 +28,10 @@ bool IsHealingSpell(StaticFunctionTag* a_base, SpellItem* a_spell)
 }
 
 
-bool IsBoundSpell(StaticFunctionTag* a_base, SpellItem* a_spell)
+bool IsBoundSpell(StaticFunctionTag*, SpellItem* a_spell)
 {
 	if (!a_spell) {
-		_ERROR("[ERROR] a_spell is a NONE form!\n");
+		_WARNING("[WARNING] a_spell is a NONE form!");
 		return false;
 	}
 
@@ -51,10 +51,10 @@ bool IsBoundSpell(StaticFunctionTag* a_base, SpellItem* a_spell)
 }
 
 
-SInt32 GetBoundSpellWeapType(StaticFunctionTag* a_base, SpellItem* a_spell)
+SInt32 GetBoundSpellWeapType(StaticFunctionTag*, SpellItem* a_spell)
 {
 	if (!a_spell) {
-		_ERROR("[ERROR] a_spell is a NONE form!\n");
+		_WARNING("[WARNING] a_spell is a NONE form!");
 		return -1;
 	}
 

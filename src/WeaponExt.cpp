@@ -11,10 +11,10 @@
 #include "Utility.h"
 
 
-TESObjectWEAP* GetEquippedWeapon(StaticFunctionTag* a_base, Actor* a_actor, SInt32 a_hand)
+TESObjectWEAP* GetEquippedWeapon(StaticFunctionTag*, Actor* a_actor, SInt32 a_hand)
 {
 	if (!a_actor) {
-		_ERROR("[ERROR] a_actor is a NONE form!\n");
+		_WARNING("[WARNING] a_actor is a NONE form!");
 		return 0;
 	}
 
@@ -30,16 +30,16 @@ TESObjectWEAP* GetEquippedWeapon(StaticFunctionTag* a_base, Actor* a_actor, SInt
 			return DYNAMIC_CAST(weap, TESForm, TESObjectWEAP);
 		}
 	default:
-		_ERROR("[ERROR] Invalid slot (%i)!\n", a_hand);
+		_WARNING("[WARNING] Invalid slot (%i)!", a_hand);
 		return 0;
 	}
 }
 
 
-bool IsWeaponBound(StaticFunctionTag* a_base, TESObjectWEAP* a_weap)
+bool IsWeaponBound(StaticFunctionTag*, TESObjectWEAP* a_weap)
 {
 	if (!a_weap) {
-		_ERROR("[ERROR] Invalid weapon!");
+		_WARNING("[WARNING] a_weap is a NONE form!");
 		return false;
 	}
 

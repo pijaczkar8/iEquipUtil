@@ -14,9 +14,12 @@
 
 #include "ActorExtLib.h"  // IActorEquipItem
 #include "ExtraLocator.h"  // ExtraListLocator
+#include "InventoryUtil.h"  // ForEachInvEntry
 #include "Registration.h"  // Registration
 
 #include "RE/BSTList.h"  // BSSimpleList
+#include "RE/ExtraPoison.h"  // ExtraPoison
+#include "RE/Memory.h"  // free
 
 
 namespace
@@ -191,6 +194,13 @@ namespace
 	};
 
 
+	enum : UInt32
+	{
+		kHandSlot_Left = 0,
+		kHandSlot_Right = 1
+	};
+
+
 	struct ActorValueModifiers
 	{
 		struct Modifiers
@@ -249,17 +259,17 @@ namespace
 }
 
 
-TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
+TESAmmo* GetEquippedAmmo(StaticFunctionTag*, Actor* a_actor)
 {
 	if (!a_actor) {
-		_ERROR("[ERROR] Invalid actor!");
+		_WARNING("[WARNING] a_actor is a NONE form!");
 		return 0;
 	}
 
 	ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
 	ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
 	if (!containerData) {
-		_ERROR("[ERROR] No container data!");
+		_ERROR("[ERROR] No container data!\n");
 		return 0;
 	}
 
@@ -281,28 +291,28 @@ TESAmmo* GetEquippedAmmo(StaticFunctionTag* a_base, Actor* a_actor)
 }
 
 
-void EquipEnchantedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
+void EquipEnchantedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
 {
 	ActorEquipEnchantedItem equipEnch(a_enchantment);
 	EquipItemEx(a_actor, a_item, a_slotID, &equipEnch, a_preventUnequip, a_equipSound);
 }
 
 
-void EquipPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
+void EquipPoisonedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
 {
 	ActorEquipPoisonedItem equipPoison(a_poison, a_count);
 	EquipItemEx(a_actor, a_item, a_slotID, &equipPoison, a_preventUnequip, a_equipSound);
 }
 
 
-void EquipEnchantedAndPoisonedItemEx(StaticFunctionTag* a_base, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
+void EquipEnchantedAndPoisonedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
 {
 	ActorEquipEnchantedAndPoisonedItem equipEnchAndPoison(a_enchantment, a_poison, a_count);
 	EquipItemEx(a_actor, a_item, a_slotID, &equipEnchAndPoison, a_preventUnequip, a_equipSound);
 }
 
 
-float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue)
+float GetAVDamage(StaticFunctionTag*, Actor* a_actor, UInt32 a_actorValue)
 {
 #if _WIN64
 	constexpr std::uintptr_t avMapOffset = 0x200;
@@ -319,10 +329,10 @@ float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue
 #endif
 
 	if (!a_actor) {
-		_ERROR("[ERROR] a_actor is a NONE form!\n");
+		_WARNING("[WARNING] a_actor is a NONE form!");
 		return 0.0;
 	} else if (a_actorValue > 163) {
-		_ERROR("[ERROR] a_actorValue is out of range!\n");
+		_WARNING("[WARNING] a_actorValue is out of range!");
 		return 0.0;
 	}
 
@@ -354,10 +364,10 @@ float GetAVDamage(StaticFunctionTag* a_base, Actor* a_actor, UInt32 a_actorValue
 }
 
 
-TESRace* GetBaseRace(StaticFunctionTag* a_base, Actor* a_actor)
+TESRace* GetBaseRace(StaticFunctionTag*, Actor* a_actor)
 {
 	if (!a_actor) {
-		_ERROR("[ERROR] a_actor is a NONE form!\n");
+		_WARNING("[WARNING] a_actor is a NONE form!");
 		return 0;
 	}
 
@@ -369,13 +379,13 @@ TESRace* GetBaseRace(StaticFunctionTag* a_base, Actor* a_actor)
 }
 
 
-float GetMagicEffectMagnitude(StaticFunctionTag* a_base, Actor* a_actor, EffectSetting* a_mgef)
+float GetMagicEffectMagnitude(StaticFunctionTag*, Actor* a_actor, EffectSetting* a_mgef)
 {
 	if (!a_actor) {
-		_ERROR("[ERROR] a_actor is a NONE form!\n");
+		_WARNING("[WARNING] a_actor is a NONE form!");
 		return 0.0;
 	} else if (!a_mgef) {
-		_ERROR("[ERROR] a_mgef is a NONE form!\n");
+		_WARNING("[WARNING] a_mgef is a NONE form!");
 		return 0.0;
 	}
 
@@ -390,6 +400,157 @@ float GetMagicEffectMagnitude(StaticFunctionTag* a_base, Actor* a_actor, EffectS
 		}
 	}
 	return 0.0;
+}
+
+
+AlchemyItem* WornGetPoison(StaticFunctionTag*, Actor* a_actor, UInt32 a_handSlot)
+{
+	if (!a_actor) {
+		_WARNING("[WARNING] a_actor is a NONE form!");
+		return 0;
+	} else {
+		switch (a_handSlot) {
+		case kHandSlot_Left:
+		case kHandSlot_Right:
+			break;
+		default:
+			_WARNING("[WARNING] a_handSlot is an invalid slot!");
+			return 0;
+		}
+	}
+
+	auto weap = a_actor->GetEquippedObject(a_handSlot == kHandSlot_Left);
+	if (!weap) {
+		_WARNING("[WARNING] a_actor is not carrying a weapon in the specified hand!");
+		return 0;
+	}
+
+	InventoryEntryData* entryData = 0;
+	ForEachInvEntry(a_actor, [&](InventoryEntryData* a_entryData) -> bool
+	{
+		entryData = a_entryData;
+		return entryData->type != weap;
+	});
+
+	if (!entryData) {
+		_ERROR("[ERROR] Could not find entry data for worn weapon!\n");
+	}
+
+	RE::ExtraPoison* xPoison = 0;
+	ForEachExtraList(entryData, [&](BaseExtraList* a_extraList) -> bool
+	{
+		xPoison = static_cast<RE::ExtraPoison*>(a_extraList->GetByType(kExtraData_Poison));
+		return xPoison == 0;
+	});
+
+	return xPoison ? xPoison->poison : 0;
+}
+
+
+bool WornRemovePoison(StaticFunctionTag*, Actor* a_actor, UInt32 a_handSlot)
+{
+	if (!a_actor) {
+		_WARNING("[WARNING] a_actor is a NONE form!");
+		return false;
+	} else {
+		switch (a_handSlot) {
+		case kHandSlot_Left:
+		case kHandSlot_Right:
+			break;
+		default:
+			_WARNING("[WARNING] a_handSlot is an invalid slot!");
+			return false;
+		}
+	}
+
+	auto weap = a_actor->GetEquippedObject(a_handSlot == kHandSlot_Left);
+	if (!weap) {
+		_WARNING("[WARNING] a_actor is not carrying a weapon in the specified hand!");
+		return false;
+	}
+
+	InventoryEntryData* entryData = 0;
+	ForEachInvEntry(a_actor, [&](InventoryEntryData* a_entryData) -> bool
+	{
+		entryData = a_entryData;
+		return entryData->type != weap;
+	});
+
+	if (!entryData) {
+		_ERROR("[ERROR] Could not find entry data for worn weapon!\n");
+		return false;
+	}
+
+	ForEachExtraList(entryData, [&](BaseExtraList* a_extraList) -> bool
+	{
+		auto xPoison = static_cast<ExtraPoison*>(a_extraList->GetByType(kExtraData_Poison));
+		if (xPoison) {
+			a_extraList->Remove(kExtraData_Poison, xPoison);
+			RE::free(xPoison);
+		}
+		return true;
+	});
+
+	return true;
+}
+
+
+bool WornSetPoison(StaticFunctionTag*, Actor* a_actor, UInt32 a_handSlot, AlchemyItem* a_poison, UInt32 a_charges)
+{
+	if (!a_actor) {
+		_WARNING("[WARNING] a_actor is a NONE form!");
+		return false;
+	} else if (!a_poison) {
+		_WARNING("[WARNING] a_poison is a NONE form!");
+		return false;
+	} else {
+		switch (a_handSlot) {
+		case kHandSlot_Left:
+		case kHandSlot_Right:
+			break;
+		default:
+			_WARNING("[WARNING] a_handSlot is an invalid slot!");
+			return false;
+		}
+	}
+
+
+	auto weap = a_actor->GetEquippedObject(a_handSlot == kHandSlot_Left);
+	if (!weap) {
+		_WARNING("[WARNING] a_actor is not carrying a weapon in the specified hand!");
+		return false;
+	}
+
+	InventoryEntryData* entryData = 0;
+	ForEachInvEntry(a_actor, [&](InventoryEntryData* a_entryData) -> bool
+	{
+		entryData = a_entryData;
+		return entryData->type != weap;
+	});
+
+	if (!entryData) {
+		_ERROR("[ERROR] Could not find entry data for worn weapon!\n");
+		return false;
+	} else if (!entryData->extendDataList) {	// worn items should always have extra data
+		_ERROR("[ERROR] Entry did not have extra data list!\n");
+		return false;
+	}
+
+	auto extraList = entryData->extendDataList->GetNthItem(0);
+	if (!extraList) {
+		_ERROR("[ERROR] Entry did not have base extra list!\n");
+		return false;
+	}
+
+	auto xPoison = static_cast<RE::ExtraPoison*>(extraList->GetByType(kExtraData_Poison));
+	if (!xPoison) {
+		xPoison = RE::ExtraPoison::Create();
+		extraList->Add(kExtraData_Poison, xPoison);
+	}
+	xPoison->count = a_charges;
+	xPoison->poison = a_poison;
+
+	return true;
 }
 
 
@@ -417,6 +578,15 @@ namespace ActorExt
 
 		a_registry->RegisterFunction(
 			new NativeFunction2<StaticFunctionTag, float, Actor*, EffectSetting*>("GetMagicEffectMagnitude", "iEquip_ActorExt", GetMagicEffectMagnitude, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, AlchemyItem*, Actor*, UInt32>("WornGetPoison", "iEquip_ActorExt", WornGetPoison, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, bool, Actor*, UInt32>("WornRemovePoison", "iEquip_ActorExt", WornRemovePoison, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction4<StaticFunctionTag, bool, Actor*, UInt32, AlchemyItem*, UInt32>("WornSetPoison", "iEquip_ActorExt", WornSetPoison, a_registry));
 
 		return true;
 	}

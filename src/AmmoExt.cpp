@@ -5,15 +5,15 @@
 #include "PapyrusNativeFunctions.h"  // StaticFunctionTag, NativeFunction
 
 
-bool IsAmmoBound(StaticFunctionTag* a_base, TESAmmo* a_ammo)
+bool IsAmmoBound(StaticFunctionTag*, TESAmmo* a_ammo)
 {
 	if (!a_ammo) {
-		_ERROR("[ERROR] Invalid ammo!");
+		_WARNING("[ERROR] a_ammo is a NONE form!");
 		return false;
-	} else {
-		BGSKeyword* WeapTypeBoundArrow = static_cast<BGSKeyword*>(LookupFormByID(0x0010D501));
-		return a_ammo->keyword.HasKeyword(WeapTypeBoundArrow);
 	}
+
+	auto WeapTypeBoundArrow = static_cast<BGSKeyword*>(LookupFormByID(0x0010D501));
+	return a_ammo->keyword.HasKeyword(WeapTypeBoundArrow);
 }
 
 

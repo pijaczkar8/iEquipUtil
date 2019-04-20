@@ -24,58 +24,54 @@ namespace
 void RegisterForBoundWeaponEquippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnBoundWeaponEquippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnBoundWeaponEquippedEvent", a_thisForm->formID);
 	}
+
+	OnBoundWeaponEquippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void UnregisterForBoundWeaponEquippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnBoundWeaponEquippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnBoundWeaponEquippedEvent", a_thisForm->formID);
 	}
+
+	OnBoundWeaponEquippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void RegisterForBoundWeaponUnequippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnBoundWeaponUnequippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Registered (0x%08X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
 	}
+
+	OnBoundWeaponUnequippedRegSet::GetSingleton()->Register<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 void UnregisterForBoundWeaponUnequippedEvent(StaticFunctionTag*, TESForm* a_thisForm)
 {
 	if (!a_thisForm) {
-		_ERROR("[ERROR] a_thisForm is a NONE form!\n");
+		_WARNING("[WARNING] a_thisForm is a NONE form!");
 		return;
-	} else {
-		OnBoundWeaponUnequippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
-		_DMESSAGE("[DEBUG] Unregistered (0x%08X) for OnBoundWeaponUnequippedEvent", a_thisForm->formID);
 	}
+
+	OnBoundWeaponUnequippedRegSet::GetSingleton()->Unregister<TESForm>(a_thisForm->formType, a_thisForm);
 }
 
 
 SInt32 GetLightDuration(StaticFunctionTag*, TESForm* a_light)
 {
 	if (!a_light) {
-		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		_WARNING("[WARNING] a_light is a NONE form!");
 		return -1;
 	} else if (a_light->formType != kFormType_Light) {
-		_ERROR("[ERROR] a_torch is a not a light!\n");
+		_WARNING("[WARNING] a_light is a not a light!");
 		return -1;
 	}
 
@@ -91,10 +87,10 @@ SInt32 GetLightDuration(StaticFunctionTag*, TESForm* a_light)
 SInt32 GetLightRadius(StaticFunctionTag*, TESForm* a_light)
 {
 	if (!a_light) {
-		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		_WARNING("[WARNING] a_light is a NONE form!");
 		return -1;
 	} else if (a_light->formType != kFormType_Light) {
-		_ERROR("[ERROR] a_torch is a not a light!\n");
+		_WARNING("[WARNING] a_light is a not a light!");
 		return -1;
 	}
 
@@ -106,13 +102,13 @@ SInt32 GetLightRadius(StaticFunctionTag*, TESForm* a_light)
 void SetLightRadius(StaticFunctionTag*, TESForm* a_light, SInt32 a_radius)
 {
 	if (!a_light) {
-		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		_WARNING("[WARNING] a_light is a NONE form!");
 		return;
 	} else if (a_light->formType != kFormType_Light) {
-		_ERROR("[ERROR] a_torch is a not a light!\n");
+		_WARNING("[WARNING] a_light is a not a light!");
 		return;
 	} else if (a_light < 0) {
-		_ERROR("[ERROR] a_radius can not be negative!\n");
+		_WARNING("[WARNING] a_radius can not be negative!");
 		return;
 	}
 
@@ -124,10 +120,10 @@ void SetLightRadius(StaticFunctionTag*, TESForm* a_light, SInt32 a_radius)
 void ResetLightRadius(StaticFunctionTag*, TESForm* a_light)
 {
 	if (!a_light) {
-		_ERROR("[ERROR] a_torch is a NONE form!\n");
+		_WARNING("[WARNING] a_light is a NONE form!");
 		return;
 	} else if (a_light->formType != kFormType_Light) {
-		_ERROR("[ERROR] a_torch is a not a light!\n");
+		_WARNING("[WARNING] a_light is a not a light!");
 		return;
 	}
 
@@ -141,11 +137,11 @@ template <aSetting<Form*>& arr>
 bool IsT(TESForm* a_form)
 {
 	if (!a_form) {
-		_ERROR("[ERROR] a_form is a NONE form!\n");
+		_WARNING("[WARNING] a_form is a NONE form!");
 		return false;
-	} else {
-		return arr.find(a_form->formID);
 	}
+
+	return arr.find(a_form->formID);
 }
 
 

@@ -8,7 +8,7 @@
 
 namespace RE
 {
-	inline void* Heap_Allocate(std::size_t a_size)
+	inline void* malloc(std::size_t a_size)
 	{
 #if _WIN64
 		return ::Heap_Allocate(a_size);
@@ -18,7 +18,13 @@ namespace RE
 	}
 
 
-	inline void Heap_Free(void* a_ptr)
+	inline void* calloc(std::size_t a_num, std::size_t a_size)
+	{
+		return malloc(a_num * a_size);
+	}
+
+
+	inline void free(void* a_ptr)
 	{
 		if (a_ptr) {
 #if _WIN64
@@ -30,20 +36,20 @@ namespace RE
 	}
 
 
-	template <typename T>
-	inline T* Heap_Allocate(void)
+	template <class T>
+	inline T* malloc()
 	{
-		return reinterpret_cast<T*>(Heap_Allocate(sizeof(T)));
+		return reinterpret_cast<T*>(malloc(sizeof(T)));
 	}
 
 
-#define TES_HEAP_REDEFINE_NEW()																											\
-	void*	operator new(std::size_t a_count)													{ return RE::Heap_Allocate(a_count); }	\
-	void*	operator new[](std::size_t a_count)													{ return RE::Heap_Allocate(a_count); }	\
-	void*	operator new([[maybe_unused]] std::size_t a_count, void* a_plcmnt)					{ return a_plcmnt; }					\
-	void*	operator new[]([[maybe_unused]] std::size_t a_count, void* a_plcmnt)				{ return a_plcmnt; }					\
-	void	operator delete(void* a_ptr)														{ RE::Heap_Free(a_ptr); }				\
-	void	operator delete[](void* a_ptr)														{ RE::Heap_Free(a_ptr); }				\
-	void	operator delete([[maybe_unused]] void* a_ptr, [[maybe_unused]] void* a_plcmnt)		{ }										\
-	void	operator delete[]([[maybe_unused]] void* a_ptr, [[maybe_unused]] void* a_plcmnt)	{ }
+#define TES_HEAP_REDEFINE_NEW()																									\
+	void*	operator new(std::size_t a_count)													{ return RE::malloc(a_count); }	\
+	void*	operator new[](std::size_t a_count)													{ return RE::malloc(a_count); }	\
+	void*	operator new([[maybe_unused]] std::size_t a_count, void* a_plcmnt)					{ return a_plcmnt; }			\
+	void*	operator new[]([[maybe_unused]] std::size_t a_count, void* a_plcmnt)				{ return a_plcmnt; }			\
+	void	operator delete(void* a_ptr)														{ RE::free(a_ptr); }			\
+	void	operator delete[](void* a_ptr)														{ RE::free(a_ptr); }			\
+	void	operator delete([[maybe_unused]] void* a_ptr, [[maybe_unused]] void* a_plcmnt)		{ return; }						\
+	void	operator delete[]([[maybe_unused]] void* a_ptr, [[maybe_unused]] void* a_plcmnt)	{ return; }
 }

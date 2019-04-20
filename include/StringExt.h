@@ -6,8 +6,9 @@ class VMClassRegistry;
 struct StaticFunctionTag;
 
 
-BSFixedString	LocalizeString(StaticFunctionTag* a_base, BSFixedString a_str);
-UInt32			CalcCRC32Hash(StaticFunctionTag* a_base, BSFixedString a_str, UInt32 a_start);
+BSFixedString	LocalizeString(StaticFunctionTag*, BSFixedString a_str);
+UInt32			CalcCRC32Hash(StaticFunctionTag*, BSFixedString a_str, UInt32 a_start);
+BSFixedString	IntToHexString(StaticFunctionTag*, UInt32 a_num);
 
 
 namespace StringExt

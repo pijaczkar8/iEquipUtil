@@ -5,6 +5,7 @@
 
 #include <clocale>  // setlocale
 #include <cstdlib>  // size_t
+#include <string>  // string
 
 #include <ShlObj.h>  // CSIDL_MYDOCUMENTS
 
@@ -15,6 +16,7 @@
 #include "Hooks.h"  // InstallHooks
 #include "InventoryExt.h"  // InventoryExt
 #include "LocaleManager.h"  // LocaleManager
+#include "ObjectReferenceExt.h"  // RegisterFuncs
 #include "RefHandleManager.h"  // RefHandleManager
 #include "Registration.h"  // OnBoundWeaponEquippedRegSet, OnBoundWeaponUnequippedRegSet, OnRefHandleActiveRegSet, OnRefHandleInvalidatedRegSet
 #include "Settings.h"  // Settings
@@ -53,6 +55,20 @@ namespace
 	};
 
 
+	std::string DecodeTypeCode(UInt32 a_typeCode)
+	{
+		constexpr std::size_t SIZE = sizeof(UInt32);
+
+		std::string sig;
+		sig.resize(SIZE);
+		char* iter = reinterpret_cast<char*>(&a_typeCode);
+		for (std::size_t i = 0, j = SIZE - 2; i < SIZE - 1; ++i, --j) {
+			sig[j] = iter[i];
+		}
+		return sig;
+	}
+
+
 	void SaveCallback(SKSESerializationInterface* a_intfc)
 	{
 		if (!OnBoundWeaponEquippedRegSet::GetSingleton()->Save(a_intfc, kOnBoundWeaponEquipped, kSerializationVersion)) {
@@ -85,6 +101,11 @@ namespace
 		UInt32 version;
 		UInt32 length;
 		while (a_intfc->GetNextRecordInfo(&type, &version, &length)) {
+			if (version != kSerializationVersion) {
+				_ERROR("[ERROR] Loaded data is out of date! Read (%u), expected (%u) for type code (%s)", version, kSerializationVersion, DecodeTypeCode(type).c_str());
+				continue;
+			}
+
 			switch (type) {
 			case kOnBoundWeaponEquipped:
 				{
@@ -132,16 +153,7 @@ namespace
 				}
 				break;
 			default:
-				{
-					constexpr std::size_t SIZE = 5;
-					char* iter = reinterpret_cast<char*>(&type);
-					char sig[SIZE];
-					for (std::size_t i = 0, j = SIZE - 2; i < SIZE - 1; ++i, --j) {
-						sig[j] = iter[i];
-					}
-					sig[SIZE - 1] = '\0';
-					_ERROR("[ERROR] Unrecognized record type (%s)!", &sig);
-				}
+				_ERROR("[ERROR] Unrecognized record type (%s)!", DecodeTypeCode(type).c_str());
 				break;
 			}
 		}
@@ -235,6 +247,8 @@ extern "C" {
 		_MESSAGE("[MESSAGE] Registered iEquip_FormExt");
 		papyrus->Register(InventoryExt::RegisterFuncs);
 		_MESSAGE("[MESSAGE] Registered iEquip_InventoryExt");
+		papyrus->Register(ObjectReferenceExt::RegisterFuncs);
+		_MESSAGE("[MESSAGE] Registered iEquip_ObjectReferenceExt");
 		papyrus->Register(SoulSeeker::RegisterFuncs);
 		_MESSAGE("[MESSAGE] Registered iEquip_SoulSeeker");
 		papyrus->Register(SpellExt::RegisterFuncs);

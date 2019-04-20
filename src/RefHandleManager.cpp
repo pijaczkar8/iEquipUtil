@@ -40,6 +40,9 @@ bool RefHandleManager::Save(SKSESerializationInterface* a_intfc, UInt32 a_type, 
 	Locker locker(_lock);
 
 	a_intfc->OpenRecord(a_type, a_version);
+
+	a_intfc->WriteRecordData(&_init, sizeof(_init));
+
 	std::size_t numEntries = _idToHandleMap.size();
 	a_intfc->WriteRecordData(&numEntries, sizeof(numEntries));
 
@@ -57,6 +60,8 @@ bool RefHandleManager::Save(SKSESerializationInterface* a_intfc, UInt32 a_type, 
 bool RefHandleManager::Load(SKSESerializationInterface* a_intfc, UInt32 a_version)
 {
 	Locker locker(_lock);
+
+	a_intfc->ReadRecordData(&_init, sizeof(_init));
 
 	std::size_t numEntries;
 	if (!a_intfc->ReadRecordData(&numEntries, sizeof(numEntries))) {
@@ -150,7 +155,7 @@ auto RefHandleManager::LookupEntry(TESForm* a_form, RefHandle a_handle)
 	Locker locker(_lock);
 
 	EntryData entryData;
-	if (a_handle > kLargestHandle) {
+	if (a_handle > kLargestHandle || a_handle == kInvalidRefHandle) {
 		_ERROR("[ERROR] Ref handle is invalid!\n");
 		return entryData;
 	}
@@ -206,8 +211,27 @@ bool RefHandleManager::IsTrackedType(TESForm* a_form)
 }
 
 
+bool RefHandleManager::IsInit() const
+{
+	Locker locker(_lock);
+	return _init;
+}
+
+
+void RefHandleManager::SetInit()
+{
+	Locker locker(_lock);
+	_init = true;
+}
+
+
+
 RefHandleManager::RefHandleManager() :
-	_activeHandles{ 0 }
+	_lock(),
+	_idToHandleMap(),
+	_handleToIDMap(),
+	_activeHandles{ 0 },
+	_init(false)
 {}
 
 
@@ -312,7 +336,7 @@ BaseExtraList* RefHandleManager::CreateBaseExtraList()
 {
 	constexpr std::size_t XLIST_SIZE = sizeof(BaseExtraList);
 
-	auto xList = static_cast<BaseExtraList*>(RE::Heap_Allocate(XLIST_SIZE));
+	auto xList = static_cast<BaseExtraList*>(RE::malloc(XLIST_SIZE));
 	std::memset(xList, 0, XLIST_SIZE);
 
 	return xList;
