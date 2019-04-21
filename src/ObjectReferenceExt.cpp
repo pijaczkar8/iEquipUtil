@@ -33,7 +33,7 @@ namespace ObjectReferenceExt
 			return -1;
 		}
 
-		auto container = DYNAMIC_CAST(a_container, TESForm, TESContainer);
+		auto container = DYNAMIC_CAST(a_container->baseForm, TESForm, TESContainer);
 		if (!container) {
 			_WARNING("[WARNING] a_container does not reference a container!");
 			return -1;
@@ -82,7 +82,7 @@ namespace ObjectReferenceExt
 			return 0;
 		}
 
-		auto container = DYNAMIC_CAST(a_container, TESForm, TESContainer);
+		auto container = DYNAMIC_CAST(a_container->baseForm, TESForm, TESContainer);
 		if (!container) {
 			_WARNING("[WARNING] a_container does not reference a container!");
 			return 0;

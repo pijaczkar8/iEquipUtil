@@ -95,4 +95,4 @@ Bool Function WornRemovePoison(Actor a_actor, Int a_handSlot) Native Global
 ; @notes Valid hand slots:
 ; 0 - Left
 ; 1 - Right
-Bool Function WornSetPoison(Actor a_actor, Int a_handSlot, Potion a_poison, Int a_charges) Native Global
+Bool Function WornSetPoison(Actor a_actor, Int a_handSlot, Potion a_poison, Int a_charges = 1) Native Global

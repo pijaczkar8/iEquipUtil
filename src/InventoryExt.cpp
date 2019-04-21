@@ -283,7 +283,11 @@ void ParseInventory(StaticFunctionTag*)
 		} else {
 			if (manager->IsTrackedType(entry->form)) {
 				auto entryData = InventoryEntryData::Create(entry->form, 0);
-				xChanges->data->objList->Insert(entryData);
+				auto& objList = reinterpret_cast<RE::BSSimpleList<InventoryEntryData*>*&>(xChanges->data->objList);
+				if (!objList) {
+					objList = new RE::BSSimpleList<InventoryEntryData*>();
+				}
+				objList->push_front(entryData);
 				itemMap.insert({ entryData->type->formID, { entry->count, entryData } });
 			}
 		}
@@ -311,7 +315,11 @@ void ParseInventory(StaticFunctionTag*)
 			xListOut = 0;
 			auto result = manager->ActivateHandle(entryData->type, xListOut);
 			if (xListOut) {
-				entryData->extendDataList->Insert(xListOut);
+				auto& xLists = reinterpret_cast<RE::BSSimpleList<BaseExtraList*>*&>(entryData->extendDataList);
+				if (!xLists) {
+					xLists = new RE::BSSimpleList<BaseExtraList*>();
+				}
+				xLists->push_front(xListOut);
 			}
 			if (result.second) {
 				regs->QueueEvent(entryData->type, result.first, 1);
