@@ -65,7 +65,7 @@ namespace ObjectReferenceExt
 		SInt32 count = 0;
 		for (auto& item : itemMap) {
 			if (item.second > 0) {
-				count += item.second;
+				++count;
 			}
 		}
 		return count;
@@ -88,32 +88,34 @@ namespace ObjectReferenceExt
 			return 0;
 		}
 
-		// default inv
-		using FormID = UInt32;
-		std::set<FormID> items;
-		for (UInt32 i = 0; i < container->numEntries; ++i) {
-			auto entry = container->entries[i];
-			if (entry->form->formType == a_type) {
-				auto result = items.insert(entry->form->formID);
-				if (result.second && a_n-- == 0) {
-					return entry->form;
-				}
-			}
-		}
-
 		// extra items
+		using FormID = UInt32;
+		using Count = SInt32;
+		std::map<FormID, Count> itemMap;
 		ForEachInvEntry(a_container, [&](InventoryEntryData* a_entryData) -> bool
 		{
 			if (a_entryData->type->formType == a_type) {
-				if (a_n-- == 0) {
-					return a_entryData->type;
-				} else {
-					items.insert(a_entryData->type->formID);
-				}
+				itemMap.insert({ a_entryData->type->formID, a_entryData->countDelta });
 			}
 			return true;
 		});
 
+		// default inv
+		for (UInt32 i = 0; i < container->numEntries; ++i) {
+			auto entry = container->entries[i];
+			if (entry->form->formType == a_type) {
+				auto result = itemMap.insert({ entry->form->formID, entry->count });
+				if (!result.second && entry->form->formID != kFormID_Gold) {
+					result.first->second += entry->count;
+				}
+			}
+		}
+
+		for (auto& item : itemMap) {
+			if (item.second > 0 && a_n-- == 0) {
+				return LookupFormByID(item.first);
+			}
+		}
 		return 0;
 	}
 
