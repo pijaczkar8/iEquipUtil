@@ -162,6 +162,7 @@ auto RefHandleManager::LookupEntry(TESForm* a_form, RefHandle a_handle)
 
 	auto it = _handleToIDMap.find(a_handle);
 	if (it == _handleToIDMap.end()) {
+		_ERROR("[ERROR] handle not found in map!\n");
 		return entryData;
 	}
 
@@ -241,6 +242,7 @@ EventResult RefHandleManager::ReceiveEvent(RE::TESUniqueIDChangeEvent* a_event, 
 		return kEvent_Continue;
 	}
 
+	Locker locker(_lock);
 	auto it = _idToHandleMap.find(a_event->oldUniqueID);
 	if (it != _idToHandleMap.end()) {
 		RefHandle handle = it->second;

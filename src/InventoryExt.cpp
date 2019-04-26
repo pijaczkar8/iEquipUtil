@@ -78,8 +78,8 @@ namespace
 
 	bool LookupEntry(TESForm* a_item, UInt32 a_refHandle, EntryData& a_entryDataOut)
 	{
-		RefHandleManager* refHandleManager = RefHandleManager::GetSingleton();
-		auto result = refHandleManager->LookupEntry(a_item, a_refHandle);
+		auto manager = RefHandleManager::GetSingleton();
+		auto result = manager->LookupEntry(a_item, a_refHandle);
 		if (!result.invEntryData || !result.extraList) {
 			_ERROR("[ERROR] Failed to find item!\n");
 			return false;
@@ -436,6 +436,8 @@ UInt32 GetRefHandleFromWornObject(StaticFunctionTag*, UInt32 a_equipSlot)
 
 BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
+	_DMESSAGE("[DEBUG] GetLongName called");
+
 	if (!a_item) {
 		_WARNING("[WARNING] a_item is a NONE form!");
 		return "";
@@ -450,16 +452,20 @@ BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandl
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText) {
+		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData");
 		return xText->name;
 	} else {
-		TESFullName* name = DYNAMIC_CAST(a_item, TESForm, TESFullName);
-		return name ? name->GetName() : "";
+		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
+		fullName ? _DMESSAGE("[DEBUG] Cast to full name succeeded") : _DMESSAGE("[DEBUG] Cast to full name failed");
+		return fullName ? fullName->name.data : "";
 	}
 }
 
 
 BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
+	_DMESSAGE("[DEBUG] GetShortName called");
+
 	if (!a_item) {
 		_WARNING("[WARNING] a_item is a NONE form!");
 		return "";
@@ -474,11 +480,13 @@ BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHand
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText) {
+		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s)", xText->name.data);
 		std::string name(xText->name.data, xText->rawNameLen);
 		return name.c_str();
 	} else {
-		TESFullName* name = DYNAMIC_CAST(a_item, TESForm, TESFullName);
-		return name ? name->GetName() : "";
+		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
+		fullName ? _DMESSAGE("[DEBUG] Cast to full name succeeded") : _DMESSAGE("[DEBUG] Cast to full name failed");
+		return fullName ? fullName->name.data : "";
 	}
 }
 

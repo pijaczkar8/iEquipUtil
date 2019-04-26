@@ -23,7 +23,6 @@ namespace
 				break;
 			}
 		}
-		return;
 	}
 }
 
@@ -42,10 +41,12 @@ inline void ForEachInvEntry(TESObjectREFR* a_objRef, ext::function_view<bool(Inv
 
 inline void ForEachExtraList(InventoryEntryData* a_entryData, ext::function_view<bool(BaseExtraList*)> a_fn)
 {
-	auto xLists = reinterpret_cast<RE::BSSimpleList<BaseExtraList*>&>(*a_entryData->extendDataList);
-	for (auto& xList : xLists) {
-		if (!a_fn(xList)) {
-			break;
+	if (a_entryData->extendDataList) {
+		auto xLists = reinterpret_cast<RE::BSSimpleList<BaseExtraList*>&>(*a_entryData->extendDataList);
+		for (auto& xList : xLists) {
+			if (!a_fn(xList)) {
+				break;
+			}
 		}
 	}
 }
