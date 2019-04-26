@@ -173,17 +173,13 @@ auto RefHandleManager::LookupEntry(TESForm* a_form, RefHandle a_handle)
 			{
 				auto xID = static_cast<ExtraUniqueID*>(a_extraList->GetByType(kExtraData_UniqueID));
 				if (xID && xID->uniqueId == it->second) {
-					entryData.extraList = a_extraList;
 					entryData.invEntryData = a_invEntryData;
-					return false;
-				} else {
-					return true;
+					entryData.extraList = a_extraList;
 				}
+				return entryData.invEntryData == 0;
 			});
-			return false;
-		} else {
-			return true;
 		}
+		return entryData.invEntryData == 0;
 	});
 
 	return entryData;

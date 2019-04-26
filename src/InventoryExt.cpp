@@ -452,7 +452,7 @@ BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandl
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText) {
-		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData");
+		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s)", xText->name);
 		return xText->name;
 	} else {
 		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
@@ -480,8 +480,9 @@ BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHand
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText) {
-		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s)", xText->name.data);
-		std::string name(xText->name.data, xText->rawNameLen);
+		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s) (%i)", xText->name.data, xText->rawNameLen);
+		std::string name(xText->name.data, static_cast<std::string::size_type>(xText->rawNameLen));
+		_DMESSAGE("[DEBUG] Built (%s)", name.c_str());
 		return name.c_str();
 	} else {
 		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
