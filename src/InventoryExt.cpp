@@ -437,8 +437,6 @@ UInt32 GetRefHandleFromWornObject(StaticFunctionTag*, UInt32 a_equipSlot)
 
 BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
-	_DMESSAGE("[DEBUG] GetLongName called");
-
 	if (!a_item) {
 		_WARNING("[WARNING] a_item is a NONE form!");
 		return "";
@@ -452,12 +450,10 @@ BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandl
 
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
-	if (xText && xText->type == -2) {
-		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s) (%i)", xText->name, xText->rawNameLen);
+	if (xText) {
 		return xText->name;
 	} else {
 		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
-		fullName ? _DMESSAGE("[DEBUG] Cast to full name succeeded") : _DMESSAGE("[DEBUG] Cast to full name failed");
 		return fullName ? fullName->name.data : "";
 	}
 }
@@ -465,8 +461,6 @@ BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandl
 
 BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 {
-	_DMESSAGE("[DEBUG] GetShortName called");
-
 	if (!a_item) {
 		_WARNING("[WARNING] a_item is a NONE form!");
 		return "";
@@ -481,12 +475,10 @@ BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHand
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
 	if (xText && xText->type == -2) {
-		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s) (%i)", xText->name.data, xText->rawNameLen);
 		std::string name(xText->name.data, xText->rawNameLen);
 		return name.c_str();
 	} else {
 		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
-		fullName ? _DMESSAGE("[DEBUG] Cast to full name succeeded") : _DMESSAGE("[DEBUG] Cast to full name failed");
 		return fullName ? fullName->name.data : "";
 	}
 }
