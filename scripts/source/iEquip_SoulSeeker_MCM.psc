@@ -22,6 +22,8 @@ Event OnConfigInit()
 	g_refHandles = new Int[10]
 	g_arrSize = 0
 
+	iEquip_InventoryExt.RegisterForRefHandleActiveEvent(Self)
+	iEquip_InventoryExt.RegisterForOnRefHandleInvalidatedEvent(Self)
 	iEquip_InventoryExt.ParseInventory()
 EndEvent
 

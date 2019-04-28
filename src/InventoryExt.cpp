@@ -397,6 +397,7 @@ UInt32 GetRefHandleFromWornObject(StaticFunctionTag*, UInt32 a_equipSlot)
 			case kXSlotID_Chest:
 			case kXSlotID_Boots:
 			case kXSlotID_Gloves:
+			case kXSlotID_Shield:
 				{
 					auto armor = static_cast<TESObjectARMO*>(a_entryData->type);
 					if ((armor->bipedObject.data.parts & firstPersonFlag) == 0) {
@@ -451,8 +452,8 @@ BSFixedString GetLongName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandl
 
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
-	if (xText) {
-		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s)", xText->name);
+	if (xText && xText->type == -2) {
+		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s) (%i)", xText->name, xText->rawNameLen);
 		return xText->name;
 	} else {
 		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
@@ -479,10 +480,9 @@ BSFixedString GetShortName(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHand
 
 	entryData.extraList->GetDisplayName(a_item);
 	auto xText = static_cast<RE::ExtraTextDisplayData*>(entryData.extraList->GetByType(kExtraData_TextDisplayData));
-	if (xText) {
+	if (xText && xText->type == -2) {
 		_DMESSAGE("[DEBUG] Item has ExtraTextDisplayData (%s) (%i)", xText->name.data, xText->rawNameLen);
-		std::string name(xText->name.data, static_cast<std::string::size_type>(xText->rawNameLen));
-		_DMESSAGE("[DEBUG] Built (%s)", name.c_str());
+		std::string name(xText->name.data, xText->rawNameLen);
 		return name.c_str();
 	} else {
 		auto fullName = DYNAMIC_CAST(a_item, TESForm, TESFullName);
@@ -577,7 +577,9 @@ void EquipItem(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle, Actor* a
 	SInt32 count = 1;
 	if (entryData.extraList) {
 		auto xCount = static_cast<ExtraCount*>(entryData.extraList->GetByType(kExtraData_Count));
-		count = xCount->count;
+		if (xCount) {
+			count = xCount->count;
+		}
 
 		auto xWorn = static_cast<ExtraWorn*>(entryData.extraList->GetByType(kExtraData_Worn));
 		worn = xWorn != 0;
