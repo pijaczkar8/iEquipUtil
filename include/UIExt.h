@@ -7,10 +7,8 @@ class VMClassRegistry;
 struct StaticFunctionTag;
 
 
-TESForm* GetFormAtInventoryIndex(StaticFunctionTag*, UInt32 a_index);
-
-
 namespace UIExt
 {
-	bool RegisterFuncs(VMClassRegistry* a_registry);
+	TESForm*	GetFormAtInventoryIndex(StaticFunctionTag*, UInt32 a_index);
+	bool		RegisterFuncs(VMClassRegistry* a_registry);
 }

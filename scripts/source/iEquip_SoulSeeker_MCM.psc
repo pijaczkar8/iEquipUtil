@@ -24,6 +24,7 @@ Event OnConfigInit()
 
 	iEquip_InventoryExt.RegisterForRefHandleActiveEvent(Self)
 	iEquip_InventoryExt.RegisterForOnRefHandleInvalidatedEvent(Self)
+	RegisterForCrosshairRef()
 	iEquip_InventoryExt.ParseInventory()
 EndEvent
 
@@ -164,12 +165,12 @@ State InventoryExt_DumpAll_T
 		While (i < g_arrSize)
 			String longName = iEquip_InventoryExt.GetLongName(g_forms[i], g_refHandles[i])
 			String shortName = iEquip_InventoryExt.GetShortName(g_forms[i], g_refHandles[i])
-			Int poisonCount = iEquip_InventoryExt.GetPoisonCount(g_forms[i], g_refHandles[i])
+			Potion poisonCount = iEquip_InventoryExt.GetPoison(g_forms[i], g_refHandles[i])
 			Enchantment ench = iEquip_InventoryExt.GetEnchantment(g_forms[i], g_refHandles[i])
 			Debug.Trace("SoulSeekerDBG: " + g_forms[i])
 			Debug.Trace("Long Name == " + longName)
 			Debug.Trace("Short Name == " + shortName)
-			Debug.Trace("Poison Count == " + poisonCount)
+			Debug.Trace("Poison == " + poisonCount)
 			Debug.Trace("Enchantment == " + ench)
 			i += 1
 		EndWhile
@@ -384,4 +385,10 @@ Event OnRefHandleInvalidated(Form a_item, Int a_refHandle)
 		EndIf
 		i += 1
 	EndWhile
+EndEvent
+
+
+Event OnCrosshairRefChange(ObjectReference a_ref)
+	Debug.Trace("SoulSeekerDBG: Ref from event == " + a_ref)
+	Debug.Trace("SoulSeekerDBG: Ref from getter == " + Game.GetCurrentCrosshairRef())
 EndEvent

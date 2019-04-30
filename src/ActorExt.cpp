@@ -22,540 +22,389 @@
 #include "RE/Memory.h"  // free
 
 
-namespace
+namespace ActorExt
 {
-	enum class ActorValue8 : UInt8
+	namespace
 	{
-		kNone = static_cast<std::underlying_type_t<ActorValue8>>(-1),
-		kAggresion = 0,
-		kConfidence = 1,
-		kEnergy = 2,
-		kMorality = 3,
-		kMood = 4,
-		kAssistance = 5,
-		kOneHanded = 6,
-		kTwoHanded = 7,
-		kArchery = 8,
-		kBlock = 9,
-		kSmithing = 10,
-		kHeavyArmor = 11,
-		kLightArmor = 12,
-		kPickpocket = 13,
-		kLockpicking = 14,
-		kSneak = 15,
-		kAlchemy = 16,
-		kSpeech = 17,
-		kAlteration = 18,
-		kConjuration = 19,
-		kDestruction = 20,
-		kIllusion = 21,
-		kRestoration = 22,
-		kEnchanting = 23,
-		kHealth = 24,
-		kMagicka = 25,
-		kStamina = 26,
-		kHealRate = 27,
-		kMagickaRate = 28,
-		StaminaRate = 29,
-		kSpeedMult = 30,
-		kInventoryWeight = 31,
-		kCarryWeight = 32,
-		kCriticalChance = 33,
-		kMeleeDamage = 34,
-		kUnarmedDamage = 35,
-		kMass = 36,
-		kVoicePoints = 37,
-		kVoiceRate = 38,
-		kDamageResist = 39,
-		kPoisonResist = 40,
-		kResistFire = 41,
-		kResistShock = 42,
-		kResistFrost = 43,
-		kResistMagic = 44,
-		kResistDisease = 45,
-		kUnknown46 = 46,
-		kUnknown47 = 47,
-		kUnknown48 = 48,
-		kUnknown49 = 49,
-		kUnknown50 = 50,
-		kUnknown51 = 51,
-		kUnknown52 = 52,
-		kParalysis = 53,
-		kInvisibility = 54,
-		kNightEye = 55,
-		kDetectLifeRange = 56,
-		kWaterBreathing = 57,
-		kWaterWalking = 58,
-		kUnknown59 = 59,
-		kFame = 60,
-		kInfamy = 61,
-		kJumpingBonus = 62,
-		kWardPower = 63,
-		kRightItemCharge = 64,
-		kArmorPerks = 65,
-		kShieldPerks = 66,
-		kWardDeflection = 67,
-		kVariable01 = 68,
-		kVariable02 = 69,
-		kVariable03 = 70,
-		kVariable04 = 71,
-		kVariable05 = 72,
-		kVariable06 = 73,
-		kVariable07 = 74,
-		kVariable08 = 75,
-		kVariable09 = 76,
-		kVariable10 = 77,
-		kBowSpeedBonus = 78,
-		kFavorActive = 79,
-		kFavorsPerDay = 80,
-		kFavorsPerDayTimer = 81,
-		kLeftItemCharge = 82,
-		kAbsorbChance = 83,
-		kBlindness = 84,
-		kWeaponSpeedMult = 85,
-		kShoutRecoveryMult = 86,
-		kBowStaggerBonus = 87,
-		kTelekinesis = 88,
-		kFavorPointsBonus = 89,
-		kLastBribedIntimidated = 90,
-		kLastFlattered = 91,
-		kMovementNoiseMult = 92,
-		kBypassVendorStolenCheck = 93,
-		kBypassVendorKeywordCheck = 94,
-		kWaitingForPlayer = 95,
-		kOneHandedModifier = 96,
-		kTwoHandedModifier = 97,
-		kMarksmanModifier = 98,
-		kBlockModifier = 99,
-		kSmithingModifier = 100,
-		kHeavyArmorModifier = 101,
-		kLightArmorModifier = 102,
-		kPickpocketModifier = 103,
-		kLockpickingModifier = 104,
-		kSneakingModifier = 105,
-		kAlchemyModifier = 106,
-		kSpeechcraftModifier = 107,
-		kAlterationModifier = 108,
-		kConjurationModifier = 109,
-		kDestructionModifier = 110,
-		kIllusionModifier = 111,
-		kRestorationModifier = 112,
-		kEnchantingModifier = 113,
-		kOneHandedSkillAdvance = 114,
-		kTwoHandedSkillAdvance = 115,
-		kMarksmanSkillAdvance = 116,
-		kBlockSkillAdvance = 117,
-		kSmithingSkillAdvance = 118,
-		kHeavyArmorSkillAdvance = 119,
-		kLightArmorSkillAdvance = 120,
-		kPickpocketSkillAdvance = 121,
-		kLockpickingSkillAdvance = 122,
-		kSneakingSkillAdvance = 123,
-		kAlchemySkillAdvance = 124,
-		kSpeechcraftSkillAdvance = 125,
-		kAlterationSkillAdvance = 126,
-		kConjurationSkillAdvance = 127,
-		kDestructionSkillAdvance = 128,
-		kIllusionSkillAdvance = 129,
-		kRestorationSkillAdvance = 130,
-		kEnchantingSkillAdvance = 131,
-		kLeftWeaponSpeedMultiply = 132,
-		kDragonSouls = 133,
-		kCombatHealthRegenMultiply = 134,
-		kOneHandedPowerModifier = 135,
-		kTwoHandedPowerModifier = 136,
-		kMarksmanPowerModifier = 137,
-		kBlockPowerModifier = 138,
-		kSmithingPowerModifier = 139,
-		kHeavyArmorPowerModifier = 140,
-		kLightArmorPowerModifier = 141,
-		kPickpocketPowerModifier = 142,
-		kLockpickingPowerModifier = 143,
-		kSneakingPowerModifier = 144,
-		kAlchemyPowerModifier = 145,
-		kSpeechcraftPowerModifier = 146,
-		kAlterationPowerModifier = 147,
-		kConjurationPowerModifier = 148,
-		kDestructionPowerModifier = 149,
-		kIllusionPowerModifier = 150,
-		kRestorationPowerModifier = 151,
-		kEnchantingPowerModifier = 152,
-		kDragonRend = 153,
-		kAttackDamageMult = 154,
-		kHealRateMult = 155,
-		kMagickaRateMult = 156,
-		StaminaRateMult = 157,
-		kWerewolfPerks = 158,
-		kVampirePerks = 159,
-		kGrabActorOffset = 160,
-		kGrabbed = 161,
-		kUnknown162 = 162,
-		kReflectDamage = 163
-	};
-
-
-	enum : UInt32
-	{
-		kHandSlot_Left = 0,
-		kHandSlot_Right = 1
-	};
-
-
-	struct ActorValueModifiers
-	{
-		struct Modifiers
+		enum class ActorValue8 : UInt8
 		{
-			enum
-			{
-				kPermanent = 0,
-				kTemporary,
-				kDamage,
-				kTotal
-			};
+			kNone = static_cast<std::underlying_type_t<ActorValue8>>(-1),
+			kAggresion = 0,
+			kConfidence = 1,
+			kEnergy = 2,
+			kMorality = 3,
+			kMood = 4,
+			kAssistance = 5,
+			kOneHanded = 6,
+			kTwoHanded = 7,
+			kArchery = 8,
+			kBlock = 9,
+			kSmithing = 10,
+			kHeavyArmor = 11,
+			kLightArmor = 12,
+			kPickpocket = 13,
+			kLockpicking = 14,
+			kSneak = 15,
+			kAlchemy = 16,
+			kSpeech = 17,
+			kAlteration = 18,
+			kConjuration = 19,
+			kDestruction = 20,
+			kIllusion = 21,
+			kRestoration = 22,
+			kEnchanting = 23,
+			kHealth = 24,
+			kMagicka = 25,
+			kStamina = 26,
+			kHealRate = 27,
+			kMagickaRate = 28,
+			StaminaRate = 29,
+			kSpeedMult = 30,
+			kInventoryWeight = 31,
+			kCarryWeight = 32,
+			kCriticalChance = 33,
+			kMeleeDamage = 34,
+			kUnarmedDamage = 35,
+			kMass = 36,
+			kVoicePoints = 37,
+			kVoiceRate = 38,
+			kDamageResist = 39,
+			kPoisonResist = 40,
+			kResistFire = 41,
+			kResistShock = 42,
+			kResistFrost = 43,
+			kResistMagic = 44,
+			kResistDisease = 45,
+			kUnknown46 = 46,
+			kUnknown47 = 47,
+			kUnknown48 = 48,
+			kUnknown49 = 49,
+			kUnknown50 = 50,
+			kUnknown51 = 51,
+			kUnknown52 = 52,
+			kParalysis = 53,
+			kInvisibility = 54,
+			kNightEye = 55,
+			kDetectLifeRange = 56,
+			kWaterBreathing = 57,
+			kWaterWalking = 58,
+			kUnknown59 = 59,
+			kFame = 60,
+			kInfamy = 61,
+			kJumpingBonus = 62,
+			kWardPower = 63,
+			kRightItemCharge = 64,
+			kArmorPerks = 65,
+			kShieldPerks = 66,
+			kWardDeflection = 67,
+			kVariable01 = 68,
+			kVariable02 = 69,
+			kVariable03 = 70,
+			kVariable04 = 71,
+			kVariable05 = 72,
+			kVariable06 = 73,
+			kVariable07 = 74,
+			kVariable08 = 75,
+			kVariable09 = 76,
+			kVariable10 = 77,
+			kBowSpeedBonus = 78,
+			kFavorActive = 79,
+			kFavorsPerDay = 80,
+			kFavorsPerDayTimer = 81,
+			kLeftItemCharge = 82,
+			kAbsorbChance = 83,
+			kBlindness = 84,
+			kWeaponSpeedMult = 85,
+			kShoutRecoveryMult = 86,
+			kBowStaggerBonus = 87,
+			kTelekinesis = 88,
+			kFavorPointsBonus = 89,
+			kLastBribedIntimidated = 90,
+			kLastFlattered = 91,
+			kMovementNoiseMult = 92,
+			kBypassVendorStolenCheck = 93,
+			kBypassVendorKeywordCheck = 94,
+			kWaitingForPlayer = 95,
+			kOneHandedModifier = 96,
+			kTwoHandedModifier = 97,
+			kMarksmanModifier = 98,
+			kBlockModifier = 99,
+			kSmithingModifier = 100,
+			kHeavyArmorModifier = 101,
+			kLightArmorModifier = 102,
+			kPickpocketModifier = 103,
+			kLockpickingModifier = 104,
+			kSneakingModifier = 105,
+			kAlchemyModifier = 106,
+			kSpeechcraftModifier = 107,
+			kAlterationModifier = 108,
+			kConjurationModifier = 109,
+			kDestructionModifier = 110,
+			kIllusionModifier = 111,
+			kRestorationModifier = 112,
+			kEnchantingModifier = 113,
+			kOneHandedSkillAdvance = 114,
+			kTwoHandedSkillAdvance = 115,
+			kMarksmanSkillAdvance = 116,
+			kBlockSkillAdvance = 117,
+			kSmithingSkillAdvance = 118,
+			kHeavyArmorSkillAdvance = 119,
+			kLightArmorSkillAdvance = 120,
+			kPickpocketSkillAdvance = 121,
+			kLockpickingSkillAdvance = 122,
+			kSneakingSkillAdvance = 123,
+			kAlchemySkillAdvance = 124,
+			kSpeechcraftSkillAdvance = 125,
+			kAlterationSkillAdvance = 126,
+			kConjurationSkillAdvance = 127,
+			kDestructionSkillAdvance = 128,
+			kIllusionSkillAdvance = 129,
+			kRestorationSkillAdvance = 130,
+			kEnchantingSkillAdvance = 131,
+			kLeftWeaponSpeedMultiply = 132,
+			kDragonSouls = 133,
+			kCombatHealthRegenMultiply = 134,
+			kOneHandedPowerModifier = 135,
+			kTwoHandedPowerModifier = 136,
+			kMarksmanPowerModifier = 137,
+			kBlockPowerModifier = 138,
+			kSmithingPowerModifier = 139,
+			kHeavyArmorPowerModifier = 140,
+			kLightArmorPowerModifier = 141,
+			kPickpocketPowerModifier = 142,
+			kLockpickingPowerModifier = 143,
+			kSneakingPowerModifier = 144,
+			kAlchemyPowerModifier = 145,
+			kSpeechcraftPowerModifier = 146,
+			kAlterationPowerModifier = 147,
+			kConjurationPowerModifier = 148,
+			kDestructionPowerModifier = 149,
+			kIllusionPowerModifier = 150,
+			kRestorationPowerModifier = 151,
+			kEnchantingPowerModifier = 152,
+			kDragonRend = 153,
+			kAttackDamageMult = 154,
+			kHealRateMult = 155,
+			kMagickaRateMult = 156,
+			StaminaRateMult = 157,
+			kWerewolfPerks = 158,
+			kVampirePerks = 159,
+			kGrabActorOffset = 160,
+			kGrabbed = 161,
+			kUnknown162 = 162,
+			kReflectDamage = 163
 		};
 
 
-		// members
-		float modifiers[Modifiers::kTotal];	// 0
-	};
-	//STATIC_ASSERT(sizeof(ActorValueModifiers) == 0xC);
-
-
-	struct ActorValueMap
-	{
-		template<typename T>
-		struct LocalMap
+		enum : UInt32
 		{
-			T* operator[](ActorValue8 a_actorValue)
+			kHandSlot_Left = 0,
+			kHandSlot_Right = 1
+		};
+
+
+		struct ActorValueModifiers
+		{
+			struct Modifiers
 			{
-				if (actorValues && entries) {
-					UInt32 idx = 0;
-					while (actorValues[idx] != (ActorValue8)0) {
-						if (actorValues[idx] == a_actorValue) {
-							break;
-						}
-						++idx;
-					}
-					if (actorValues[idx] != (ActorValue8)0) {
-						return &entries[idx];
-					}
-				}
-				return 0;
-			}
+				enum
+				{
+					kPermanent = 0,
+					kTemporary,
+					kDamage,
+					kTotal
+				};
+			};
 
 
 			// members
-			ActorValue8*	actorValues;	// 00
-			T*				entries;		// 08
+			float modifiers[Modifiers::kTotal];	// 0
 		};
-		//STATIC_ASSERT(sizeof(LocalMap<float>) == 0x10);
+		//STATIC_ASSERT(sizeof(ActorValueModifiers) == 0xC);
 
 
-		// members
-		LocalMap<float>					baseValues;	// 00
-		LocalMap<ActorValueModifiers>	modifiers;	// 10
-	};
-	//STATIC_ASSERT(sizeof(ActorValueMap) == 0x20);
-}
-
-
-TESAmmo* GetEquippedAmmo(StaticFunctionTag*, Actor* a_actor)
-{
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return 0;
-	}
-
-	ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
-	ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
-	if (!containerData) {
-		_ERROR("[ERROR] No container data!\n");
-		return 0;
-	}
-
-	InventoryEntryData* entryData = 0;
-	BaseExtraList* xList = 0;
-	ExtraListLocator xListLocator(0, { kExtraData_Worn }, { });
-	for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
-		entryData = containerData->objList->GetNthItem(i);
-		if (entryData && entryData->type->IsAmmo()) {
-			xListLocator.setEntryData(entryData);
-			xList = xListLocator.found();
-			if (xList) {
-				return static_cast<TESAmmo*>(entryData->type);
-			}
-		}
-	}
-
-	return 0;
-}
-
-
-void EquipEnchantedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
-{
-	ActorEquipEnchantedItem equipEnch(a_enchantment);
-	EquipItemEx(a_actor, a_item, a_slotID, &equipEnch, a_preventUnequip, a_equipSound);
-}
-
-
-void EquipPoisonedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
-{
-	ActorEquipPoisonedItem equipPoison(a_poison, a_count);
-	EquipItemEx(a_actor, a_item, a_slotID, &equipPoison, a_preventUnequip, a_equipSound);
-}
-
-
-void EquipEnchantedAndPoisonedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
-{
-	ActorEquipEnchantedAndPoisonedItem equipEnchAndPoison(a_enchantment, a_poison, a_count);
-	EquipItemEx(a_actor, a_item, a_slotID, &equipEnchAndPoison, a_preventUnequip, a_equipSound);
-}
-
-
-float GetAVDamage(StaticFunctionTag*, Actor* a_actor, UInt32 a_actorValue)
-{
-#if _WIN64
-	constexpr std::uintptr_t avMapOffset = 0x200;
-	constexpr std::uintptr_t avHealthOffset = 0x228;
-	constexpr std::uintptr_t avMagickaOffset = 0x234;
-	constexpr std::uintptr_t avStaminaOffset = 0x240;
-	constexpr std::uintptr_t avVoicePointsOffset = 0x24C;
-#else
-	constexpr std::uintptr_t avMapOffset = 0x13C;
-	constexpr std::uintptr_t avHealthOffset = 0x150;
-	constexpr std::uintptr_t avMagickaOffset = 0x15C;
-	constexpr std::uintptr_t avStaminaOffset = 0x168;
-	constexpr std::uintptr_t avVoicePointsOffset = 0x174;
-#endif
-
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return 0.0;
-	} else if (a_actorValue > 163) {
-		_WARNING("[WARNING] a_actorValue is out of range!");
-		return 0.0;
-	}
-
-	std::uintptr_t actorBase = reinterpret_cast<std::uintptr_t>(a_actor);
-	ActorValueModifiers* avMods = 0;
-	ActorValue8 actorValue = static_cast<ActorValue8>(a_actorValue);
-	switch (actorValue) {
-	case ActorValue8::kHealth:
-		avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avHealthOffset);
-		break;
-	case ActorValue8::kMagicka:
-		avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avMagickaOffset);
-		break;
-	case ActorValue8::kStamina:
-		avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avStaminaOffset);
-		break;
-	case ActorValue8::kVoicePoints:
-		avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avVoicePointsOffset);
-		break;
-	default:
+		struct ActorValueMap
 		{
-			ActorValueMap* avMap = reinterpret_cast<ActorValueMap*>(actorBase + avMapOffset);
-			avMods = avMap->modifiers[actorValue];
-		}
-		break;
+			template<typename T>
+			struct LocalMap
+			{
+				T* operator[](ActorValue8 a_actorValue)
+				{
+					if (actorValues && entries) {
+						UInt32 idx = 0;
+						while (actorValues[idx] != (ActorValue8)0) {
+							if (actorValues[idx] == a_actorValue) {
+								break;
+							}
+							++idx;
+						}
+						if (actorValues[idx] != (ActorValue8)0) {
+							return &entries[idx];
+						}
+					}
+					return 0;
+				}
+
+
+				// members
+				ActorValue8*	actorValues;	// 00
+				T*				entries;		// 08
+			};
+			//STATIC_ASSERT(sizeof(LocalMap<float>) == 0x10);
+
+
+			// members
+			LocalMap<float>					baseValues;	// 00
+			LocalMap<ActorValueModifiers>	modifiers;	// 10
+		};
+		//STATIC_ASSERT(sizeof(ActorValueMap) == 0x20);
 	}
 
-	return avMods ? std::abs(avMods->modifiers[ActorValueModifiers::Modifiers::kDamage]) : 0.0;
-}
 
-
-TESRace* GetBaseRace(StaticFunctionTag*, Actor* a_actor)
-{
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return 0;
-	}
-
-	if (a_actor->formID == (*g_thePlayer)->formID) {
-		return (*g_thePlayer)->PlayerCharacter::race;
-	} else {
-		return static_cast<TESNPC*>(a_actor->baseForm)->race.race;
-	}
-}
-
-
-float GetMagicEffectMagnitude(StaticFunctionTag*, Actor* a_actor, EffectSetting* a_mgef)
-{
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return 0.0;
-	} else if (!a_mgef) {
-		_WARNING("[WARNING] a_mgef is a NONE form!");
-		return 0.0;
-	}
-
-	RE::BSSimpleList<ActiveEffect*>* activeEffects = reinterpret_cast<RE::BSSimpleList<ActiveEffect*>*>(a_actor->magicTarget.GetActiveEffects());
-	if (!activeEffects) {
-		return 0.0;
-	}
-
-	for (auto& activeEffect : *activeEffects) {
-		if (activeEffect->effect && activeEffect->effect->mgef == a_mgef) {
-			return activeEffect->effect->magnitude;
-		}
-	}
-	return 0.0;
-}
-
-
-AlchemyItem* WornGetPoison(StaticFunctionTag*, Actor* a_actor, UInt32 a_handSlot)
-{
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return 0;
-	} else {
-		switch (a_handSlot) {
-		case kHandSlot_Left:
-		case kHandSlot_Right:
-			break;
-		default:
-			_WARNING("[WARNING] a_handSlot is an invalid slot!");
+	TESAmmo* GetEquippedAmmo(StaticFunctionTag*, Actor* a_actor)
+	{
+		if (!a_actor) {
+			_WARNING("[WARNING] a_actor is a NONE form!");
 			return 0;
 		}
-	}
 
-	auto weap = a_actor->GetEquippedObject(a_handSlot == kHandSlot_Left);
-	if (!weap) {
-		_WARNING("[WARNING] a_actor is not carrying a weapon in the specified hand!");
+		ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(a_actor->extraData.GetByType(kExtraData_ContainerChanges));
+		ExtraContainerChanges::Data* containerData = containerChanges ? containerChanges->data : 0;
+		if (!containerData) {
+			_ERROR("[ERROR] No container data!\n");
+			return 0;
+		}
+
+		InventoryEntryData* entryData = 0;
+		BaseExtraList* xList = 0;
+		ExtraListLocator xListLocator(0, { kExtraData_Worn }, { });
+		for (UInt32 i = 0; i < containerData->objList->Count(); ++i) {
+			entryData = containerData->objList->GetNthItem(i);
+			if (entryData && entryData->type->IsAmmo()) {
+				xListLocator.setEntryData(entryData);
+				xList = xListLocator.found();
+				if (xList) {
+					return static_cast<TESAmmo*>(entryData->type);
+				}
+			}
+		}
+
 		return 0;
 	}
 
-	InventoryEntryData* entryData = 0;
-	ForEachInvEntry(a_actor, [&](InventoryEntryData* a_entryData) -> bool
-	{
-		entryData = a_entryData;
-		return entryData->type != weap;
-	});
 
-	if (!entryData) {
-		_ERROR("[ERROR] Could not find entry data for worn weapon!\n");
+	void EquipEnchantedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, bool a_preventUnequip, bool a_equipSound)
+	{
+		ActorEquipEnchantedItem equipEnch(a_enchantment);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipEnch, a_preventUnequip, a_equipSound);
 	}
 
-	RE::ExtraPoison* xPoison = 0;
-	ForEachExtraList(entryData, [&](BaseExtraList* a_extraList) -> bool
+
+	void EquipPoisonedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
 	{
-		xPoison = static_cast<RE::ExtraPoison*>(a_extraList->GetByType(kExtraData_Poison));
-		return xPoison == 0;
-	});
-
-	return xPoison ? xPoison->poison : 0;
-}
+		ActorEquipPoisonedItem equipPoison(a_poison, a_count);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipPoison, a_preventUnequip, a_equipSound);
+	}
 
 
-bool WornRemovePoison(StaticFunctionTag*, Actor* a_actor, UInt32 a_handSlot)
-{
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return false;
-	} else {
-		switch (a_handSlot) {
-		case kHandSlot_Left:
-		case kHandSlot_Right:
+	void EquipEnchantedAndPoisonedItemEx(StaticFunctionTag*, Actor* a_actor, TESForm* a_item, SInt32 a_slotID, EnchantmentItem* a_enchantment, AlchemyItem* a_poison, UInt32 a_count, bool a_preventUnequip, bool a_equipSound)
+	{
+		ActorEquipEnchantedAndPoisonedItem equipEnchAndPoison(a_enchantment, a_poison, a_count);
+		EquipItemEx(a_actor, a_item, a_slotID, &equipEnchAndPoison, a_preventUnequip, a_equipSound);
+	}
+
+
+	float GetAVDamage(StaticFunctionTag*, Actor* a_actor, UInt32 a_actorValue)
+	{
+#if _WIN64
+		constexpr std::uintptr_t avMapOffset = 0x200;
+		constexpr std::uintptr_t avHealthOffset = 0x228;
+		constexpr std::uintptr_t avMagickaOffset = 0x234;
+		constexpr std::uintptr_t avStaminaOffset = 0x240;
+		constexpr std::uintptr_t avVoicePointsOffset = 0x24C;
+#else
+		constexpr std::uintptr_t avMapOffset = 0x13C;
+		constexpr std::uintptr_t avHealthOffset = 0x150;
+		constexpr std::uintptr_t avMagickaOffset = 0x15C;
+		constexpr std::uintptr_t avStaminaOffset = 0x168;
+		constexpr std::uintptr_t avVoicePointsOffset = 0x174;
+#endif
+
+		if (!a_actor) {
+			_WARNING("[WARNING] a_actor is a NONE form!");
+			return 0.0;
+		} else if (a_actorValue > 163) {
+			_WARNING("[WARNING] a_actorValue is out of range!");
+			return 0.0;
+		}
+
+		std::uintptr_t actorBase = reinterpret_cast<std::uintptr_t>(a_actor);
+		ActorValueModifiers* avMods = 0;
+		ActorValue8 actorValue = static_cast<ActorValue8>(a_actorValue);
+		switch (actorValue) {
+		case ActorValue8::kHealth:
+			avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avHealthOffset);
+			break;
+		case ActorValue8::kMagicka:
+			avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avMagickaOffset);
+			break;
+		case ActorValue8::kStamina:
+			avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avStaminaOffset);
+			break;
+		case ActorValue8::kVoicePoints:
+			avMods = reinterpret_cast<ActorValueModifiers*>(actorBase + avVoicePointsOffset);
 			break;
 		default:
-			_WARNING("[WARNING] a_handSlot is an invalid slot!");
-			return false;
-		}
-	}
-
-	auto weap = a_actor->GetEquippedObject(a_handSlot == kHandSlot_Left);
-	if (!weap) {
-		_WARNING("[WARNING] a_actor is not carrying a weapon in the specified hand!");
-		return false;
-	}
-
-	InventoryEntryData* entryData = 0;
-	ForEachInvEntry(a_actor, [&](InventoryEntryData* a_entryData) -> bool
-	{
-		entryData = a_entryData;
-		return entryData->type != weap;
-	});
-
-	if (!entryData) {
-		_ERROR("[ERROR] Could not find entry data for worn weapon!\n");
-		return false;
-	}
-
-	ForEachExtraList(entryData, [&](BaseExtraList* a_extraList) -> bool
-	{
-		auto xPoison = static_cast<ExtraPoison*>(a_extraList->GetByType(kExtraData_Poison));
-		if (xPoison) {
-			a_extraList->Remove(kExtraData_Poison, xPoison);
-			RE::free(xPoison);
-		}
-		return true;
-	});
-
-	return true;
-}
-
-
-bool WornSetPoison(StaticFunctionTag*, Actor* a_actor, UInt32 a_handSlot, AlchemyItem* a_poison, UInt32 a_charges)
-{
-	if (!a_actor) {
-		_WARNING("[WARNING] a_actor is a NONE form!");
-		return false;
-	} else if (!a_poison) {
-		_WARNING("[WARNING] a_poison is a NONE form!");
-		return false;
-	} else {
-		switch (a_handSlot) {
-		case kHandSlot_Left:
-		case kHandSlot_Right:
+			{
+				ActorValueMap* avMap = reinterpret_cast<ActorValueMap*>(actorBase + avMapOffset);
+				avMods = avMap->modifiers[actorValue];
+			}
 			break;
-		default:
-			_WARNING("[WARNING] a_handSlot is an invalid slot!");
-			return false;
+		}
+
+		return avMods ? std::abs(avMods->modifiers[ActorValueModifiers::Modifiers::kDamage]) : 0.0;
+	}
+
+
+	TESRace* GetBaseRace(StaticFunctionTag*, Actor* a_actor)
+	{
+		if (!a_actor) {
+			_WARNING("[WARNING] a_actor is a NONE form!");
+			return 0;
+		}
+
+		if (a_actor->formID == (*g_thePlayer)->formID) {
+			return (*g_thePlayer)->PlayerCharacter::race;
+		} else {
+			return static_cast<TESNPC*>(a_actor->baseForm)->race.race;
 		}
 	}
 
 
-	auto weap = a_actor->GetEquippedObject(a_handSlot == kHandSlot_Left);
-	if (!weap) {
-		_WARNING("[WARNING] a_actor is not carrying a weapon in the specified hand!");
-		return false;
-	}
-
-	InventoryEntryData* entryData = 0;
-	ForEachInvEntry(a_actor, [&](InventoryEntryData* a_entryData) -> bool
+	float GetMagicEffectMagnitude(StaticFunctionTag*, Actor* a_actor, EffectSetting* a_mgef)
 	{
-		entryData = a_entryData;
-		return entryData->type != weap;
-	});
+		if (!a_actor) {
+			_WARNING("[WARNING] a_actor is a NONE form!");
+			return 0.0;
+		} else if (!a_mgef) {
+			_WARNING("[WARNING] a_mgef is a NONE form!");
+			return 0.0;
+		}
 
-	if (!entryData) {
-		_ERROR("[ERROR] Could not find entry data for worn weapon!\n");
-		return false;
-	} else if (!entryData->extendDataList) {	// worn items should always have extra data
-		_ERROR("[ERROR] Entry did not have extra data list!\n");
-		return false;
+		RE::BSSimpleList<ActiveEffect*>* activeEffects = reinterpret_cast<RE::BSSimpleList<ActiveEffect*>*>(a_actor->magicTarget.GetActiveEffects());
+		if (!activeEffects) {
+			return 0.0;
+		}
+
+		for (auto& activeEffect : *activeEffects) {
+			if (activeEffect->effect && activeEffect->effect->mgef == a_mgef) {
+				return activeEffect->effect->magnitude;
+			}
+		}
+		return 0.0;
 	}
 
-	auto extraList = entryData->extendDataList->GetNthItem(0);
-	if (!extraList) {
-		_ERROR("[ERROR] Entry did not have base extra list!\n");
-		return false;
-	}
 
-	auto xPoison = static_cast<RE::ExtraPoison*>(extraList->GetByType(kExtraData_Poison));
-	if (!xPoison) {
-		xPoison = RE::ExtraPoison::Create();
-		extraList->Add(kExtraData_Poison, xPoison);
-	}
-	xPoison->count = a_charges;
-	xPoison->poison = a_poison;
-
-	return true;
-}
-
-
-namespace ActorExt
-{
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(
@@ -578,15 +427,6 @@ namespace ActorExt
 
 		a_registry->RegisterFunction(
 			new NativeFunction2<StaticFunctionTag, float, Actor*, EffectSetting*>("GetMagicEffectMagnitude", "iEquip_ActorExt", GetMagicEffectMagnitude, a_registry));
-
-		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, AlchemyItem*, Actor*, UInt32>("WornGetPoison", "iEquip_ActorExt", WornGetPoison, a_registry));
-
-		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, bool, Actor*, UInt32>("WornRemovePoison", "iEquip_ActorExt", WornRemovePoison, a_registry));
-
-		a_registry->RegisterFunction(
-			new NativeFunction4<StaticFunctionTag, bool, Actor*, UInt32, AlchemyItem*, UInt32>("WornSetPoison", "iEquip_ActorExt", WornSetPoison, a_registry));
 
 		return true;
 	}

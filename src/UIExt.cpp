@@ -19,29 +19,29 @@
 #endif
 
 
-TESForm* GetFormAtInventoryIndex(StaticFunctionTag*, UInt32 a_index)
-{
-	MenuManager* mm = MenuManager::GetSingleton();
-	UIStringHolder* uiStrHolder = UIStringHolder::GetSingleton();
-	RE::InventoryMenu* invMenu = static_cast<RE::InventoryMenu*>(mm->GetMenu(&uiStrHolder->inventoryMenu));
-	if (!invMenu) {
-		_WARNING("[WARNING] Inventory menu is not open!");
-		return 0;
-	}
-
-	auto& items = invMenu->inventoryData->items;
-	if (a_index >= items.count) {
-		_WARNING("[WARNING] Index is out of range!");
-		return 0;
-	}
-
-	auto item = items[a_index];
-	return item && item->data.objDesc ? item->data.objDesc->type : 0;
-}
-
-
 namespace UIExt
 {
+	TESForm* GetFormAtInventoryIndex(StaticFunctionTag*, UInt32 a_index)
+	{
+		MenuManager* mm = MenuManager::GetSingleton();
+		UIStringHolder* uiStrHolder = UIStringHolder::GetSingleton();
+		RE::InventoryMenu* invMenu = static_cast<RE::InventoryMenu*>(mm->GetMenu(&uiStrHolder->inventoryMenu));
+		if (!invMenu) {
+			_WARNING("[WARNING] Inventory menu is not open!");
+			return 0;
+		}
+
+		auto& items = invMenu->inventoryData->items;
+		if (a_index >= items.count) {
+			_WARNING("[WARNING] Index is out of range!");
+			return 0;
+		}
+
+		auto item = items[a_index];
+		return item && item->data.objDesc ? item->data.objDesc->type : 0;
+	}
+
+
 	bool RegisterFuncs(VMClassRegistry* a_registry)
 	{
 		a_registry->RegisterFunction(

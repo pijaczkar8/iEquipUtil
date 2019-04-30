@@ -6,20 +6,18 @@ class VMClassRegistry;
 struct StaticFunctionTag;
 
 
-enum
-{
-	kHand_Unequipped,
-	kHand_Right,
-	kHand_Left,
-	kHand_DualWield
-};
-
-
-TESObjectWEAP*	GetEquippedWeapon(StaticFunctionTag*, Actor* a_actor, SInt32 a_hand);
-bool			IsWeaponBound(StaticFunctionTag*, TESObjectWEAP* a_weap);
-
-
 namespace WeaponExt
 {
-	bool RegisterFuncs(VMClassRegistry* a_registry);
+	enum
+	{
+		kHand_Unequipped,
+		kHand_Right,
+		kHand_Left,
+		kHand_DualWield
+	};
+
+
+	TESObjectWEAP*	GetEquippedWeapon(StaticFunctionTag*, Actor* a_actor, SInt32 a_hand);
+	bool			IsWeaponBound(StaticFunctionTag*, TESObjectWEAP* a_weap);
+	bool			RegisterFuncs(VMClassRegistry* a_registry);
 }
