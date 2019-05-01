@@ -105,6 +105,21 @@ Function SetPoison(Form a_item, Int a_refHandle, Potion a_newPoison, Int a_newCo
 Function RemovePoison(Form a_item, Int a_refHandle) Global Native
 
 
+; @brief Retrieves the poison count of the item.
+; @param a_item The item to retrieve the poison count of.
+; @param a_refHandle The handle to the item.
+; @return Returns 0 error, else returns the poison count.
+Int Function GetPoisonCount(Form a_item, Int a_refHandle) Global Native
+
+
+; @brief Sets the poison count of the item.
+; @param a_item The item to set the poison count on.
+; @param a_refHandle The handle to the item.
+; @param a_newCount The new poison count.
+; @notes Only works if the weapon has an existing poison applied.
+Function SetPoisonCount(Form a_item, Int a_refHandle, Int a_newCount) Global Native
+
+
 ; @brief Retrieves the enchantment on the item.
 ; @param a_item The item to retrieve the enchantment of.
 ; @param a_refHandle The handle to the item.

@@ -563,6 +563,50 @@ namespace InventoryExt
 	}
 
 
+	SInt32 GetPoisonCount(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
+	{
+		if (!a_item) {
+			_WARNING("[WARNING] a_item is a NONE form!");
+			return 0;
+		} else if (a_item->formType != kFormType_Weapon) {
+			_WARNING("[WARNING] a_item is not a weapon!");
+			return 0;
+		}
+
+		EntryData entryData;
+		bool result = LookupEntry(a_item, a_refHandle, entryData);
+		if (!result) {
+			return 0;
+		}
+
+		auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_Poison));
+		return xPoison ? xPoison->count : 0;
+	}
+
+
+	void SetPoisonCount(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle, UInt32 a_newCount)
+	{
+		if (!a_item) {
+			_WARNING("[WARNING] a_item is a NONE form!");
+			return;
+		} else if (a_item->formType != kFormType_Weapon) {
+			_WARNING("[WARNING] a_item is not a weapon!");
+			return;
+		}
+
+		EntryData entryData;
+		bool result = LookupEntry(a_item, a_refHandle, entryData);
+		if (!result) {
+			return;
+		}
+
+		auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_Poison));
+		if (xPoison) {
+			xPoison->count = a_newCount;
+		}
+	}
+
+
 	EnchantmentItem* GetEnchantment(StaticFunctionTag*, TESForm* a_item, UInt32 a_refHandle)
 	{
 		if (!a_item) {
@@ -680,7 +724,13 @@ namespace InventoryExt
 			new NativeFunction2<StaticFunctionTag, void, TESForm*, UInt32>("RemovePoison", "iEquip_InventoryExt", RemovePoison, a_registry));
 
 		a_registry->RegisterFunction(
-			new NativeFunction2<StaticFunctionTag, EnchantmentItem*, TESForm*, UInt32>("GetEnchantment", "iEquip_InventoryExt", GetEnchantment, a_registry));
+			new NativeFunction2<StaticFunctionTag, void, TESForm*, UInt32>("RemovePoison", "iEquip_InventoryExt", RemovePoison, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, SInt32, TESForm*, UInt32>("GetPoisonCount", "iEquip_InventoryExt", GetPoisonCount, a_registry));
+
+		a_registry->RegisterFunction(
+			new NativeFunction3<StaticFunctionTag, void, TESForm*, UInt32, UInt32>("SetPoisonCount", "iEquip_InventoryExt", SetPoisonCount, a_registry));
 
 		a_registry->RegisterFunction(
 			new NativeFunction6<StaticFunctionTag, void, TESForm*, UInt32, Actor*, UInt32, bool, bool>("EquipItem", "iEquip_InventoryExt", EquipItem, a_registry));
