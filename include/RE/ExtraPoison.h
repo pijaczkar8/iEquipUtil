@@ -5,6 +5,8 @@
 #include "GameObjects.h"  // AlchemyItem
 #include "ITypes.h"  // UInt32
 
+#include "RE/Memory.h"  // TES_HEAP_REDEFINE_NEW
+
 #if _WIN64
 #include "Relocation.h"
 #endif
@@ -27,6 +29,8 @@ namespace RE
 #endif
 			return static_cast<ExtraPoison*>(BSExtraData::Create(sizeof(RE::ExtraPoison), vtbl));
 		}
+
+		TES_HEAP_REDEFINE_NEW();
 
 #if _WIN64
 		// SE: they swapped order of poison and unk

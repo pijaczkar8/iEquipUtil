@@ -558,7 +558,7 @@ namespace InventoryExt
 		auto xPoison = static_cast<RE::ExtraPoison*>(entryData.extraList->GetByType(kExtraData_Poison));
 		if (xPoison) {
 			entryData.extraList->Remove(kExtraData_Poison, xPoison);
-			RE::free(xPoison);
+			delete xPoison;
 		}
 	}
 

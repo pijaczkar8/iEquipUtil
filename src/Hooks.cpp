@@ -92,6 +92,7 @@ namespace
 			auto manager = RefHandleManager::GetSingleton();
 			if (!manager->IsInit() || !manager->IsTrackedType(a_item)) {
 				(this->*_AddItem)(a_item, a_extraList, a_count, a_fromRefr);
+				return;
 			}
 
 			auto regs = OnRefHandleActiveRegSet::GetSingleton();
@@ -119,6 +120,7 @@ namespace
 			auto manager = RefHandleManager::GetSingleton();
 			if (!manager->IsInit() || !manager->IsTrackedType(a_item)) {
 				(this->*_PickUpItem)(a_item, a_count, a_arg3, a_playSound);
+				return;
 			}
 
 			auto result = manager->ActivateHandle(a_item->baseForm, a_item->extraData);
